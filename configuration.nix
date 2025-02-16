@@ -1,15 +1,15 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, inputs, ... }:
 
 {
-  imports =
-    [
-      # Include the results of the hardware scan
-      ./hardware-configuration.nix
-    ];
+  imports = [
+    # Include the results of the hardware scan
+    ./hardware-configuration.nix
+  ];
 
   ################################
   # Basic System Configuration
   ################################
+  nixpkgs.config.allowUnfree = true;
 
   # Hostname
   networking.hostName = "oddship-thinkpad-x1";
@@ -40,6 +40,9 @@
   services.xserver.desktopManager.plasma5.enable = true;
   services.displayManager.sddm.enable = true;
 
+  #programs.hyprland.package = inputs.hyprland.packages."${pkgs.system}".hyprland;
+  programs.hyprland = { enable = true; };
+  environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
   ################################
   # Various Services
@@ -61,9 +64,16 @@
   networking.firewall.enable = true;
   networking.firewall.allowedTCPPorts = [ 22 ];
 
+  hardware.bluetooth.enable = true;
+  services.blueman.enable = true;
+
   ################################
   # Users
   ################################
+
+  users.users.root.openssh.authorizedKeys.keys = [
+    "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC+77QIoFL/P784uC6KNPIjl8XQRhLKBn/wxbLZE6fIcR5HayJ0K2htzl2UdU3jPHsjRap+xkVDKCKBI16D6mT7gVabQ9J4iVR4IdYrw6KiPqamI6wdskRzf4gnaqw4+QbzUqdqlkqmqiwW29qhQ6bLi+tsU3U9uv9drWaJjQQ9ZTqlmJMmtTWwmhGb3t7VYDcBCoM4FmXGG+5v1z9fvrGN1F4hVhRuO6hydcGz7lJZBkCYRdo9NDiYZfEYqGvUbU1a8JO4EXYm4FLkyCp1t6pco9355x8ON74A4oLPqsdTBcYsP2GKThXQ3eNIzp5WAUouPC2O4Y0Go5UnHs9Yxqr5G9Hbo/K7h22T7OgrvsCOa9WjhSI83fVRblknjnkg9TT28tsR9isp9mAGMrN7Y3KaHu9QcgKdNlwzHLUcTaJi0SRHL0Kv7DTJG075i8ncG+nqwrFL7AdEz3w8dYvHihRhh8Gi5iWAot87Iq4f1j9AxpiMFmtp8U5X+LgG1et395RHuptb3viOEQrE5zfEVzto6LjbXC6NO+5HkfKJkHqcXrU46PYHq8t0EawxOa57e/0oJ0/c1F3cD4bR1CdxtGGIAy2re4p4gpAeC6V02IewKnGDwxR+/2gBG3zirs6s2Js6z4Gny3sZHDdknGwe7ghbixgzVOd7gJOYLqquDp/WRQ=="
+  ];
 
   users.users.rhnvrm = {
     isNormalUser = true;
@@ -73,7 +83,16 @@
       git
       neovim
       zsh
-      home-manager  # optional, for the CLI
+      firefox
+      vscode
+      home-manager # optional, for the CLI
+    ];
+
+    # Password
+    password = "pass";
+
+    openssh.authorizedKeys.keys = [
+      "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC+77QIoFL/P784uC6KNPIjl8XQRhLKBn/wxbLZE6fIcR5HayJ0K2htzl2UdU3jPHsjRap+xkVDKCKBI16D6mT7gVabQ9J4iVR4IdYrw6KiPqamI6wdskRzf4gnaqw4+QbzUqdqlkqmqiwW29qhQ6bLi+tsU3U9uv9drWaJjQQ9ZTqlmJMmtTWwmhGb3t7VYDcBCoM4FmXGG+5v1z9fvrGN1F4hVhRuO6hydcGz7lJZBkCYRdo9NDiYZfEYqGvUbU1a8JO4EXYm4FLkyCp1t6pco9355x8ON74A4oLPqsdTBcYsP2GKThXQ3eNIzp5WAUouPC2O4Y0Go5UnHs9Yxqr5G9Hbo/K7h22T7OgrvsCOa9WjhSI83fVRblknjnkg9TT28tsR9isp9mAGMrN7Y3KaHu9QcgKdNlwzHLUcTaJi0SRHL0Kv7DTJG075i8ncG+nqwrFL7AdEz3w8dYvHihRhh8Gi5iWAot87Iq4f1j9AxpiMFmtp8U5X+LgG1et395RHuptb3viOEQrE5zfEVzto6LjbXC6NO+5HkfKJkHqcXrU46PYHq8t0EawxOa57e/0oJ0/c1F3cD4bR1CdxtGGIAy2re4p4gpAeC6V02IewKnGDwxR+/2gBG3zirs6s2Js6z4Gny3sZHDdknGwe7ghbixgzVOd7gJOYLqquDp/WRQ=="
     ];
   };
 
@@ -82,22 +101,8 @@
   ################################
 
   # Configure home-manager for user rhnvrm
-  home-manager.users.rhnvrm = { pkgs, ... }: {
-    home.username = "rhnvrm";
-    home.homeDirectory = "/home/rhnvrm";
-
-    home.stateVersion = "24.11";
-
-    # Example: Git config
-    programs.git = {
-      enable = true;
-      userName = "Rohan Verma";
-      userEmail = "hello@rohanverma.net";
-    };
-
-    # Zsh
-    programs.zsh.enable = true;
-  };
+  home-manager.backupFileExtension = "bak";
+  home-manager.users.rhnvrm = { imports = [ ./home.nix ]; };
 
   ################################
   # System Packages
@@ -112,6 +117,20 @@
     tmux
     htop
     curl
+    kitty
+
+    nixfmt-rfc-style
+
+    # fonts
+    fira-code
+    fira-code-symbols
+    nerd-fonts.fira-code
+    nerd-fonts.jetbrains-mono
+    font-manager
+    font-awesome_5
+    noto-fonts-emoji
+    noto-fonts
+    jetbrains-mono
   ];
 
   # NixOS version. Adjust for your target release if necessary.
