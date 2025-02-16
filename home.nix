@@ -21,6 +21,12 @@
     enable = true;
   };
 
+  programs.rofi = {
+    enable = true;
+    package = pkgs.rofi-wayland;
+    font = "Noto Sans Medium 11";
+  };
+
   wayland.windowManager.hyprland = {
     enable = true;
     settings = {
@@ -29,6 +35,12 @@
         "nm-applet --indicator"
         "blueman-applet"
       ];
+
+
+      gestures = {
+        workspace_swipe = true;
+        workspace_swipe_fingers = 4;
+      };
 
       "$mod" = "SUPER";
 
@@ -44,7 +56,10 @@
           "$mod, RETURN, exec, kitty"
           "$mod, Q, killactive"
           "$mod SHIFT, Q, exit"
-          # "$mod R, exec, anyrun"
+          "$mod, D, exec, rofi -show drun"
+
+          "$mod, Tab, workspace, +1"
+          "$mod SHIFT, Tab, workspace, -1"
         ]
         ++ (builtins.concatLists (
           builtins.genList (
