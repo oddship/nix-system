@@ -1,5 +1,5 @@
-{ inputs, pkgs, ... }: {
-  # imports = [inputs.walker.homeManagerModules.default];
+{ inputs, pkgs, ... }:
+{
   home.username = "rhnvrm";
   home.homeDirectory = "/home/rhnvrm";
 
@@ -13,23 +13,13 @@
   };
 
   # WM
-  programs.kitty = { enable = true; };
+  programs.kitty = {
+    enable = true;
+  };
 
-  programs.ghostty = { enable = true; };
-
-  # programs.walker = {
-  #   enable = true;
-  #   runAsService = true;
-  #   config = {
-  #     search.placeholder = "Example";
-  #     ui.fullscreen = true;
-  #     list = {
-  #       height = 200;
-  #     };
-  #     websearch.prefix = "?";
-  #     switcher.prefix = "/";
-  #   };
-  # };
+  programs.ghostty = {
+    enable = true;
+  };
 
   wayland.windowManager.hyprland = {
     enable = true;
@@ -49,16 +39,29 @@
         "$mod ALT, mouse:272, resizewindow"
       ];
 
-      bind = [
-        "$mod, RETURN, exec, kitty"
-        "$mod, Q, killactive"
-        "$mod SHIFT, Q, exit"
-      ] ++ (builtins.concatLists (builtins.genList (x:
-        let ws = let c = (x + 1) / 10; in builtins.toString (x + 1 - (c * 10));
-        in [
-          "$mod, ${ws}, workspace, ${toString (x + 1)}"
-          "$mod SHIFT, ${ws}, movetoworkspace, ${toString (x + 1)}"
-        ]) 10));
+      bind =
+        [
+          "$mod, RETURN, exec, kitty"
+          "$mod, Q, killactive"
+          "$mod SHIFT, Q, exit"
+          # "$mod R, exec, anyrun"
+        ]
+        ++ (builtins.concatLists (
+          builtins.genList (
+            x:
+            let
+              ws =
+                let
+                  c = (x + 1) / 10;
+                in
+                builtins.toString (x + 1 - (c * 10));
+            in
+            [
+              "$mod, ${ws}, workspace, ${toString (x + 1)}"
+              "$mod SHIFT, ${ws}, movetoworkspace, ${toString (x + 1)}"
+            ]
+          ) 10
+        ));
 
       monitor = [ ",preferred,auto,1" ];
     };
@@ -67,5 +70,7 @@
   # Zsh
   programs.zsh.enable = true;
 
-  programs.waybar = { enable = true; };
+  programs.waybar = {
+    enable = true;
+  };
 }

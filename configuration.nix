@@ -1,10 +1,37 @@
-{ config, lib, pkgs, inputs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
+}:
 
 {
   imports = [
     # Include the results of the hardware scan
     ./hardware-configuration.nix
   ];
+
+  nix.settings = {
+    accept-flake-config = true;
+    auto-optimise-store = true;
+    builders-use-substitutes = true;
+
+    experimental-features = [
+      "flakes"
+      "nix-command"
+    ];
+
+    extra-substituters = [
+      "https://nix-community.cachix.org"
+      "https://hyprland.cachix.org"
+    ];
+
+    extra-trusted-public-keys = [
+      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+      "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
+    ];
+  };
 
   ################################
   # Basic System Configuration
@@ -41,7 +68,9 @@
   services.displayManager.sddm.enable = true;
 
   #programs.hyprland.package = inputs.hyprland.packages."${pkgs.system}".hyprland;
-  programs.hyprland = { enable = true; };
+  programs.hyprland = {
+    enable = true;
+  };
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
   ################################
@@ -77,7 +106,10 @@
 
   users.users.rhnvrm = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" ]; # for sudo + NM
+    extraGroups = [
+      "wheel"
+      "networkmanager"
+    ]; # for sudo + NM
     shell = pkgs.zsh;
     packages = with pkgs; [
       git
@@ -102,7 +134,11 @@
 
   # Configure home-manager for user rhnvrm
   home-manager.backupFileExtension = "bak";
-  home-manager.users.rhnvrm = { imports = [ ./home.nix ]; };
+  home-manager.users.rhnvrm = {
+    imports = [
+      ./home.nix
+    ];
+  };
 
   ################################
   # System Packages
@@ -136,4 +172,3 @@
   # NixOS version. Adjust for your target release if necessary.
   system.stateVersion = "24.11";
 }
-
