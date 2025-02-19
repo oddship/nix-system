@@ -24,12 +24,10 @@
 
     extra-substituters = [
       "https://nix-community.cachix.org"
-      "https://hyprland.cachix.org"
     ];
 
     extra-trusted-public-keys = [
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-      "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
     ];
   };
 
@@ -64,13 +62,10 @@
   ################################
 
   services.xserver.enable = true;
-  services.xserver.desktopManager.plasma5.enable = true;
+  services.desktopManager.plasma6.enable = true;
   services.displayManager.sddm.enable = true;
+  services.displayManager.sddm.wayland.enable = true;
 
-  #programs.hyprland.package = inputs.hyprland.packages."${pkgs.system}".hyprland;
-  programs.hyprland = {
-    enable = true;
-  };
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
   ################################
@@ -94,7 +89,6 @@
   networking.firewall.allowedTCPPorts = [ 22 ];
 
   hardware.bluetooth.enable = true;
-  services.blueman.enable = true;
 
   ################################
   # Users
@@ -116,7 +110,7 @@
       neovim
       zsh
       firefox
-      vscode
+      vscode-fhs
       home-manager # optional, for the CLI
     ];
 
@@ -156,6 +150,9 @@
     kitty
 
     nixfmt-rfc-style
+
+    cliphist
+    wl-clipboard
 
     # fonts
     fira-code
