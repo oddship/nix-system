@@ -176,6 +176,8 @@
 
     obsidian
 
+    kdePackages.yakuake
+
     # fonts
     fira-code
     fira-code-symbols
@@ -196,6 +198,8 @@
     dataDir = "/home/rhnvrm"; #TODO this can be made to come form config
     # TODO: setup the initial devices from a secrets store.
   };
+
+  services.netbird.enable = true;
 
   # NixOS version. Adjust for your target release if necessary.
   system.stateVersion = "24.11";
