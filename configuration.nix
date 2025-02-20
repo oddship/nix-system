@@ -90,6 +90,9 @@
 
   hardware.bluetooth.enable = true;
 
+
+
+
   ################################
   # Users
   ################################
@@ -154,6 +157,8 @@
     cliphist
     wl-clipboard
 
+    syncthing
+
     # fonts
     fira-code
     fira-code-symbols
@@ -165,6 +170,13 @@
     noto-fonts
     jetbrains-mono
   ];
+
+  # TODO: move this to home manager once maybe 
+  # https://github.com/nix-community/home-manager/issues/2064 is resolved
+  services.syncthing = {
+    enable = true;
+    # TODO: setup the initial devices from a secrets store.
+  };
 
   # NixOS version. Adjust for your target release if necessary.
   system.stateVersion = "24.11";
