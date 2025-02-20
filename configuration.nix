@@ -83,6 +83,12 @@
 
   # OpenSSH
   services.openssh.enable = true;
+  services.openssh.hostKeys = [
+    {
+      path = "/etc/ssh/ssh_host_ed25519_key";
+      type = "ed25519";
+    }
+  ];
 
   # Firewall
   networking.firewall.enable = true;
@@ -90,8 +96,9 @@
 
   hardware.bluetooth.enable = true;
 
+  # Secrets
 
-
+  age.secrets.login_pass_thinkpad.file = ./secrets/login_pass_thinkpad.age;
 
   ################################
   # Users
@@ -118,6 +125,7 @@
     ];
 
     # Password
+    # passwordFile = config.age.secrets.login_pass_thinkpad.path;
     password = "pass";
 
     openssh.authorizedKeys.keys = [
@@ -152,6 +160,8 @@
     curl
     kitty
 
+    inputs.agenix.packages.${system}.default
+
     nixfmt-rfc-style
 
     cliphist
@@ -171,7 +181,7 @@
     jetbrains-mono
   ];
 
-  # TODO: move this to home manager once maybe 
+  # TODO: move this to home manager once maybe
   # https://github.com/nix-community/home-manager/issues/2064 is resolved
   services.syncthing = {
     enable = true;
