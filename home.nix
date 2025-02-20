@@ -81,6 +81,8 @@
       '';
     };
 
+    # TODO: zoxide enable like a program
+
     neovim = {
       enable = true;
       viAlias = true;

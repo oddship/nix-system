@@ -90,6 +90,8 @@
     }
   ];
 
+  services.tailscale.enable = true;
+
   # Firewall
   networking.firewall.enable = true;
   networking.firewall.allowedTCPPorts = [ 22 ];
@@ -122,7 +124,7 @@
       zsh
       firefox
       vscode-fhs
-      home-manager # optional, for the CLI
+      home-manager # optional, for the CLI # add to programs
     ];
 
     # Password
@@ -169,6 +171,10 @@
     wl-clipboard
 
     syncthing
+    
+    tail-tray
+
+    obsidian
 
     # fonts
     fira-code
@@ -186,6 +192,8 @@
   # https://github.com/nix-community/home-manager/issues/2064 is resolved
   services.syncthing = {
     enable = true;
+    user = "rhnvrm";
+    dataDir = "/home/rhnvrm"; #TODO this can be made to come form config
     # TODO: setup the initial devices from a secrets store.
   };
 
