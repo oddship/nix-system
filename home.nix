@@ -1,5 +1,9 @@
-{ inputs, pkgs, ... }:
-{
+{ inputs, pkgs, ... }: let 
+  wallpaper = pkgs.fetchurl {
+    url = "https://w.wallhaven.cc/full/2y/wallhaven-2yrwzy.jpg";
+    hash = "sha256-OJBIdULF8iElf2GNl2Nmedh5msVSSWbid2RtYM5Cjog=";
+  };
+in {
   home.username = "rhnvrm";
   home.homeDirectory = "/home/rhnvrm";
 
@@ -76,6 +80,15 @@
       "next-entry" = [ "<Shift><Alt>j" ];
       "prev-entry" = [ "<Shift><Alt>k" ];
       "toggle-menu" = [ "<Super>v" ];
+    };
+
+    "org/gnome/desktop/peripherals/mouse" = {
+      "natural-scoll" = true;
+    };
+
+    "org/gnome/desktop/background" = {
+      picture-uri = "${wallpaper}";
+      picture-uri-dark = "${wallpaper}";
     };
   };
 
