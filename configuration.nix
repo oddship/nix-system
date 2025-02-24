@@ -214,6 +214,9 @@
     curl
     kitty
 
+    #vivaldi
+    chromium
+
     inputs.agenix.packages.${system}.default
 
     nixfmt-rfc-style

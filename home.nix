@@ -4,7 +4,7 @@
   home.homeDirectory = "/home/rhnvrm";
 
   home.stateVersion = "24.11";
-
+  nixpkgs.config.allowUnfree = true;
   home.packages = with pkgs; [
     btop
     htop
@@ -16,6 +16,14 @@
     go
     lua
     zig
+
+    vlc
+    spotify
+
+    gnomeExtensions.caffeine
+    gnomeExtensions.dash-to-dock
+    gnomeExtensions.appindicator
+    gnomeExtensions.clipboard-history
 
     git
     curl
@@ -31,6 +39,45 @@
     ncdu
     websocat
   ];
+
+  dconf.settings = {
+    "org/gnome/desktop/interface" = {
+      color-scheme = "prefer-dark";
+    };
+
+    "org/gnome/shell" = {
+      favorite-apps = [
+        "obsidian.desktop"
+        "firefox.desktop"
+        "code.desktop"
+        "com.mitchellh.ghostty.desktop"
+      ];
+      disable-user-extensions = false;
+      disabled-extensions = "disabled";
+      enabled-extensions = [
+        "caffeine@patapon.info"
+        "dash-to-dock@micxgx.gmail.com"
+        "appindicatorsupport@rgcjonas.gmail.com"
+        "workspace-indicator@gnome-shell-extensions.gcampax.github.com"
+        "clipboard-history@alexsaveau.dev"
+      ];
+    };
+
+    "org/gnome/desktop/wm/keybindings" = {
+      close = [ "<Super>q" ];
+    };
+
+    "org/gnome/settings-daemon/plugins/media-keys" = {
+      search = [ "<Super>d" ];
+    };
+
+    "org/gnome/shell/extensions/clipboard-history" = {
+      "display-mode" = 0;
+      "next-entry" = [ "<Shift><Alt>j" ];
+      "prev-entry" = [ "<Shift><Alt>k" ];
+      "toggle-menu" = [ "<Super>v" ];
+    };
+  };
 
   # Example: Git config
   programs.git = {
@@ -60,7 +107,12 @@
       enable = true;
       oh-my-zsh = {
         enable = true;
-        plugins = [ "git" "docker" "ssh-agent" "dotenv" ];
+        plugins = [
+          "git"
+          "docker"
+          "ssh-agent"
+          "dotenv"
+        ];
         theme = "robbyrussell";
       };
       shellAliases = {
