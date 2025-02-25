@@ -15,6 +15,8 @@
     };
 
     agenix.url = "github:ryantm/agenix";
+
+    nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=v0.4.1";
   };
 
   outputs =
@@ -24,6 +26,7 @@
       disko,
       home-manager,
       agenix,
+      nix-flatpak,
       ...
     }@inputs:
     let
@@ -43,6 +46,7 @@
           home-manager.nixosModules.home-manager
           ./disko-config.nix
           agenix.nixosModules.default
+          nix-flatpak.nixosModules.nix-flatpak
         ];
       };
     };

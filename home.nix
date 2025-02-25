@@ -52,7 +52,7 @@ in {
     "org/gnome/shell" = {
       favorite-apps = [
         "obsidian.desktop"
-        "firefox.desktop"
+        "com.vivaldi.Vivaldi.desktop"
         "code.desktop"
         "com.mitchellh.ghostty.desktop"
       ];
@@ -93,6 +93,10 @@ in {
     "org/gnome/desktop/background" = {
       picture-uri = "${wallpaper}";
       picture-uri-dark = "${wallpaper}";
+    };
+
+    "org/gnome/shell/extensions/dash-to-dock" = {
+      "scroll-action" = "cycle-windows";
     };
   };
 
