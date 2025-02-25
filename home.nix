@@ -1,9 +1,11 @@
-{ inputs, pkgs, ... }: let 
+{ inputs, pkgs, ... }:
+let
   wallpaper = pkgs.fetchurl {
     url = "https://w.wallhaven.cc/full/2y/wallhaven-2yrwzy.jpg";
     hash = "sha256-OJBIdULF8iElf2GNl2Nmedh5msVSSWbid2RtYM5Cjog=";
   };
-in {
+in
+{
   home.username = "rhnvrm";
   home.homeDirectory = "/home/rhnvrm";
 
@@ -28,6 +30,8 @@ in {
     gnomeExtensions.dash-to-dock
     gnomeExtensions.appindicator
     gnomeExtensions.clipboard-history
+    gnomeExtensions.just-perfection
+    gnomeExtensions.blur-my-shell
 
     git
     curl
@@ -64,15 +68,27 @@ in {
         "appindicatorsupport@rgcjonas.gmail.com"
         "workspace-indicator@gnome-shell-extensions.gcampax.github.com"
         "clipboard-history@alexsaveau.dev"
+        "just-perfection-desktop@just-perfection"
+        "blur-my-shell@aunetx"
       ];
     };
 
     "org/gnome/desktop/wm/keybindings" = {
       close = [ "<Super>q" ];
+      "toggle-message-tray" = [ "<Shift><Super>v" ];
     };
 
     "org/gnome/settings-daemon/plugins/media-keys" = {
       search = [ "<Super>d" ];
+      custom-keybindings = [
+        "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
+      ];
+    };
+
+    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
+      binding = "<Super>Return";
+      command = "ghostty";
+      name = "Launch Ghostty";
     };
 
     "org/gnome/shell/extensions/clipboard-history" = {
@@ -97,6 +113,18 @@ in {
 
     "org/gnome/shell/extensions/dash-to-dock" = {
       "scroll-action" = "cycle-windows";
+      shortcut = [ "<Shift><Super>q" ];
+    };
+
+    "org/gnome/shell/extensions/just-perfection" = {
+      "workspace-wrap-around" = true;
+      "animation" = 3;
+    };
+
+    "org/gnome/shell/extensions/blur-my-shell/applications" = {
+      whitelist = [ "com.mitchellh.ghostty" ];
+      blur = true;
+      dynamic-opacity = true;
     };
   };
 
