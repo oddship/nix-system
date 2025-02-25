@@ -235,6 +235,7 @@
     obsidian
 
     # fonts
+    # TODO: inter
     fira-code
     fira-code-symbols
     nerd-fonts.fira-code
@@ -259,4 +260,12 @@
 
   # NixOS version. Adjust for your target release if necessary.
   system.stateVersion = "24.11";
+
+  system.activationScripts.diff = {
+    supportsDryActivation = true;
+
+    text = ''
+      ${pkgs.nvd}/bin/nvd --nix-bin-dir=${pkgs.nix}/bin diff /run/current-system "$systemConfig"
+    '';
+  };
 }

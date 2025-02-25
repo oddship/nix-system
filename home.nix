@@ -83,7 +83,11 @@ in {
     };
 
     "org/gnome/desktop/peripherals/mouse" = {
-      "natural-scoll" = true;
+      "natural-scoll" = false;
+    };
+
+    "org/gnome/desktop/interface" = {
+      "show-battery-percentage" = true;
     };
 
     "org/gnome/desktop/background" = {
@@ -91,6 +95,8 @@ in {
       picture-uri-dark = "${wallpaper}";
     };
   };
+
+  programs.home-manager.enable = true;
 
   # Example: Git config
   programs.git = {
