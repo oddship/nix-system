@@ -126,6 +126,14 @@ in
       blur = true;
       dynamic-opacity = true;
     };
+
+    "org/gnome/shell/extensions/workspace-indicator" = {
+      "embed-previews" = false;
+    };
+
+    "org/gnome/desktop/wm/preferences" = {
+      "workspace-names" = [ "Notes" "Browser" "Code" "Terminal" ];
+    };
   };
 
   programs.home-manager.enable = true;

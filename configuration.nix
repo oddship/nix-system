@@ -256,6 +256,7 @@
     noto-fonts-emoji
     noto-fonts
     jetbrains-mono
+    inter
   ];
 
   # TODO: move this to home manager once maybe
