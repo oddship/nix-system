@@ -58,6 +58,14 @@
 
   programs.zsh.enable = true;
 
+  # Docker setup
+  virtualisation.docker.enable = true;
+  virtualisation.docker.rootless = {
+    enable = true;
+    setSocketVariable = true;
+  };
+  virtualisation.docker.storageDriver = "btrfs";
+
   ################################
   # Desktop Environment
   ################################
@@ -169,6 +177,7 @@
     extraGroups = [
       "wheel"
       "networkmanager"
+      "docker"
     ]; # for sudo + NM
     shell = pkgs.zsh;
     packages = with pkgs; [
