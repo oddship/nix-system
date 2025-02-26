@@ -5,7 +5,8 @@ let
     hash = "sha256-OJBIdULF8iElf2GNl2Nmedh5msVSSWbid2RtYM5Cjog=";
   };
 
-  autostartPrograms = [ pkgs.syncthingtray-minimal ];
+  # TODO: check if ktailctl is working on autostart
+  autostartPrograms = [ pkgs.syncthingtray-minimal pkgs.ktailctl ];
 in
 {
   home.username = "rhnvrm";
@@ -186,7 +187,6 @@ in
         plugins = [
           "git"
           "docker"
-          "ssh-agent"
           "dotenv"
         ];
         theme = "robbyrussell";
@@ -198,15 +198,15 @@ in
       };
       initExtra = ''
         export PATH=$HOME/go/bin:$PATH
-        # zoxide integration = for z 
-        eval "$(zoxide init zsh)"
+
         # fnm integration for node js
         eval "$(fnm env --use-on-cd)"
-        # ssh-agent config
-        zstyle :omz:plugins:ssh-agent lazy yes
-        zstyle :omz:plugins:ssh-agent identities id_ed25519
-        zstyle :omz:plugins:ssh-agent lifetime 1h
       '';
+    };
+
+    zoxide = {
+      enable = true;
+      enableZshIntegration = true;
     };
 
     # TODO: zoxide enable like a program
@@ -246,7 +246,13 @@ in
             # text attribute with the contents of the .desktop file
             text = pkg.desktopItem.text;
           }
-        else
+        # For ktailctl, /share/applications/org.fkoehler.KTailctl.desktop is the name so add a manual
+        # entry for it
+        else if pkg.pname == "ktailctl" then
+          {
+            source = (pkg + "/share/applications/org.fkoehler.KTailctl.desktop");
+          }
+        else 
           {
             # Application does *not* have a desktopItem entry. Try to find a
             # matching .desktop name in /share/apaplications

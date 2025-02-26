@@ -238,7 +238,7 @@
     syncthing
     syncthingtray-minimal
 
-    tail-tray
+    ktailctl
 
     gnome-tweaks
     gnome-extension-manager
