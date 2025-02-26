@@ -50,6 +50,16 @@ in
     websocat
   ];
 
+  # TODO: figure out default browser. 
+  # this does not work, or does (?) unsure. 
+  # For now manually run `xdg-settings set default-web-browser com.vivaldi.Vivaldi.desktop`
+  xdg.mimeApps.defaultApplications = {
+    "text/html" = [ "com.vivaldi.Vivaldi.desktop" ];
+    "text/xml" = [ "com.vivaldi.Vivaldi.desktop" ];
+    "x-scheme-handler/http" = [ "com.vivaldi.Vivaldi.desktop" ];
+    "x-scheme-handler/https" = [ "com.vivaldi.Vivaldi.desktop" ];
+  };
+
   dconf.settings = {
     "org/gnome/desktop/interface" = {
       color-scheme = "prefer-dark";
