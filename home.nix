@@ -4,6 +4,8 @@ let
     url = "https://w.wallhaven.cc/full/2y/wallhaven-2yrwzy.jpg";
     hash = "sha256-OJBIdULF8iElf2GNl2Nmedh5msVSSWbid2RtYM5Cjog=";
   };
+
+  autostartPrograms = [ pkgs.syncthingtray-minimal ];
 in
 {
   home.username = "rhnvrm";
@@ -132,7 +134,12 @@ in
     };
 
     "org/gnome/desktop/wm/preferences" = {
-      "workspace-names" = [ "Notes" "Browser" "Code" "Terminal" ];
+      "workspace-names" = [
+        "Notes"
+        "Browser"
+        "Code"
+        "Terminal"
+      ];
     };
   };
 
@@ -216,4 +223,25 @@ in
       enableZshIntegration = true;
     };
   };
+
+  # Autostart XDG for gnome (ref: https://github.com/nix-community/home-manager/issues/3447)
+  home.file = builtins.listToAttrs (
+    map (pkg: {
+      name = ".config/autostart/" + pkg.pname + ".desktop";
+      value =
+        if pkg ? desktopItem then
+          {
+            # Application has a desktopItem entry.
+            # Assume that it was made with makeDesktopEntry, which exposes a
+            # text attribute with the contents of the .desktop file
+            text = pkg.desktopItem.text;
+          }
+        else
+          {
+            # Application does *not* have a desktopItem entry. Try to find a
+            # matching .desktop name in /share/apaplications
+            source = (pkg + "/share/applications/" + pkg.pname + ".desktop");
+          };
+    }) autostartPrograms
+  );
 }

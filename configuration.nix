@@ -236,6 +236,7 @@
     wl-clipboard
 
     syncthing
+    syncthingtray-minimal
 
     tail-tray
 
