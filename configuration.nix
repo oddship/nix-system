@@ -225,8 +225,8 @@
     curl
     kitty
 
-    #vivaldi
     chromium
+    #vivaldi
 
     inputs.agenix.packages.${system}.default
 
@@ -245,6 +245,7 @@
     bibata-cursors
 
     obsidian
+    ticktick
 
     # fonts
     # TODO: inter
