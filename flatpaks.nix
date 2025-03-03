@@ -12,8 +12,14 @@
     onCalendar = "weekly"; # default value
   };
 
+  xdg.portal = {
+    enable = true;
+    xdgOpenUsePortal = true;
+  };
+
   services.flatpak.packages = [
     "com.github.tchx84.Flatseal"
     "com.vivaldi.Vivaldi"
+    "com.spotify.Client"
   ];
 }

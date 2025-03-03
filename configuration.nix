@@ -47,6 +47,9 @@
   # Networking
   networking.networkmanager.enable = true;
 
+  # Firmware update
+  services.fwupd.enable = true;
+
   # Localization
   time.timeZone = "Asia/Kolkata";
   i18n.defaultLocale = "en_US.UTF-8";
@@ -234,6 +237,8 @@
 
     cliphist
     wl-clipboard
+
+    pritunl-ssh
 
     syncthing
     syncthingtray-minimal

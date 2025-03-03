@@ -5,8 +5,11 @@ let
     hash = "sha256-OJBIdULF8iElf2GNl2Nmedh5msVSSWbid2RtYM5Cjog=";
   };
 
-  # TODO: check if ktailctl is working on autostart
-  autostartPrograms = [ pkgs.syncthingtray-minimal pkgs.ktailctl ];
+  # TODO: syncthingtray does not work on first boot correctly
+  autostartPrograms = [
+    pkgs.syncthingtray-minimal
+    pkgs.ktailctl
+  ];
 in
 {
   home.username = "rhnvrm";
@@ -27,7 +30,6 @@ in
     zig
 
     vlc
-    spotify
 
     gnomeExtensions.caffeine
     gnomeExtensions.dash-to-dock
@@ -51,8 +53,8 @@ in
     websocat
   ];
 
-  # TODO: figure out default browser. 
-  # this does not work, or does (?) unsure. 
+  # TODO: figure out default browser.
+  # this does not work, or does (?) unsure.
   # For now manually run `xdg-settings set default-web-browser com.vivaldi.Vivaldi.desktop`
   xdg.mimeApps.defaultApplications = {
     "text/html" = [ "com.vivaldi.Vivaldi.desktop" ];
@@ -68,6 +70,7 @@ in
 
     "org/gnome/shell" = {
       favorite-apps = [
+        "ticktick.desktop"
         "obsidian.desktop"
         "com.vivaldi.Vivaldi.desktop"
         "code.desktop"
@@ -113,6 +116,10 @@ in
 
     "org/gnome/desktop/peripherals/mouse" = {
       "natural-scoll" = false;
+    };
+
+    "org/gnome/desktop/peripherals/touchpad" = {
+      "natural-scroll" = false;
     };
 
     "org/gnome/desktop/interface" = {
@@ -170,6 +177,7 @@ in
 
   programs.ghostty = {
     enable = true;
+    enableZshIntegration = true;
   };
 
   programs.rofi = {
@@ -201,6 +209,11 @@ in
 
         # fnm integration for node js
         eval "$(fnm env --use-on-cd)"
+
+        # necessary for tmux etc on remotes where term info is not available
+        if [[ "$TERM_PROGRAM" == "ghostty" ]]; then
+            export TERM=xterm-256color
+        fi
       '';
     };
 
@@ -252,7 +265,7 @@ in
           {
             source = (pkg + "/share/applications/org.fkoehler.KTailctl.desktop");
           }
-        else 
+        else
           {
             # Application does *not* have a desktopItem entry. Try to find a
             # matching .desktop name in /share/apaplications
