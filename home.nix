@@ -1,4 +1,9 @@
-{ inputs, pkgs, ... }:
+{
+  inputs,
+  pkgs,
+  gitConfigExtra ? "",
+  ...
+}:
 let
   wallpaper = pkgs.fetchurl {
     url = "https://w.wallhaven.cc/full/2y/wallhaven-2yrwzy.jpg";
@@ -168,6 +173,8 @@ in
     enable = true;
     userName = "Rohan Verma";
     userEmail = "hello@rohanverma.net";
+
+    extraConfig = gitConfigExtra; # TODO: need to figure out a better way to do this
   };
 
   # WM
@@ -206,6 +213,7 @@ in
       };
       initExtra = ''
         export PATH=$HOME/go/bin:$PATH
+        export EDITOR="vim"
 
         # fnm integration for node js
         eval "$(fnm env --use-on-cd)"

@@ -7,4 +7,5 @@ let
 in
 {
   "login_pass_thinkpad.age".publicKeys = [ rhnvrm_ed25519 thinkpadx1 ];
+  "git-config-extra.age".publicKeys = [ rhnvrm_ed25519 thinkpadx1];
 }

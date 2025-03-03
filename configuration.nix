@@ -165,6 +165,7 @@
   # Secrets
 
   age.secrets.login_pass_thinkpad.file = ./secrets/login_pass_thinkpad.age;
+  age.secrets.git-config-extra.file = ./secrets/git-config-extra.age;
 
   ################################
   # Users
@@ -211,6 +212,10 @@
     imports = [
       ./home.nix
     ];
+
+    _module.args = {
+      gitConfigExtra = builtins.readFile config.age.secrets.git-config-extra.path; # TODO this requires impure flag
+    };
   };
 
   ################################
