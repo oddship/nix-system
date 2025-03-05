@@ -174,7 +174,11 @@ in
     userName = "Rohan Verma";
     userEmail = "hello@rohanverma.net";
 
-    extraConfig = gitConfigExtra; # TODO: need to figure out a better way to do this
+    includes = [
+      {
+        path = gitConfigExtra; # TODO: need to figure out a better way to do this
+      }
+    ];
   };
 
   # WM

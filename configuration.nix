@@ -50,6 +50,9 @@
   # Firmware update
   services.fwupd.enable = true;
 
+  # Precompiled binaries
+  programs.nix-ld.enable = true;
+
   # Localization
   time.timeZone = "Asia/Kolkata";
   i18n.defaultLocale = "en_US.UTF-8";
@@ -62,12 +65,13 @@
   programs.zsh.enable = true;
 
   # Docker setup
-  virtualisation.docker.enable = true;
-  virtualisation.docker.rootless = {
+  virtualisation.docker = {
     enable = true;
-    setSocketVariable = true;
+    storageDriver = "btrfs";
+    enableOnBoot = true;
+    autoPrune.enable = true;
   };
-  virtualisation.docker.storageDriver = "btrfs";
+
 
   ################################
   # Desktop Environment
@@ -157,15 +161,19 @@
   services.tailscale.enable = true;
 
   # Firewall
-  networking.firewall.enable = true;
-  networking.firewall.allowedTCPPorts = [ 22 ];
+  networking.firewall.enable = false;
+  # use nftables for firewall
+  networking.nftables.enable = true;
 
   hardware.bluetooth.enable = true;
 
   # Secrets
 
   age.secrets.login_pass_thinkpad.file = ./secrets/login_pass_thinkpad.age;
-  age.secrets.git-config-extra.file = ./secrets/git-config-extra.age;
+  age.secrets.git-config-extra = {
+    file = ./secrets/git-config-extra.age;
+    owner = "rhnvrm"; # todo: switch to work user eventually
+  };
 
   ################################
   # Users
@@ -214,7 +222,7 @@
     ];
 
     _module.args = {
-      gitConfigExtra = builtins.readFile config.age.secrets.git-config-extra.path; # TODO this requires impure flag
+      gitConfigExtra = config.age.secrets.git-config-extra.path; # TODO this requires impure flag
     };
   };
 
@@ -232,6 +240,9 @@
     htop
     curl
     kitty
+
+    nftables
+    iptables
 
     chromium
     #vivaldi
