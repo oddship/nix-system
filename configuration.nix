@@ -198,6 +198,7 @@
       zsh
       firefox
       vscode-fhs
+      zed-editor
       home-manager # optional, for the CLI # add to programs
     ];
 
@@ -260,6 +261,8 @@
     syncthingtray-minimal
 
     ktailctl
+
+    nomad
 
     gnome-tweaks
     gnome-extension-manager
