@@ -46,8 +46,22 @@
           agenix.nixosModules.default
           nix-flatpak.nixosModules.nix-flatpak
 
-          ./hosts/thinkpadx1/disko-config.nix
+          ./hosts/thinkpadx1/disko-config.nix # TODO: can be moved inside config
           ./hosts/thinkpadx1/configuration.nix
+        ];
+      };
+
+      nixosConfigurations."oddship-ux303" = nixpkgs.lib.nixosSystem {
+        inherit system;
+        specialArgs = { inherit inputs; };
+        modules = [
+          disko.nixosModules.disko
+          home-manager.nixosModules.home-manager
+          agenix.nixosModules.default
+          nix-flatpak.nixosModules.nix-flatpak
+
+          ./hosts/ux303/configuration.nix
+          ./hosts/ux303/hardware-config.nix
         ];
       };
     };
