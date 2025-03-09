@@ -41,12 +41,13 @@
         inherit system;
         specialArgs = { inherit inputs; };
         modules = [
-          ./configuration.nix
           disko.nixosModules.disko
           home-manager.nixosModules.home-manager
-          ./disko-config.nix
           agenix.nixosModules.default
           nix-flatpak.nixosModules.nix-flatpak
+
+          ./hosts/thinkpadx1/disko-config.nix
+          ./hosts/thinkpadx1/configuration.nix
         ];
       };
     };

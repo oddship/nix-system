@@ -169,9 +169,9 @@
 
   # Secrets
 
-  age.secrets.login_pass_thinkpad.file = ./secrets/login_pass_thinkpad.age;
+  age.secrets.login_pass_thinkpad.file = ../../secrets/login_pass_thinkpad.age;
   age.secrets.git-config-extra = {
-    file = ./secrets/git-config-extra.age;
+    file = ../../secrets/git-config-extra.age;
     owner = "rhnvrm"; # todo: switch to work user eventually
   };
 
