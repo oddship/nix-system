@@ -10,4 +10,5 @@ in
   "login_pass_thinkpad.age".publicKeys = [ rhnvrm_ed25519 thinkpadx1 ];
   "git-config-extra.age".publicKeys = [ rhnvrm_ed25519 thinkpadx1];
   "wifi_pass_ux303.age".publicKeys = [ rhnvrm_ed25519 ux303 ];
+  "cloudflared_oddship_rohanvermanet.age".publicKeys = [ rhnvrm_ed25519 ux303];
 }

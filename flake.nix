@@ -60,6 +60,7 @@
           agenix.nixosModules.default
           nix-flatpak.nixosModules.nix-flatpak
 
+          ./modules
           ./hosts/ux303/configuration.nix
           ./hosts/ux303/hardware-config.nix
         ];

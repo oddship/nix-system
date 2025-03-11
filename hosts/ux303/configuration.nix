@@ -103,11 +103,20 @@
     };
   };
 
+  # Services
+  services.tailscale.enable = true;
+
+  # Programs
   programs = {
     zsh = {
       enable = true;
     };
   };
+
+  # Custom module config
+  media_server.enable = true;
+  age.secrets.cloudflared_oddship_rohanvermanet.file = ../../secrets/cloudflared_oddship_rohanvermanet.age;
+  media_server.cloudflare_secret = config.age.secrets.cloudflared_oddship_rohanvermanet.path;
 
   system.stateVersion = "24.11";
 }
