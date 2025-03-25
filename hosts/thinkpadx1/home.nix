@@ -36,6 +36,8 @@ in
 
     vlc
 
+    thunderbird
+
     gnomeExtensions.caffeine
     gnomeExtensions.dash-to-dock
     gnomeExtensions.appindicator
@@ -77,7 +79,7 @@ in
       favorite-apps = [
         "ticktick.desktop"
         "obsidian.desktop"
-        "com.vivaldi.Vivaldi.desktop"
+        "com.vivaldi.Vivaldi.desktop" # TODO: switch this out with chromium
         "code.desktop"
         "com.mitchellh.ghostty.desktop"
       ];

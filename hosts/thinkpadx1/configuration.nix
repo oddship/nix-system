@@ -72,7 +72,6 @@
     autoPrune.enable = true;
   };
 
-
   ################################
   # Desktop Environment
   ################################
@@ -134,6 +133,10 @@
     gnome-software
   ];
 
+  # gnome cast
+	# networking.firewall.allowedTCPPorts = [ 7236 ];
+
+
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
   ################################
@@ -161,11 +164,15 @@
   services.tailscale.enable = true;
 
   # Firewall
-  networking.firewall.enable = false;
+  networking.firewall.enable = true;
+	networking.firewall.logRefusedConnections = true;
   # use nftables for firewall
   networking.nftables.enable = true;
 
   hardware.bluetooth.enable = true;
+
+  # keyboard
+  hardware.keyboard.qmk.enable = true;
 
   # Secrets
 
@@ -266,6 +273,7 @@
 
     gnome-tweaks
     gnome-extension-manager
+		# gnome-network-displays
     bibata-cursors
 
     obsidian
