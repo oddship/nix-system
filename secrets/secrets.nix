@@ -2,7 +2,7 @@ let
   rhnvrm_ed25519 = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKsBh6mM1T0HyG8Gp4doFEo8izvF8snx4wJXmkyzZCBw hello@rohanverma.net";
   users = [ rhnvrm_ed25519 ];
 
-  thinkpadx1 = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFaS218MkohpmXFgAPcaJNJmQ/GhYwduDdilFdztVivQ";
+  thinkpadx1 = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDx7uPdD2Fc/3j/2cx1VPYxoN9lL3QR4KTPzVhsGTaM8";
   ux303 = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIN+P0DWqkyUAV26Gh2vBP7LnUV/VhehvMXsnBU0QLAi2";
   systems = [ thinkpadx1 ux303 ];
 in
