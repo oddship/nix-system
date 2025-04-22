@@ -60,14 +60,11 @@ in
     websocat
   ];
 
-  # TODO: figure out default browser.
-  # this does not work, or does (?) unsure.
-  # For now manually run `xdg-settings set default-web-browser com.vivaldi.Vivaldi.desktop`
   xdg.mimeApps.defaultApplications = {
-    "text/html" = [ "com.vivaldi.Vivaldi.desktop" ];
-    "text/xml" = [ "com.vivaldi.Vivaldi.desktop" ];
-    "x-scheme-handler/http" = [ "com.vivaldi.Vivaldi.desktop" ];
-    "x-scheme-handler/https" = [ "com.vivaldi.Vivaldi.desktop" ];
+    "text/html" = [ "chromium-browser.desktop" ];
+    "text/xml" = [ "chromium-browser.desktop" ];
+    "x-scheme-handler/http" = [ "chromium-browser.desktop" ];
+    "x-scheme-handler/https" = [ "chromium-browser.desktop" ];
   };
 
   dconf.settings = {
@@ -77,11 +74,12 @@ in
 
     "org/gnome/shell" = {
       favorite-apps = [
+        "com.mitchellh.ghostty.desktop"
         "ticktick.desktop"
         "obsidian.desktop"
-        "com.vivaldi.Vivaldi.desktop" # TODO: switch this out with chromium
+        "chromium-browser.desktop"
         "code.desktop"
-        "com.mitchellh.ghostty.desktop"
+        "dev.zed.Zed.desktop"
       ];
       disable-user-extensions = false;
       disabled-extensions = "disabled";
@@ -146,6 +144,7 @@ in
     "org/gnome/shell/extensions/just-perfection" = {
       "workspace-wrap-around" = true;
       "animation" = 3;
+      "workspace-switcher-should-show" = true;
     };
 
     "org/gnome/shell/extensions/blur-my-shell/applications" = {
@@ -156,6 +155,10 @@ in
 
     "org/gnome/shell/extensions/workspace-indicator" = {
       "embed-previews" = false;
+    };
+
+    "org/gnome/mutter" = {
+      "dynamic-workspaces" = true;
     };
 
     "org/gnome/desktop/wm/preferences" = {

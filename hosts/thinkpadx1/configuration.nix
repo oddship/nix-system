@@ -134,8 +134,7 @@
   ];
 
   # gnome cast
-	# networking.firewall.allowedTCPPorts = [ 7236 ];
-
+  # networking.firewall.allowedTCPPorts = [ 7236 ];
 
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
@@ -165,7 +164,7 @@
 
   # Firewall
   networking.firewall.enable = true;
-	networking.firewall.logRefusedConnections = true;
+  networking.firewall.logRefusedConnections = true;
   # use nftables for firewall
   networking.nftables.enable = true;
 
@@ -258,6 +257,8 @@
     inputs.agenix.packages.${system}.default
 
     nixfmt-rfc-style
+    nixd
+    nil
 
     cliphist
     wl-clipboard
@@ -273,7 +274,7 @@
 
     gnome-tweaks
     gnome-extension-manager
-		# gnome-network-displays
+    # gnome-network-displays
     bibata-cursors
 
     obsidian
