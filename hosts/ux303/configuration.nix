@@ -32,8 +32,6 @@
     ];
   };
 
-  nixpkgs.config.allowUnfree = true;
-
   # Localization
   time.timeZone = "Asia/Kolkata";
   i18n.defaultLocale = "en_US.UTF-8";

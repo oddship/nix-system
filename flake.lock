@@ -21,6 +21,30 @@
         "type": "github"
       }
     },
+    "claude-desktop": {
+      "inputs": {
+        "flake-utils": [
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1745417999,
+        "narHash": "sha256-DqfNL28ny9M13s4Ae0PmdYdcu+CXQ0U9pM+3z/vGRDI=",
+        "owner": "rhnvrm",
+        "repo": "claude-desktop-linux-flake",
+        "rev": "1318b0dee4e1716cd6276b308c206eb451edf443",
+        "type": "github"
+      },
+      "original": {
+        "owner": "rhnvrm",
+        "ref": "fix-titlebar",
+        "repo": "claude-desktop-linux-flake",
+        "type": "github"
+      }
+    },
     "darwin": {
       "inputs": {
         "nixpkgs": [
@@ -60,6 +84,24 @@
       "original": {
         "owner": "nix-community",
         "repo": "disko",
+        "type": "github"
+      }
+    },
+    "flake-utils": {
+      "inputs": {
+        "systems": "systems_2"
+      },
+      "locked": {
+        "lastModified": 1731533236,
+        "narHash": "sha256-l0KFg5HjrsfsO/JpG+r7fRrqm12kzFHyUHqHCVpMMbI=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "11707dc2f618dd54ca8739b309ec4fc024de578b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
         "type": "github"
       }
     },
@@ -155,13 +197,30 @@
     "root": {
       "inputs": {
         "agenix": "agenix",
+        "claude-desktop": "claude-desktop",
         "disko": "disko",
+        "flake-utils": "flake-utils",
         "home-manager": "home-manager_2",
         "nix-flatpak": "nix-flatpak",
         "nixpkgs": "nixpkgs_2"
       }
     },
     "systems": {
+      "locked": {
+        "lastModified": 1681028828,
+        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
+        "owner": "nix-systems",
+        "repo": "default",
+        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-systems",
+        "repo": "default",
+        "type": "github"
+      }
+    },
+    "systems_2": {
       "locked": {
         "lastModified": 1681028828,
         "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",

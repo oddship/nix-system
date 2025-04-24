@@ -21,7 +21,6 @@ in
   home.homeDirectory = "/home/rhnvrm";
 
   home.stateVersion = "24.11";
-  nixpkgs.config.allowUnfree = true;
   home.packages = with pkgs; [
     btop
     htop
@@ -37,6 +36,8 @@ in
     vlc
 
     thunderbird
+
+    appflowy
 
     gnomeExtensions.caffeine
     gnomeExtensions.dash-to-dock
@@ -137,8 +138,10 @@ in
     };
 
     "org/gnome/shell/extensions/dash-to-dock" = {
-      "scroll-action" = "cycle-windows";
+      "scroll-action" = "switch-workspace";
       shortcut = [ "<Shift><Super>q" ];
+      "multi-monitor" = true;
+      "isolate-monitors" = true;
     };
 
     "org/gnome/shell/extensions/just-perfection" = {
@@ -168,6 +171,7 @@ in
         "Code"
         "Terminal"
       ];
+      "button-layout" = "appmenu:minimize,maximize,close";
     };
   };
 

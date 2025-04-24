@@ -35,7 +35,6 @@
   ################################
   # Basic System Configuration
   ################################
-  nixpkgs.config.allowUnfree = true;
 
   # Hostname
   networking.hostName = "oddship-thinkpad-x1";
@@ -242,6 +241,7 @@
     wget
     git
     zsh
+    just
     neovim
     tmux
     htop
@@ -272,6 +272,8 @@
 
     nomad
 
+    uv
+
     gnome-tweaks
     gnome-extension-manager
     # gnome-network-displays
@@ -279,6 +281,8 @@
 
     obsidian
     ticktick
+
+    inputs.claude-desktop.packages.${system}.claude-desktop-with-fhs
 
     # fonts
     # TODO: inter

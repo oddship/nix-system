@@ -2,7 +2,7 @@
   description = "The oddship nix-system flake";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable"; # Allow unfree packages for all of nixpkgs
 
     disko = {
       url = "github:nix-community/disko";
@@ -17,6 +17,16 @@
     agenix.url = "github:ryantm/agenix";
 
     nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=v0.4.1";
+
+    flake-utils.url = "github:numtide/flake-utils";
+
+    claude-desktop = {
+      url = "github:rhnvrm/claude-desktop-linux-flake?ref=fix-titlebar";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        flake-utils.follows = "flake-utils";
+      };
+    };
   };
 
   outputs =
@@ -31,16 +41,14 @@
     }@inputs:
     let
       system = "x86_64-linux";
-      pkgs = import nixpkgs {
-        inherit system;
-        config.allowUnfree = true;
-      };
     in
     {
       nixosConfigurations."oddship-thinkpad-x1" = nixpkgs.lib.nixosSystem {
         inherit system;
         specialArgs = { inherit inputs; };
         modules = [
+          { nixpkgs.config.allowUnfree = true; }
+
           disko.nixosModules.disko
           home-manager.nixosModules.home-manager
           agenix.nixosModules.default
