@@ -21,7 +21,7 @@
     flake-utils.url = "github:numtide/flake-utils";
 
     claude-desktop = {
-      url = "github:rhnvrm/claude-desktop-linux-flake?ref=fix-titlebar";
+      url = "github:k3d3/claude-desktop-linux-flake";
       inputs = {
         nixpkgs.follows = "nixpkgs";
         flake-utils.follows = "flake-utils";
@@ -70,6 +70,20 @@
 
           ./hosts/ux303/configuration.nix
           ./hosts/ux303/hardware-config.nix
+        ];
+      };
+
+      nixosConfigurations."oddship-beagle" = nixpkgs.lib.nixosSystem {
+        inherit system;
+        specialArgs = { inherit inputs; };
+        modules = [
+          disko.nixosModules.disko
+          home-manager.nixosModules.home-manager
+          agenix.nixosModules.default
+          nix-flatpak.nixosModules.nix-flatpak
+
+          ./hosts/servers/beagle/disko-config.nix
+          ./hosts/servers/beagle/configuration.nix
         ];
       };
     };
