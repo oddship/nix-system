@@ -27,6 +27,14 @@
         flake-utils.follows = "flake-utils";
       };
     };
+
+    # Eventually, we should switch this to nixpkgs. Currently we are
+    # using a binary distribution of zen-browser.
+    zen-browser = {
+      url = "github:youwen5/zen-browser-flake";
+
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =

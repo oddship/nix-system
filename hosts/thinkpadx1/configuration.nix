@@ -260,6 +260,7 @@
 
     chromium
     #vivaldi
+    inputs.zen-browser.packages.${pkgs.system}.default
 
     inputs.agenix.packages.${system}.default
 
@@ -292,12 +293,17 @@
     inputs.claude-desktop.packages.${system}.claude-desktop-with-fhs
 
     # fonts
-    # TODO: inter
+    font-manager
+  ];
+
+  # Fonts
+  fonts.enableDefaultPackages = true;
+  fonts.fontconfig.useEmbeddedBitmaps = true;
+  fonts.packages = with pkgs; [
     fira-code
     fira-code-symbols
     nerd-fonts.fira-code
     nerd-fonts.jetbrains-mono
-    font-manager
     font-awesome_5
     noto-fonts-emoji
     noto-fonts
