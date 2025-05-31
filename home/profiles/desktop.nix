@@ -24,32 +24,38 @@ in
     stateVersion = "24.11";
   };
 
-  # Additional desktop packages for user
+  # Pass gitConfigExtra to git module
+  _module.args = {
+    inherit gitConfigExtra;
+  };
+
   home.packages = with pkgs; [
-    # System monitoring
     btop
     htop
-    iotop
-    iftop
-    
-    # Development tools
+
     gnumake
     fnm
     gcc
+
     go
     python3
     lua
     zig
-    
-    # GNOME extensions
+
+    vlc
+
+    thunderbird
+
+    appflowy
+
     gnomeExtensions.caffeine
     gnomeExtensions.dash-to-dock
     gnomeExtensions.appindicator
     gnomeExtensions.clipboard-history
     gnomeExtensions.just-perfection
     gnomeExtensions.blur-my-shell
-    
-    # CLI utilities
+
+    git
     curl
     wget
     ripgrep
@@ -64,12 +70,6 @@ in
     websocat
   ];
 
-  # Pass gitConfigExtra to git module
-  _module.args = {
-    inherit gitConfigExtra;
-  };
-
-  # Default applications
   xdg.mimeApps.defaultApplications = {
     "text/html" = [ "zen.desktop" ];
     "text/xml" = [ "zen.desktop" ];
@@ -77,11 +77,9 @@ in
     "x-scheme-handler/https" = [ "zen.desktop" ];
   };
 
-  # GNOME configuration
   dconf.settings = {
     "org/gnome/desktop/interface" = {
       color-scheme = "prefer-dark";
-      show-battery-percentage = true;
     };
 
     "org/gnome/shell" = {
@@ -108,7 +106,7 @@ in
 
     "org/gnome/desktop/wm/keybindings" = {
       close = [ "<Super>q" ];
-      toggle-message-tray = [ "<Shift><Super>v" ];
+      "toggle-message-tray" = [ "<Shift><Super>v" ];
     };
 
     "org/gnome/settings-daemon/plugins/media-keys" = {
@@ -125,18 +123,22 @@ in
     };
 
     "org/gnome/shell/extensions/clipboard-history" = {
-      display-mode = 0;
-      next-entry = [ "<Shift><Alt>j" ];
-      prev-entry = [ "<Shift><Alt>k" ];
-      toggle-menu = [ "<Super>v" ];
+      "display-mode" = 0;
+      "next-entry" = [ "<Shift><Alt>j" ];
+      "prev-entry" = [ "<Shift><Alt>k" ];
+      "toggle-menu" = [ "<Super>v" ];
     };
 
     "org/gnome/desktop/peripherals/mouse" = {
-      natural-scroll = false;
+      "natural-scroll" = false;
     };
 
     "org/gnome/desktop/peripherals/touchpad" = {
-      natural-scroll = false;
+      "natural-scroll" = false;
+    };
+
+    "org/gnome/desktop/interface" = {
+      "show-battery-percentage" = true;
     };
 
     "org/gnome/desktop/background" = {
@@ -145,16 +147,16 @@ in
     };
 
     "org/gnome/shell/extensions/dash-to-dock" = {
-      scroll-action = "switch-workspace";
+      "scroll-action" = "switch-workspace";
       shortcut = [ "<Shift><Super>q" ];
-      multi-monitor = true;
-      isolate-monitors = true;
+      "multi-monitor" = true;
+      "isolate-monitors" = true;
     };
 
     "org/gnome/shell/extensions/just-perfection" = {
-      workspace-wrap-around = true;
-      animation = 3;
-      workspace-switcher-should-show = true;
+      "workspace-wrap-around" = true;
+      "animation" = 3;
+      "workspace-switcher-should-show" = true;
     };
 
     "org/gnome/shell/extensions/blur-my-shell/applications" = {
@@ -164,32 +166,25 @@ in
     };
 
     "org/gnome/shell/extensions/workspace-indicator" = {
-      embed-previews = false;
+      "embed-previews" = false;
     };
 
     "org/gnome/mutter" = {
-      dynamic-workspaces = true;
+      "dynamic-workspaces" = true;
     };
 
     "org/gnome/desktop/wm/preferences" = {
-      workspace-names = [
+      "workspace-names" = [
         "Notes"
         "Browser"
         "Code"
         "Terminal"
       ];
-      button-layout = "appmenu:minimize,maximize,close";
+      "button-layout" = "appmenu:minimize,maximize,close";
     };
   };
 
   programs.home-manager.enable = true;
-
-  # Rofi configuration
-  programs.rofi = {
-    enable = true;
-    package = pkgs.rofi-wayland;
-    font = "Noto Sans Medium 11";
-  };
 
   # Autostart XDG for gnome (ref: https://github.com/nix-community/home-manager/issues/3447)
   home.file = builtins.listToAttrs (
