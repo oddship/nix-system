@@ -63,10 +63,10 @@ in
   ];
 
   xdg.mimeApps.defaultApplications = {
-    "text/html" = [ "chromium-browser.desktop" ];
-    "text/xml" = [ "chromium-browser.desktop" ];
-    "x-scheme-handler/http" = [ "chromium-browser.desktop" ];
-    "x-scheme-handler/https" = [ "chromium-browser.desktop" ];
+    "text/html" = [ "zen.desktop" ];
+    "text/xml" = [ "zen.desktop" ];
+    "x-scheme-handler/http" = [ "zen.desktop" ];
+    "x-scheme-handler/https" = [ "zen.desktop" ];
   };
 
   dconf.settings = {
@@ -79,7 +79,7 @@ in
         "com.mitchellh.ghostty.desktop"
         "ticktick.desktop"
         "obsidian.desktop"
-        "chromium-browser.desktop"
+        "zen.desktop"
         "code.desktop"
         "dev.zed.Zed.desktop"
       ];
