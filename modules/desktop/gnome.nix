@@ -9,11 +9,9 @@ in
 
   config = lib.mkIf cfg.enable {
     # X11 and GNOME
-    services.xserver = {
-      enable = true;
-      displayManager.gdm.enable = true;
-      desktopManager.gnome.enable = true;
-    };
+    services.xserver.enable = true;
+    services.displayManager.gdm.enable = true;
+    services.desktopManager.gnome.enable = true;
 
     # GNOME keyring
     security.pam.services.login.enableGnomeKeyring = true;

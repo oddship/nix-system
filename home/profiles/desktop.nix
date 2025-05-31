@@ -1,4 +1,4 @@
-{ inputs, pkgs, gitConfigExtra ? "", ... }:
+{ inputs, pkgs, ... }:
 let
   wallpaper = pkgs.fetchurl {
     url = "https://w.wallhaven.cc/full/2y/wallhaven-2yrwzy.jpg";
@@ -24,10 +24,7 @@ in
     stateVersion = "24.11";
   };
 
-  # Pass gitConfigExtra to git module
-  _module.args = {
-    inherit gitConfigExtra;
-  };
+
 
   home.packages = with pkgs; [
     btop

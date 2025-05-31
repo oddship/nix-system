@@ -17,7 +17,7 @@
       cd = "z";
       sudo = "sudo --preserve-env=PATH env";
     };
-    initExtra = ''
+    initContent = ''
       export PATH=$HOME/go/bin:$PATH
       export EDITOR="vim"
 
