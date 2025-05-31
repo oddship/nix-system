@@ -75,6 +75,27 @@ clean generations="7d":
     sudo nix-collect-garbage --delete-older-than {{generations}}
     @echo -e "${GREEN}Cleanup complete${NC}"
 
+# Clean build artifacts and temporary files
+clean-build:
+    @echo -e "${BLUE}Cleaning build artifacts...${NC}"
+    @rm -f {{flake_path}}/result*
+    @echo -e "${GREEN}Build artifacts cleaned${NC}"
+
+# Full cleanup: generations + build artifacts
+clean-all generations="7d": clean-build
+    @echo -e "${YELLOW}Full cleanup: generations + build artifacts...${NC}"
+    sudo nix-collect-garbage --delete-older-than {{generations}}
+    @echo -e "${GREEN}Full cleanup complete${NC}"
+
+# Clean nix store (careful - removes unused packages)
+clean-store:
+    @echo -e "${RED}WARNING: This will remove all unused packages from nix store${NC}"
+    @read -p "Continue? [y/N]: " confirm && [ "$$confirm" = "y" ] || exit 1
+    @echo -e "${YELLOW}Cleaning nix store...${NC}"
+    sudo nix-collect-garbage -d
+    nix-store --gc
+    @echo -e "${GREEN}Nix store cleaned${NC}"
+
 # Show system generations
 generations:
     @echo -e "${BLUE}=== System Generations ===${NC}"
@@ -259,6 +280,8 @@ help:
     @echo "  just switch         - Build and switch to new configuration"
     @echo "  just update         - Update flake inputs"
     @echo "  just clean          - Garbage collect old generations"
+    @echo "  just clean-build    - Remove build artifacts (result symlinks)"
+    @echo "  just clean-all      - Full cleanup (generations + artifacts)"
     @echo "  just search <pkg>   - Search for packages"
     @echo ""
     @echo "Script management:"
