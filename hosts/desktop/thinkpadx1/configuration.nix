@@ -26,8 +26,7 @@
     ../../../modules/packages/desktop.nix
     ../../../modules/packages/development.nix
 
-    # Hardware profile
-    ../../../modules/hardware/laptop.nix
+
   ];
 
   # Host-specific configuration
@@ -46,7 +45,7 @@
   desktop.gnome.enable = true;
   packages.desktop.enable = true;
   packages.development.enable = true;
-  hardware.laptop.enable = true;
+
 
   # Desktop-specific user configuration
   users.users.rhnvrm.extraGroups = [ "docker" ];
@@ -74,6 +73,6 @@
 
   # Host-specific packages that don't belong in modules
   environment.systemPackages = with pkgs; [
-    ghostty
+    # Empty - all packages are in modules
   ];
 }
