@@ -62,8 +62,7 @@
           agenix.nixosModules.default
           nix-flatpak.nixosModules.nix-flatpak
 
-          ./hosts/thinkpadx1/disko-config.nix # TODO: can be moved inside config
-          ./hosts/thinkpadx1/configuration.nix
+          ./hosts/desktop/thinkpadx1/configuration.nix
         ];
       };
 
