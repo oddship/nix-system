@@ -5,6 +5,7 @@
     extraGroups = [
       "wheel"
       "networkmanager"
+      "lp"
     ];
     shell = pkgs.zsh;
     

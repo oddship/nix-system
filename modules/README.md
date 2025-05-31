@@ -105,11 +105,17 @@ Desktop-specific services.
 
 **Options:**
 - `services.desktop.enable` - Enable desktop services
+- `services.desktop.printing.enable` - Enable printing services (default: true)
+- `services.desktop.printing.epson.enable` - Enable Epson printer drivers (default: true)
 
 **Provides:**
 - PipeWire audio system
 - Tailscale and Netbird VPN
 - Syncthing file synchronization
+- CUPS printing service with Epson drivers
+- Avahi for printer auto-discovery
+- system-config-printer GUI tool
+- Firewall rules for printing (port 631)
 
 **Usage:**
 ```nix

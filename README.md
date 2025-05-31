@@ -56,6 +56,7 @@ nix-system/
 - **Disko**: Declarative disk partitioning
 - **Agenix**: Encrypted secrets management
 - **Home-Manager**: User environment management
+- **Printing**: CUPS with Epson driver support and auto-discovery
 - **Just**: Simple task automation
 
 ## 📦 Module System
@@ -70,7 +71,7 @@ nix-system/
 
 ### Service Modules
 - `openssh.nix` - SSH server
-- `desktop.nix` - Desktop services (audio, VPN, sync)
+- `desktop.nix` - Desktop services (audio, VPN, sync, printing)
 - `development.nix` - Development tools (Docker, Steam)
 
 ### Package Modules
@@ -154,6 +155,21 @@ just search package-name
 
 # Format all Nix files
 just fmt
+```
+
+### Printing
+```bash
+# Print a file
+lp filename
+
+# Check print queue
+lpstat -o
+
+# Open CUPS web interface
+firefox http://localhost:631
+
+# GUI printer configuration
+system-config-printer
 ```
 
 ### Module Creation
