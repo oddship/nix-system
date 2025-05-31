@@ -5,7 +5,7 @@ let
   # Custom scripts package
   my-scripts = pkgs.stdenv.mkDerivation {
     name = "my-scripts";
-    src = pkgs.lib.cleanSource (lib.cleanSource ./../..);
+    src = ../../scripts;
     
     buildInputs = with pkgs; [ makeWrapper ];
     
@@ -13,28 +13,26 @@ let
       mkdir -p $out/bin
       
       # Copy all shell scripts to bin and make them executable
-      if [ -d "$src/scripts" ]; then
-        for script in "$src/scripts"/*.sh; do
-          if [ -f "$script" ]; then
-            script_name=$(basename "$script" .sh)
-            cp "$script" "$out/bin/$script_name"
-            chmod +x "$out/bin/$script_name"
-            
-            # Wrap scripts to ensure dependencies are available
-            wrapProgram "$out/bin/$script_name" \
-              --prefix PATH : ${lib.makeBinPath (with pkgs; [
-                bash
-                coreutils
-                gawk
-                lsof
-                fzf
-                procps
-                sudo
-                util-linux
-              ])}
-          fi
-        done
-      fi
+      for script in $src/*.sh; do
+        if [ -f "$script" ]; then
+          script_name=$(basename "$script" .sh)
+          cp "$script" "$out/bin/$script_name"
+          chmod +x "$out/bin/$script_name"
+          
+          # Wrap scripts to ensure dependencies are available
+          wrapProgram "$out/bin/$script_name" \
+            --prefix PATH : ${lib.makeBinPath (with pkgs; [
+              bash
+              coreutils
+              gawk
+              lsof
+              fzf
+              procps
+              sudo
+              util-linux
+            ])}
+        fi
+      done
     '';
     
     meta = with lib; {
