@@ -199,6 +199,58 @@ rebuild: switch
 # Quick update and rebuild
 upgrade: update switch
 
+# List available scripts
+list-scripts:
+    @echo -e "${BLUE}=== Available Scripts ===${NC}"
+    @ls -la {{flake_path}}/scripts/*.sh 2>/dev/null | awk '{print $9}' | sed 's/.*\///' | sed 's/\.sh$//' || echo "No scripts found"
+
+# Create a new script template
+new-script name:
+    @echo -e "${BLUE}Creating new script: {{name}}${NC}"
+    @cat > {{flake_path}}/scripts/{{name}}.sh << 'EOF'
+    #!/usr/bin/env bash
+    
+    # {{name}}.sh
+    # -----------
+    # Description: TODO - Add description
+    
+    set -euo pipefail
+    
+    # Script implementation goes here
+    echo "TODO: Implement {{name}}"
+    EOF
+    @chmod +x {{flake_path}}/scripts/{{name}}.sh
+    @echo -e "${GREEN}Created script: scripts/{{name}}.sh${NC}"
+    @echo "Don't forget to rebuild to install: just switch"
+
+# Edit a script
+edit-script name:
+    @if [ -f "{{flake_path}}/scripts/{{name}}.sh" ]; then \
+        $EDITOR {{flake_path}}/scripts/{{name}}.sh; \
+    else \
+        echo -e "${RED}Script not found: {{name}}.sh${NC}"; \
+        echo "Available scripts:"; \
+        just list-scripts; \
+    fi
+
+# Test a script locally (without installing)
+test-script name *args:
+    @if [ -f "{{flake_path}}/scripts/{{name}}.sh" ]; then \
+        echo -e "${BLUE}Testing script: {{name}}${NC}"; \
+        bash {{flake_path}}/scripts/{{name}}.sh {{args}}; \
+    else \
+        echo -e "${RED}Script not found: {{name}}.sh${NC}"; \
+    fi
+
+# Show script documentation
+script-help name:
+    @if [ -f "{{flake_path}}/scripts/{{name}}.sh" ]; then \
+        echo -e "${BLUE}=== Script: {{name}} ===${NC}"; \
+        head -20 {{flake_path}}/scripts/{{name}}.sh | grep -E '^#' | sed 's/^# //'; \
+    else \
+        echo -e "${RED}Script not found: {{name}}.sh${NC}"; \
+    fi
+
 # Help command
 help:
     @echo -e "${BLUE}=== NixOS Management Commands ===${NC}"
@@ -208,6 +260,12 @@ help:
     @echo "  just update         - Update flake inputs"
     @echo "  just clean          - Garbage collect old generations"
     @echo "  just search <pkg>   - Search for packages"
+    @echo ""
+    @echo "Script management:"
+    @echo "  just list-scripts   - List available scripts"
+    @echo "  just new-script <n> - Create new script template"
+    @echo "  just edit-script <n>- Edit existing script"
+    @echo "  just test-script <n>- Test script without installing"
     @echo ""
     @echo "Advanced commands:"
     @echo "  just test           - Test configuration in VM"

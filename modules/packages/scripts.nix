@@ -1,0 +1,55 @@
+{ config, lib, pkgs, ... }:
+let
+  cfg = config.packages.scripts;
+
+  # Custom scripts package
+  my-scripts = pkgs.stdenv.mkDerivation {
+    name = "my-scripts";
+    src = pkgs.lib.cleanSource (lib.cleanSource ./../..);
+    
+    buildInputs = with pkgs; [ makeWrapper ];
+    
+    installPhase = ''
+      mkdir -p $out/bin
+      
+      # Copy all shell scripts to bin and make them executable
+      if [ -d "$src/scripts" ]; then
+        for script in "$src/scripts"/*.sh; do
+          if [ -f "$script" ]; then
+            script_name=$(basename "$script" .sh)
+            cp "$script" "$out/bin/$script_name"
+            chmod +x "$out/bin/$script_name"
+            
+            # Wrap scripts to ensure dependencies are available
+            wrapProgram "$out/bin/$script_name" \
+              --prefix PATH : ${lib.makeBinPath (with pkgs; [
+                bash
+                coreutils
+                gawk
+                lsof
+                fzf
+                procps
+                sudo
+                util-linux
+              ])}
+          fi
+        done
+      fi
+    '';
+    
+    meta = with lib; {
+      description = "Personal shell scripts collection";
+      license = licenses.mit;
+      platforms = platforms.linux;
+    };
+  };
+in
+{
+  options.packages.scripts = {
+    enable = lib.mkEnableOption "personal shell scripts";
+  };
+
+  config = lib.mkIf cfg.enable {
+    environment.systemPackages = [ my-scripts ];
+  };
+}

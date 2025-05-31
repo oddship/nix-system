@@ -25,6 +25,7 @@
     # Package collections
     ../../../modules/packages/desktop.nix
     ../../../modules/packages/development.nix
+    ../../../modules/packages/scripts.nix
 
 
   ];
@@ -45,6 +46,7 @@
   desktop.gnome.enable = true;
   packages.desktop.enable = true;
   packages.development.enable = true;
+  packages.scripts.enable = true;
 
 
   # Desktop-specific user configuration
