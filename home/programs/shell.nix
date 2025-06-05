@@ -16,6 +16,7 @@
       ls = "eza --icons=always";
       cd = "z";
       sudo = "sudo --preserve-env=PATH env";
+      zed = "zeditor";
     };
     initContent = ''
       export PATH=$HOME/go/bin:$PATH
@@ -27,6 +28,11 @@
       # necessary for tmux etc on remotes where term info is not available
       if [[ "$TERM_PROGRAM" == "ghostty" ]]; then
           export TERM=xterm-256color
+      fi
+
+      # Nix environment indicator
+      if [[ -n "$IN_NIX_SHELL" ]]; then
+        export PS1="❄️  $PS1"
       fi
     '';
   };
