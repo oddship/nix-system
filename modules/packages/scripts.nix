@@ -30,6 +30,10 @@ let
               procps
               sudo
               util-linux
+              # Clipboard utilities
+              xclip
+              xsel
+              wl-clipboard
             ])}
         fi
       done

@@ -21,6 +21,28 @@ kill-port
 
 **Dependencies:** lsof, fzf, awk, ps, sudo
 
+### clipfile
+Copy file contents to system clipboard with cross-platform support.
+
+**Usage:**
+```bash
+clipfile [OPTIONS] FILE
+```
+
+**Options:**
+- `-h, --help`: Show help message
+- `-v, --verbose`: Show verbose output
+- `-n, --no-newline`: Remove trailing newline from output
+
+**Features:**
+- Auto-detects available clipboard backend
+- Supports X11 (xclip, xsel), Wayland (wl-clipboard), and macOS (pbcopy)
+- File validation and error handling
+- Verbose mode for detailed feedback
+- Option to strip trailing newlines
+
+**Dependencies:** xclip OR xsel OR wl-clipboard OR pbcopy (platform-dependent)
+
 ## Adding New Scripts
 
 1. Add your `.sh` script to this directory
