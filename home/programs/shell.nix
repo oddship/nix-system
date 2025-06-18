@@ -34,6 +34,12 @@
       if [[ -n "$IN_NIX_SHELL" ]]; then
         export PS1="❄️  $PS1"
       fi
+
+      # Find and cd function using fzf
+      fcd() {
+          local dir
+          dir=$(find ''${1:-.} -type d -not -path '*/.*' 2>/dev/null | fzf +m) && cd "$dir"
+      }
     '';
   };
 
