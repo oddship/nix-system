@@ -1,4 +1,10 @@
-{ config, lib, pkgs, inputs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
+}:
 let
   cfg = config.packages.development;
 in
@@ -11,10 +17,11 @@ in
     environment.systemPackages = with pkgs; [
       # Terminal tools
       kitty
-      
+
       # Development tools
       nomad
       uv
+      graphviz
 
       # Nix tooling
       inputs.agenix.packages.${pkgs.system}.default
