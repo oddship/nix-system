@@ -22,6 +22,8 @@ in
       nomad
       uv
       graphviz
+      gh # GitHub CLI
+      glab # GitLab CLI
 
       # Nix tooling
       inputs.agenix.packages.${pkgs.system}.default
