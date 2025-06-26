@@ -46,6 +46,9 @@
   # Firmware updates
   services.fwupd.enable = lib.mkDefault true;
 
+  # OOM Prevention
+  services.earlyoom.enable = lib.mkDefault true;
+
   # Precompiled binaries
   programs.nix-ld.enable = lib.mkDefault true;
 
