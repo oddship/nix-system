@@ -199,7 +199,8 @@ Development tool packages.
 
 **Provides:**
 - Terminal emulator (Kitty)
-- Development tools (nomad, uv)
+- Development tools (nomad, uv, graphviz)
+- Version control CLI tools (gh, glab)
 - Nix tooling (agenix)
 - Network tools (nftables, iptables)
 - Syncthing
@@ -209,6 +210,31 @@ Development tool packages.
 {
   imports = [ ./modules/packages/development.nix ];
   packages.development.enable = true;
+}
+```
+
+#### `scripts.nix`
+Personal shell scripts collection.
+
+**Options:**
+- `packages.scripts.enable` - Enable personal shell scripts
+
+**Provides:**
+- Custom shell scripts (kill-port, clipfile, tmux-session, aicat)
+- Wrapped scripts with proper dependencies in PATH
+- System-wide script installation (available as commands without .sh extension)
+
+**Available Scripts:**
+- `kill-port`: Interactive process killer by port using fzf
+- `clipfile`: Copy file contents to system clipboard
+- `tmux-session`: Interactive tmux session manager
+- `aicat`: AI-friendly file concatenation tool
+
+**Usage:**
+```nix
+{
+  imports = [ ./modules/packages/scripts.nix ];
+  packages.scripts.enable = true;
 }
 ```
 

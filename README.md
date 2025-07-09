@@ -98,7 +98,7 @@ See [home/README.md](home/README.md) for details.
 2. Partition disks according to your disko configuration
 3. Clone this repository:
    ```bash
-   git clone https://github.com/yourusername/nix-system.git
+   git clone https://github.com/oddship/nix-system.git
    cd nix-system
    ```
 4. Install:

@@ -43,6 +43,59 @@ clipfile [OPTIONS] FILE
 
 **Dependencies:** xclip OR xsel OR wl-clipboard OR pbcopy (platform-dependent)
 
+### tmux-session.sh
+Interactive tmux session manager using fzf for streamlined session management.
+
+**Usage:**
+```bash
+tmux-session [OPTIONS]
+```
+
+**Options:**
+- `-h, --help`: Show help message
+- `-l, --list`: List all sessions
+- `-a, --attach`: Attach to session (with fzf selection)
+- `-c, --create NAME`: Create new session
+- `-k, --kill`: Kill session (with fzf selection)
+- `-d, --dev`: Create development session for current directory
+- `-i, --info`: Show session info
+
+**Features:**
+- Interactive menu with fzf for session selection
+- Development session creation with 3-pane layout (nvim + 2 terminals)
+- Session management (create, kill, attach, info)
+- Current directory-based session naming
+- Automatic session detection and attachment
+
+**Dependencies:** tmux, fzf, bash
+
+**Shell Aliases (from shell.nix):**
+- `tms`: Interactive session manager menu
+- `tmd`: Create development session for current directory
+
+### aicat.sh
+AI-friendly file concatenation tool for analysis and documentation.
+
+**Usage:**
+```bash
+aicat <title> <file1> <file2> ... <fileN>
+```
+
+**Features:**
+- Concatenates multiple files with AI-readable headers
+- Adds contextual information for AI analysis
+- Preserves file structure and relationships
+- Generates markdown-formatted output with proper document structure
+- Includes usage instructions and analysis guide in output
+- Handles missing files gracefully with warnings
+
+**Dependencies:** bash, cat, basename
+
+**Example:**
+```bash
+aicat "NixOS Configuration" flake.nix configuration.nix hardware.nix
+```
+
 ## Adding New Scripts
 
 1. Add your `.sh` script to this directory
