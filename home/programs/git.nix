@@ -1,4 +1,10 @@
-{ config, lib, pkgs, gitConfigExtra ? "", ... }:
+{
+  config,
+  lib,
+  pkgs,
+  gitConfigExtra ? "",
+  ...
+}:
 {
   # Git configuration
   programs.git = {

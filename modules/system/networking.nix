@@ -24,17 +24,22 @@
     enable = lib.mkDefault true;
     dnssec = lib.mkDefault "true";
     domains = [ "~." ];
-    fallbackDns = [ "1.1.1.1" "1.0.0.1" "2606:4700:4700::1111" "2606:4700:4700::1001" ];
+    fallbackDns = [
+      "1.1.1.1"
+      "1.0.0.1"
+      "2606:4700:4700::1111"
+      "2606:4700:4700::1001"
+    ];
   };
 
   # Network optimization
   boot.kernel.sysctl = {
     # TCP Fast Open for both incoming and outgoing connections
     "net.ipv4.tcp_fastopen" = lib.mkDefault 3;
-    
+
     # Increase TCP congestion control algorithm
     "net.ipv4.tcp_congestion" = lib.mkDefault "bbr";
-    
+
     # Increase max connections
     "net.core.somaxconn" = lib.mkDefault 1024;
   };

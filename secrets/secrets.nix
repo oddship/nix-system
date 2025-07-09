@@ -4,10 +4,22 @@ let
 
   thinkpadx1 = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDx7uPdD2Fc/3j/2cx1VPYxoN9lL3QR4KTPzVhsGTaM8";
   ux303 = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIN+P0DWqkyUAV26Gh2vBP7LnUV/VhehvMXsnBU0QLAi2";
-  systems = [ thinkpadx1 ux303 ];
+  systems = [
+    thinkpadx1
+    ux303
+  ];
 in
 {
-  "login_pass_thinkpad.age".publicKeys = [ rhnvrm_ed25519 thinkpadx1 ];
-  "git-config-extra.age".publicKeys = [ rhnvrm_ed25519 thinkpadx1];
-  "wifi_pass_ux303.age".publicKeys = [ rhnvrm_ed25519 ux303 ];
+  "login_pass_thinkpad.age".publicKeys = [
+    rhnvrm_ed25519
+    thinkpadx1
+  ];
+  "git-config-extra.age".publicKeys = [
+    rhnvrm_ed25519
+    thinkpadx1
+  ];
+  "wifi_pass_ux303.age".publicKeys = [
+    rhnvrm_ed25519
+    ux303
+  ];
 }

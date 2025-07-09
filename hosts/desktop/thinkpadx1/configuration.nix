@@ -1,4 +1,10 @@
-{ config, lib, pkgs, inputs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
+}:
 {
   imports = [
     # Hardware configuration
@@ -27,7 +33,6 @@
     ../../../modules/packages/development.nix
     ../../../modules/packages/scripts.nix
 
-
   ];
 
   # Host-specific configuration
@@ -47,7 +52,6 @@
   packages.desktop.enable = true;
   packages.development.enable = true;
   packages.scripts.enable = true;
-
 
   # Desktop-specific user configuration
   users.users.rhnvrm.extraGroups = [ "docker" ];

@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.packages.scripts;
 
@@ -6,12 +11,12 @@ let
   my-scripts = pkgs.stdenv.mkDerivation {
     name = "my-scripts";
     src = ../../scripts;
-    
+
     buildInputs = with pkgs; [ makeWrapper ];
-    
+
     installPhase = ''
       mkdir -p $out/bin
-      
+
       # Copy all shell scripts to bin and make them executable
       for script in $src/*.sh; do
         if [ -f "$script" ]; then
@@ -21,24 +26,29 @@ let
           
           # Wrap scripts to ensure dependencies are available
           wrapProgram "$out/bin/$script_name" \
-            --prefix PATH : ${lib.makeBinPath (with pkgs; [
-              bash
-              coreutils
-              gawk
-              lsof
-              fzf
-              procps
-              sudo
-              util-linux
-              # Clipboard utilities
-              xclip
-              xsel
-              wl-clipboard
-            ])}
+            --prefix PATH : ${
+              lib.makeBinPath (
+                with pkgs;
+                [
+                  bash
+                  coreutils
+                  gawk
+                  lsof
+                  fzf
+                  procps
+                  sudo
+                  util-linux
+                  # Clipboard utilities
+                  xclip
+                  xsel
+                  wl-clipboard
+                ]
+              )
+            }
         fi
       done
     '';
-    
+
     meta = with lib; {
       description = "Personal shell scripts collection";
       license = licenses.mit;

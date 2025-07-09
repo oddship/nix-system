@@ -16,6 +16,7 @@ in
     ../programs/terminal.nix
     ../programs/git.nix
     ../programs/development.nix
+    ../programs/tmux.nix
   ];
 
   home = {
@@ -23,8 +24,6 @@ in
     homeDirectory = "/home/rhnvrm";
     stateVersion = "24.11";
   };
-
-
 
   home.packages = with pkgs; [
     btop

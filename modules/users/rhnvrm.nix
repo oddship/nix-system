@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 {
   users.users.rhnvrm = {
     isNormalUser = true;
@@ -8,7 +13,7 @@
       "lp"
     ];
     shell = pkgs.zsh;
-    
+
     # Essential user packages
     packages = with pkgs; [
       git

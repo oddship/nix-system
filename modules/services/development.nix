@@ -1,11 +1,16 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.services.development;
 in
 {
   options.services.development = {
     enable = lib.mkEnableOption "development services";
-    
+
     docker = {
       enable = lib.mkEnableOption "Docker virtualization";
       enableOnBoot = lib.mkOption {
@@ -19,11 +24,11 @@ in
         description = "Docker storage driver to use";
       };
     };
-    
+
     gaming = {
       enable = lib.mkEnableOption "gaming support (Steam)";
     };
-    
+
     virtualisation = {
       enable = lib.mkEnableOption "additional virtualization support";
       libvirtd = lib.mkEnableOption "libvirtd for VMs";
@@ -43,7 +48,9 @@ in
         flags = [ "--all" ];
       };
       daemon.settings = {
-        features = { buildkit = true; };
+        features = {
+          buildkit = true;
+        };
         live-restore = true;
         log-driver = "json-file";
         log-opts = {
@@ -91,7 +98,7 @@ in
     # Development tools services
     services.lorri.enable = true; # Nix shell helper
     programs.direnv.enable = true; # Directory-based environments
-    
+
     # Enable USB access for development boards
     services.udev.packages = with pkgs; [
       platformio

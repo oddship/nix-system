@@ -1,18 +1,23 @@
-{ lib, config, pkgs, ... }:
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}:
 let
   cfg = config.services.desktop;
 in
 {
   options.services.desktop = {
     enable = lib.mkEnableOption "desktop services";
-    
+
     printing = {
       enable = lib.mkOption {
         type = lib.types.bool;
         default = true;
         description = "Enable printing services";
       };
-      
+
       epson = {
         enable = lib.mkOption {
           type = lib.types.bool;
@@ -45,18 +50,24 @@ in
     services.printing = lib.mkIf cfg.printing.enable {
       enable = true;
       startWhenNeeded = true;
-      
-      drivers = with pkgs; [
-        # Generic drivers
-        gutenprint
-        gutenprintBin
-        cups-filters
-      ] ++ lib.optionals cfg.printing.epson.enable (with pkgs; [
-        # Epson-specific drivers
-        epson-escpr
-        epson-escpr2
-      ]);
-      
+
+      drivers =
+        with pkgs;
+        [
+          # Generic drivers
+          gutenprint
+          gutenprintBin
+          cups-filters
+        ]
+        ++ lib.optionals cfg.printing.epson.enable (
+          with pkgs;
+          [
+            # Epson-specific drivers
+            epson-escpr
+            epson-escpr2
+          ]
+        );
+
       # Enable automatic printer discovery
       browsing = true;
       defaultShared = false;
@@ -70,14 +81,17 @@ in
     };
 
     # System packages for printer management
-    environment.systemPackages = lib.mkIf cfg.printing.enable (with pkgs; [
-      system-config-printer  # GUI printer configuration
-    ]);
+    environment.systemPackages = lib.mkIf cfg.printing.enable (
+      with pkgs;
+      [
+        system-config-printer # GUI printer configuration
+      ]
+    );
 
     # Firewall rules for printing
     networking.firewall = lib.mkIf cfg.printing.enable {
-      allowedTCPPorts = [ 631 ];  # CUPS web interface
-      allowedUDPPorts = [ 631 ];  # CUPS browsing
+      allowedTCPPorts = [ 631 ]; # CUPS web interface
+      allowedUDPPorts = [ 631 ]; # CUPS browsing
     };
   };
 }
