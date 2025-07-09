@@ -59,6 +59,8 @@ in
     age
     tree
     jq
+    sqlite
+    duckdb
     tmux
     zoxide
     eza
