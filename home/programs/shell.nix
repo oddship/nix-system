@@ -19,7 +19,6 @@
     };
     shellAliases = {
       ls = "eza --icons=always";
-      cd = "z";
       sudo = "sudo --preserve-env=PATH env";
       zed = "zeditor";
 

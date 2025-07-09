@@ -72,7 +72,7 @@
     useGlobalPkgs = true;
     useUserPackages = true;
     users.rhnvrm = {
-      imports = [ ../../../home/profiles/desktop.nix ];
+      imports = [ ./home.nix ];
       _module.args = {
         gitConfigExtra = config.age.secrets.git-config-extra.path;
       };
