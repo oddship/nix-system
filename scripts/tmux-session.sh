@@ -33,16 +33,15 @@ create_dev_session() {
     
     # Create session with editor
     tmux new-session -d -s "$session_name" -c "$PWD"
+    
+    # Send nvim to the first pane
     tmux send-keys -t "$session_name" "nvim" C-m
     
     # Split horizontally for terminal
     tmux split-window -t "$session_name" -h -c "$PWD"
     
-    # Split bottom pane vertically for commands
+    # Split the right pane vertically for commands
     tmux split-window -t "$session_name" -v -c "$PWD"
-    
-    # Select the editor pane
-    tmux select-pane -t "$session_name:0.0"
     
     # Attach to the session
     tmux attach-session -t "$session_name"
