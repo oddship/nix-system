@@ -101,6 +101,52 @@ Development environment configuration.
   - Default editor
   - Basic settings (line numbers, indentation, tab width)
 
+### `tmux.nix`
+Terminal multiplexer configuration.
+
+**Key Bindings:**
+- **Prefix**: `Ctrl+a` (instead of default `Ctrl+b`)
+- **Split panes**: `|` (horizontal), `-` (vertical)
+- **Navigate panes**: `Alt+arrows` (no prefix needed)
+- **Resize panes**: `Ctrl+arrows` (with prefix)
+- **Switch windows**: `Shift+arrows` (no prefix needed)
+- **Copy mode**: `v` (select), `y` (copy), `r` (rectangle mode)
+- **Reload config**: `prefix + r`
+
+**Shell Aliases:**
+```bash
+tm          # tmux
+tma <name>  # tmux attach-session -t <name>
+tmn <name>  # tmux new-session -s <name>
+tml         # tmux list-sessions
+tmk <name>  # tmux kill-session -t <name>
+tms         # tmux-session (interactive session manager)
+tmd         # tmux-session --dev (create dev session)
+```
+
+**Shell Functions:**
+- `tmux-dev`: Create development session for current directory
+- `tmux-attach`: Attach to session with fzf selection
+
+**Session Manager:**
+The `tmux-session` script provides an interactive session manager:
+
+- **`tms`**: Interactive menu with options:
+  - Attach to existing session
+  - Create new session
+  - Create development session
+  - Kill session
+  - Show session info
+  - List all sessions
+
+- **`tmd`**: Directly creates a development session for current directory:
+  - Uses current directory name as session name
+  - Creates 3-pane layout:
+    - Left pane: Opens `nvim` automatically
+    - Top right pane: Terminal in current directory
+    - Bottom right pane: Terminal in current directory
+  - Selects the nvim pane and attaches to the session
+
 ## Integration with NixOS
 
 Home-manager can be integrated with NixOS in two ways:
