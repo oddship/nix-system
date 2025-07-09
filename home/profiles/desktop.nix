@@ -76,6 +76,7 @@ in
   dconf.settings = {
     "org/gnome/desktop/interface" = {
       color-scheme = "prefer-dark";
+      show-battery-percentage = false;
     };
 
     "org/gnome/shell" = {
@@ -133,9 +134,7 @@ in
       "natural-scroll" = false;
     };
 
-    "org/gnome/desktop/interface" = {
-      "show-battery-percentage" = true;
-    };
+    # Merged with interface section above
 
     "org/gnome/desktop/background" = {
       picture-uri = "${wallpaper}";
@@ -151,7 +150,7 @@ in
 
     "org/gnome/shell/extensions/just-perfection" = {
       "workspace-wrap-around" = true;
-      "animation" = 3;
+      "animation" = 1;
       "workspace-switcher-should-show" = true;
     };
 
