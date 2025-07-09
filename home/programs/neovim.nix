@@ -1,0 +1,450 @@
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+{
+  # Neovim Configuration
+  # ===================
+  #
+  # Key Features:
+  # - SpaceVim-style keybindings with which-key integration
+  # - Full LSP support with auto-completion
+  # - GitHub Copilot integration
+  # - Treesitter syntax highlighting
+  # - File management with Telescope and nvim-tree
+  # - Git integration with gitsigns and fugitive
+  # - Modern UI with lualine and bufferline
+  # - Development essentials (autopairs, comments, snippets)
+  # - Enhanced navigation with easymotion and sneak
+  # - Better start screen with startify
+  #
+  # SpaceVim-style Key Bindings (Leader: Space):
+  # - <leader>ff: Find files
+  # - <leader>fg: Live grep
+  # - <leader>fb: Buffer list
+  # - <leader>fe: File explorer
+  # - <leader>ss: Search text
+  # - <leader>bb: Switch buffer
+  # - <leader>wh/j/k/l: Window navigation
+  # - <leader>gs: Git status
+  # - <leader>ld: LSP definitions
+  # - <leader>la: LSP code actions
+  # - <leader>tt: Toggle terminal
+  # - <leader>qq: Quit
+  # - jk/kj: Exit insert mode
+  # - <leader><leader>s: EasyMotion search
+  # - s/S: Sneak forward/backward
+  # - H/L: Line start/end
+  # - J/K: Move 5 lines down/up
+
+  programs.neovim = {
+    enable = true;
+    viAlias = true;
+    vimAlias = true;
+    defaultEditor = true;
+
+    plugins = with pkgs.vimPlugins; [
+      # Bootstrap plugin manager
+      plenary-nvim # Required by many plugins
+    ];
+
+    extraConfig = ''
+      " Basic settings
+      set number
+      set relativenumber
+      set expandtab
+      set tabstop=2
+      set shiftwidth=2
+      set softtabstop=2
+      set autoindent
+      set smartindent
+      set wrap
+      set ignorecase
+      set smartcase
+      set incsearch
+      set hlsearch
+      set hidden
+      set backup
+      set writebackup
+      set undofile
+      set mouse=a
+      set clipboard=unnamedplus
+      set updatetime=300
+      set signcolumn=yes
+      set cursorline
+      set scrolloff=8
+      set sidescrolloff=8
+      set splitbelow
+      set splitright
+      set termguicolors
+
+      " Leader key
+      let mapleader = " "
+
+      " Clear search highlighting
+      nnoremap <Esc> :nohlsearch<CR>
+
+      " Better window navigation
+      nnoremap <C-h> <C-w>h
+      nnoremap <C-j> <C-w>j
+      nnoremap <C-k> <C-w>k
+      nnoremap <C-l> <C-w>l
+
+      " Better buffer navigation
+      nnoremap <Tab> :bnext<CR>
+      nnoremap <S-Tab> :bprevious<CR>
+
+      " Quick save and quit
+      nnoremap <leader>w :w<CR>
+      nnoremap <leader>q :q<CR>
+      nnoremap <leader>x :x<CR>
+
+      " GitHub Copilot settings
+      let g:copilot_no_tab_map = v:true
+      let g:copilot_assume_mapped = v:true
+      let g:copilot_tab_fallback = ""
+
+      " Copilot accept with Ctrl+J
+      imap <C-J> <Plug>(copilot-accept-word)
+      imap <C-L> <Plug>(copilot-accept-line)
+
+      " Color scheme (set in Lua config after plugin loads)
+    '';
+
+    extraLuaConfig = ''
+      -- Bootstrap lazy.nvim
+      local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+      if not vim.loop.fs_stat(lazypath) then
+        vim.fn.system({
+          "git",
+          "clone",
+          "--filter=blob:none",
+          "https://github.com/folke/lazy.nvim.git",
+          "--branch=stable",
+          lazypath,
+        })
+      end
+      vim.opt.rtp:prepend(lazypath)
+
+      -- Configure lazy.nvim
+      require("lazy").setup({
+        -- Theme
+        {
+          "folke/tokyonight.nvim",
+          lazy = false,
+          priority = 1000,
+          config = function()
+            vim.cmd.colorscheme("tokyonight-night")
+          end,
+        },
+        
+        -- LSP Configuration
+        {
+          "neovim/nvim-lspconfig",
+          dependencies = {
+            "hrsh7th/cmp-nvim-lsp",
+          },
+          config = function()
+            local lspconfig = require('lspconfig')
+            local capabilities = require('cmp_nvim_lsp').default_capabilities()
+            
+            local servers = {
+              'nil_ls', 'pyright', 'ts_ls', 'gopls', 'rust_analyzer', 
+              'bashls', 'jsonls', 'yamlls'
+            }
+            
+            for _, server in ipairs(servers) do
+              lspconfig[server].setup {
+                capabilities = capabilities,
+                on_attach = function(client, bufnr)
+                  local bufopts = { noremap=true, silent=true, buffer=bufnr }
+                  vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, bufopts)
+                  vim.keymap.set('n', 'gd', vim.lsp.buf.definition, bufopts)
+                  vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)
+                  vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, bufopts)
+                  vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, bufopts)
+                  vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, bufopts)
+                  vim.keymap.set('n', 'gr', vim.lsp.buf.references, bufopts)
+                  vim.keymap.set('n', '<leader>f', function() vim.lsp.buf.format { async = true } end, bufopts)
+                end,
+              }
+            end
+          end,
+        },
+        
+        -- Completion
+        {
+          "hrsh7th/nvim-cmp",
+          dependencies = {
+            "hrsh7th/cmp-nvim-lsp",
+            "hrsh7th/cmp-buffer",
+            "hrsh7th/cmp-path",
+            "L3MON4D3/LuaSnip",
+            "saadparwaiz1/cmp_luasnip",
+            "rafamadriz/friendly-snippets",
+          },
+          config = function()
+            local cmp = require('cmp')
+            local luasnip = require('luasnip')
+            
+            require('luasnip.loaders.from_vscode').lazy_load()
+            
+            cmp.setup({
+              snippet = {
+                expand = function(args)
+                  luasnip.lsp_expand(args.body)
+                end,
+              },
+              mapping = cmp.mapping.preset.insert({
+                ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+                ['<C-f>'] = cmp.mapping.scroll_docs(4),
+                ['<C-Space>'] = cmp.mapping.complete(),
+                ['<C-e>'] = cmp.mapping.abort(),
+                ['<CR>'] = cmp.mapping.confirm({ select = true }),
+                ['<Tab>'] = cmp.mapping(function(fallback)
+                  if cmp.visible() then
+                    cmp.select_next_item()
+                  elseif luasnip.expand_or_jumpable() then
+                    luasnip.expand_or_jump()
+                  else
+                    fallback()
+                  end
+                end, { 'i', 's' }),
+                ['<S-Tab>'] = cmp.mapping(function(fallback)
+                  if cmp.visible() then
+                    cmp.select_prev_item()
+                  elseif luasnip.jumpable(-1) then
+                    luasnip.jump(-1)
+                  else
+                    fallback()
+                  end
+                end, { 'i', 's' }),
+              }),
+              sources = cmp.config.sources({
+                { name = 'nvim_lsp' },
+                { name = 'luasnip' },
+              }, {
+                { name = 'buffer' },
+              })
+            })
+          end,
+        },
+        
+        -- GitHub Copilot
+        { "github/copilot.vim" },
+        
+        -- Treesitter
+        {
+          "nvim-treesitter/nvim-treesitter",
+          build = ":TSUpdate",
+          config = function()
+            require('nvim-treesitter.configs').setup {
+              ensure_installed = { "nix", "lua", "python", "javascript", "typescript", "json", "yaml", "toml", "markdown", "bash", "go", "rust", "html", "css" },
+              auto_install = true,
+              highlight = { enable = true },
+              indent = { enable = true },
+            }
+          end,
+        },
+        
+        -- Telescope
+        {
+          "nvim-telescope/telescope.nvim",
+          dependencies = { 
+            "nvim-lua/plenary.nvim",
+            { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
+          },
+          config = function()
+            local telescope = require('telescope')
+            telescope.setup({
+              defaults = {
+                mappings = {
+                  i = {
+                    ["<C-j>"] = require('telescope.actions').move_selection_next,
+                    ["<C-k>"] = require('telescope.actions').move_selection_previous,
+                  },
+                },
+              },
+            })
+            telescope.load_extension('fzf')
+          end,
+        },
+        
+        -- File Tree
+        {
+          "nvim-tree/nvim-tree.lua",
+          dependencies = { "nvim-tree/nvim-web-devicons" },
+          config = function()
+            require('nvim-tree').setup({
+              sort_by = "case_sensitive",
+              view = { adaptive_size = true },
+              renderer = { 
+                group_empty = true,
+                icons = {
+                  show = {
+                    file = true,
+                    folder = true,
+                    folder_arrow = true,
+                    git = true,
+                  },
+                },
+              },
+              filters = { dotfiles = true },
+            })
+          end,
+        },
+        
+        -- Git
+        {
+          "lewis6991/gitsigns.nvim",
+          config = function()
+            require('gitsigns').setup()
+          end,
+        },
+        { "tpope/vim-fugitive" },
+        
+        -- UI
+        {
+          "nvim-lualine/lualine.nvim",
+          dependencies = { "nvim-tree/nvim-web-devicons" },
+          config = function()
+            require('lualine').setup {
+              options = { theme = 'tokyonight' },
+            }
+          end,
+        },
+        {
+          "akinsho/bufferline.nvim",
+          dependencies = "nvim-tree/nvim-web-devicons",
+          config = function()
+            require('bufferline').setup {
+              options = { diagnostics = "nvim_lsp" }
+            }
+          end,
+        },
+        
+        -- Editing
+        { "windwp/nvim-autopairs", config = true },
+        { "numToStr/Comment.nvim", config = true },
+        { "lukas-reineke/indent-blankline.nvim", main = "ibl", config = true },
+        
+        -- SpaceVim-style features
+        {
+          "folke/which-key.nvim",
+          event = "VeryLazy",
+          config = function()
+            local wk = require("which-key")
+            wk.setup()
+            
+            -- SpaceVim-style bindings (new format)
+            wk.add({
+              { "<leader> ", "<cmd>Telescope find_files<cr>", desc = "Find files" },
+              { "<leader>f", group = "File" },
+              { "<leader>ff", "<cmd>Telescope find_files<cr>", desc = "Find files" },
+              { "<leader>fr", "<cmd>Telescope oldfiles<cr>", desc = "Recent files" },
+              { "<leader>fs", "<cmd>w<cr>", desc = "Save file" },
+              { "<leader>fe", "<cmd>NvimTreeToggle<cr>", desc = "Explorer" },
+              { "<leader>s", group = "Search" },
+              { "<leader>ss", "<cmd>Telescope live_grep<cr>", desc = "Search text" },
+              { "<leader>sf", "<cmd>Telescope find_files<cr>", desc = "Search files" },
+              { "<leader>sh", "<cmd>Telescope help_tags<cr>", desc = "Help tags" },
+              { "<leader>b", group = "Buffer" },
+              { "<leader>bb", "<cmd>Telescope buffers<cr>", desc = "Switch buffer" },
+              { "<leader>bd", "<cmd>bd<cr>", desc = "Delete buffer" },
+              { "<leader>bn", "<cmd>bnext<cr>", desc = "Next buffer" },
+              { "<leader>bp", "<cmd>bprev<cr>", desc = "Previous buffer" },
+              { "<leader>w", group = "Window" },
+              { "<leader>wh", "<C-w>h", desc = "Move left" },
+              { "<leader>wj", "<C-w>j", desc = "Move down" },
+              { "<leader>wk", "<C-w>k", desc = "Move up" },
+              { "<leader>wl", "<C-w>l", desc = "Move right" },
+              { "<leader>ws", "<cmd>split<cr>", desc = "Split horizontal" },
+              { "<leader>wv", "<cmd>vsplit<cr>", desc = "Split vertical" },
+              { "<leader>wd", "<cmd>q<cr>", desc = "Close window" },
+              { "<leader>g", group = "Git" },
+              { "<leader>gs", "<cmd>Telescope git_status<cr>", desc = "Status" },
+              { "<leader>gc", "<cmd>Telescope git_commits<cr>", desc = "Commits" },
+              { "<leader>gb", "<cmd>Telescope git_branches<cr>", desc = "Branches" },
+              { "<leader>l", group = "LSP" },
+              { "<leader>ld", "<cmd>Telescope lsp_definitions<cr>", desc = "Definitions" },
+              { "<leader>lr", "<cmd>Telescope lsp_references<cr>", desc = "References" },
+              { "<leader>la", "<cmd>lua vim.lsp.buf.code_action()<cr>", desc = "Code action" },
+              { "<leader>lf", "<cmd>lua vim.lsp.buf.format()<cr>", desc = "Format" },
+              { "<leader>lR", "<cmd>lua vim.lsp.buf.rename()<cr>", desc = "Rename" },
+              { "<leader>t", group = "Terminal" },
+              { "<leader>tt", "<cmd>ToggleTerm<cr>", desc = "Toggle terminal" },
+              { "<leader>a", group = "AI/Claude Code" },
+              { "<leader>ac", "<cmd>ClaudeCode<cr>", desc = "Toggle Claude" },
+              { "<leader>af", "<cmd>ClaudeCodeFocus<cr>", desc = "Focus Claude" },
+              { "<leader>ar", "<cmd>ClaudeCode --resume<cr>", desc = "Resume Claude" },
+              { "<leader>aC", "<cmd>ClaudeCode --continue<cr>", desc = "Continue Claude" },
+              { "<leader>ab", "<cmd>ClaudeCodeAdd %<cr>", desc = "Add current buffer" },
+              { "<leader>aa", "<cmd>ClaudeCodeDiffAccept<cr>", desc = "Accept diff" },
+              { "<leader>ad", "<cmd>ClaudeCodeDiffDeny<cr>", desc = "Deny diff" },
+              { "<leader>q", group = "Quit" },
+              { "<leader>qq", "<cmd>q<cr>", desc = "Quit" },
+              { "<leader>qQ", "<cmd>qa<cr>", desc = "Quit all" },
+            })
+          end,
+        },
+        { "mhinz/vim-startify" },
+        { "easymotion/vim-easymotion" },
+        { "justinmk/vim-sneak" },
+        { "tpope/vim-surround" },
+        
+        -- Terminal
+        {
+          "akinsho/toggleterm.nvim",
+          config = function()
+            require('toggleterm').setup {
+              size = 20,
+              open_mapping = [[<c-\>]],
+              direction = "horizontal",
+              shell = vim.o.shell,
+            }
+          end,
+        },
+        
+        -- Claude Code Integration
+        {
+          "coder/claudecode.nvim",
+          dependencies = { "folke/snacks.nvim" },
+          config = true,
+          keys = {
+            { "<leader>a", nil, desc = "AI/Claude Code" },
+            { "<leader>ac", "<cmd>ClaudeCode<cr>", desc = "Toggle Claude" },
+            { "<leader>af", "<cmd>ClaudeCodeFocus<cr>", desc = "Focus Claude" },
+            { "<leader>ar", "<cmd>ClaudeCode --resume<cr>", desc = "Resume Claude" },
+            { "<leader>aC", "<cmd>ClaudeCode --continue<cr>", desc = "Continue Claude" },
+            { "<leader>ab", "<cmd>ClaudeCodeAdd %<cr>", desc = "Add current buffer" },
+            { "<leader>as", "<cmd>ClaudeCodeSend<cr>", mode = "v", desc = "Send to Claude" },
+            {
+              "<leader>as",
+              "<cmd>ClaudeCodeTreeAdd<cr>",
+              desc = "Add file",
+              ft = { "NvimTree", "neo-tree", "oil" },
+            },
+            -- Diff management
+            { "<leader>aa", "<cmd>ClaudeCodeDiffAccept<cr>", desc = "Accept diff" },
+            { "<leader>ad", "<cmd>ClaudeCodeDiffDeny<cr>", desc = "Deny diff" },
+          },
+        },
+      })
+
+      -- Additional keymaps
+      vim.keymap.set('i', 'jk', '<Esc>')
+      vim.keymap.set('i', 'kj', '<Esc>')
+      vim.keymap.set('n', 'H', '^')
+      vim.keymap.set('n', 'L', '$')
+      vim.keymap.set('n', 'J', '5j')
+      vim.keymap.set('n', 'K', '5k')
+
+      -- Diagnostic keymaps
+      vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
+      vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
+      vim.keymap.set('n', '<leader>d', vim.diagnostic.open_float)
+    '';
+  };
+}

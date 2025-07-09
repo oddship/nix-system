@@ -15,7 +15,7 @@ in
     ../programs/shell.nix
     ../programs/terminal.nix
     ../programs/git.nix
-    ../programs/development.nix
+    ../programs/neovim.nix
     ../programs/tmux.nix
   ];
 

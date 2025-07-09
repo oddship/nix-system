@@ -70,6 +70,8 @@
         inherit system;
         specialArgs = { inherit inputs; };
         modules = [
+          { nixpkgs.config.allowUnfree = true; }
+
           disko.nixosModules.disko
           home-manager.nixosModules.home-manager
           agenix.nixosModules.default
@@ -84,6 +86,8 @@
         inherit system;
         specialArgs = { inherit inputs; };
         modules = [
+          { nixpkgs.config.allowUnfree = true; }
+
           disko.nixosModules.disko
           home-manager.nixosModules.home-manager
           agenix.nixosModules.default

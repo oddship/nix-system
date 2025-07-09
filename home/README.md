@@ -12,7 +12,7 @@ home/
     ├── shell.nix      # Shell environment (zsh, direnv, fzf)
     ├── terminal.nix   # Terminal emulators (kitty, ghostty, rofi)
     ├── git.nix        # Git configuration
-    └── development.nix # Development tools (neovim)
+    └── neovim.nix     # Neovim configuration
 ```
 
 ## Profile Modules (`profiles/`)
@@ -92,14 +92,18 @@ Git version control configuration.
 }
 ```
 
-### `development.nix`
-Development environment configuration.
+### `neovim.nix`
+Comprehensive Neovim configuration for development.
 
 **Provides:**
-- **Neovim**: 
-  - Vi/vim aliases
-  - Default editor
-  - Basic settings (line numbers, indentation, tab width)
+- **Full LSP support**: Nix, Python, TypeScript, Go, Rust, Bash, JSON, YAML
+- **GitHub Copilot integration**: AI-powered code completion
+- **Auto-completion**: nvim-cmp with snippets support
+- **Syntax highlighting**: Treesitter for multiple languages
+- **File navigation**: Telescope fuzzy finder, nvim-tree file explorer
+- **Git integration**: gitsigns, fugitive
+- **Modern UI**: Tokyo Night theme, lualine status bar, bufferline tabs
+- **Development tools**: auto-pairs, comments, indentation guides, terminal
 
 ### `tmux.nix`
 Terminal multiplexer configuration.

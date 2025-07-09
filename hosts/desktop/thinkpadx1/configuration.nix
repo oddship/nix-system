@@ -69,6 +69,8 @@
   # Home Manager integration
   home-manager = {
     backupFileExtension = "bak";
+    useGlobalPkgs = true;
+    useUserPackages = true;
     users.rhnvrm = {
       imports = [ ../../../home/profiles/desktop.nix ];
       _module.args = {
