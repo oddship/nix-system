@@ -157,9 +157,9 @@ in
     };
 
     "org/gnome/shell/extensions/blur-my-shell/applications" = {
-      whitelist = [ "com.mitchellh.ghostty" ];
+      whitelist = [ ];
       blur = true;
-      dynamic-opacity = true;
+      dynamic-opacity = false;
     };
 
     "org/gnome/shell/extensions/workspace-indicator" = {
