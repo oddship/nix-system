@@ -17,6 +17,8 @@ in
     environment.systemPackages = with pkgs; [
       # Terminal tools
       kitty
+      bat # Better cat with syntax highlighting
+      ncdu # NCurses disk usage analyzer
 
       # Development tools
       nomad
