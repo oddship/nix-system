@@ -42,6 +42,8 @@ let
                   xclip
                   xsel
                   wl-clipboard
+                  # Markdown rendering
+                  pandoc
                 ]
               )
             }
