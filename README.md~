@@ -1,7 +1,6 @@
 # NixOS System Configuration
 
-A modular, flake-based NixOS configuration for personal systems with declarative
-disk management, secrets handling, and home-manager integration.
+A modular, flake-based NixOS configuration for personal systems with declarative disk management, secrets handling, and home-manager integration.
 
 ## 🚀 Quick Start
 
@@ -44,11 +43,11 @@ nix-system/
 
 ## 🖥️ Hosts
 
-| Host                  | Type    | Description                                       |
-| --------------------- | ------- | ------------------------------------------------- |
+| Host | Type | Description |
+|------|------|-------------|
 | `oddship-thinkpad-x1` | Desktop | Primary workstation with GNOME, development tools |
-| `oddship-ux303`       | Server  | Laptop running as server, WiFi enabled            |
-| `oddship-beagle`      | Server  | Basic server configuration                        |
+| `oddship-ux303` | Server | Laptop running as server, WiFi enabled |
+| `oddship-beagle` | Server | Basic server configuration |
 
 ## 🔧 Key Features
 
@@ -63,23 +62,19 @@ nix-system/
 ## 📦 Module System
 
 ### System Modules
-
 - `common.nix` - Base system configuration
 - `boot.nix` - Bootloader setup
 - `networking.nix` - Network configuration
 
 ### Desktop Modules
-
 - `gnome.nix` - GNOME desktop environment
 
 ### Service Modules
-
 - `openssh.nix` - SSH server
 - `desktop.nix` - Desktop services (audio, VPN, sync, printing)
 - `development.nix` - Development tools (Docker, Steam)
 
 ### Package Modules
-
 - `desktop.nix` - Desktop applications
 - `development.nix` - Development tools
 
@@ -88,7 +83,6 @@ See [modules/README.md](modules/README.md) for detailed documentation.
 ## 🏠 Home-Manager
 
 User-specific configurations including:
-
 - Shell environment (zsh with oh-my-zsh)
 - Terminal emulators (Kitty, Ghostty)
 - Development tools (Neovim, Git)
@@ -137,7 +131,6 @@ config.age.secrets.secret-name.path
 ## 🛠️ Common Operations
 
 ### System Management
-
 ```bash
 # Check configuration for errors
 just check
@@ -153,7 +146,6 @@ just clean
 ```
 
 ### Development
-
 ```bash
 # Open Nix REPL with flake
 just repl
@@ -166,7 +158,6 @@ just fmt
 ```
 
 ### Printing
-
 ```bash
 # Print a file
 lp filename
@@ -182,7 +173,6 @@ system-config-printer
 ```
 
 ### Module Creation
-
 ```bash
 # Create a new module
 just new-module category name
@@ -191,19 +181,16 @@ just new-module category name
 ## 📝 Adding a New Host
 
 1. Create host directory:
-
    ```bash
    mkdir -p hosts/desktop/newhostname
    ```
 
 2. Add configuration files:
-
    - `configuration.nix` - Main system config
    - `hardware-configuration.nix` - Hardware-specific config
    - `disko-config.nix` - Disk layout (if using disko)
 
 3. Add to `flake.nix`:
-
    ```nix
    nixosConfigurations."newhostname" = nixpkgs.lib.nixosSystem {
      inherit system;

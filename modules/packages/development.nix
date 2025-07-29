@@ -26,6 +26,7 @@ in
       graphviz
       gh # GitHub CLI
       glab # GitLab CLI
+      nodePackages.prettier # Code formatter
 
       # Nix tooling
       inputs.agenix.packages.${pkgs.system}.default

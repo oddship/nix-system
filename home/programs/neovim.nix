@@ -383,6 +383,35 @@
         { "numToStr/Comment.nvim", config = true },
         { "lukas-reineke/indent-blankline.nvim", main = "ibl", config = true },
         
+        -- Formatting
+        {
+          "stevearc/conform.nvim",
+          config = function()
+            require("conform").setup({
+              formatters_by_ft = {
+                markdown = { "prettier_markdown" },
+                javascript = { "prettier_code" },
+                typescript = { "prettier_code" },
+                json = { "prettier_code" },
+                yaml = { "prettier_code" },
+                html = { "prettier_code" },
+                css = { "prettier_code" },
+              },
+              formatters = {
+                prettier_markdown = {
+                  command = "prettier",
+                  args = { "--print-width", "80", "--prose-wrap", "always", "--stdin-filepath", "$FILENAME" },
+                },
+                prettier_code = {
+                  command = "prettier",
+                  args = { "--print-width", "120", "--stdin-filepath", "$FILENAME" },
+                },
+              },
+              format_on_save = false,
+            })
+          end,
+        },
+        
         -- SpaceVim-style features
         {
           "folke/which-key.nvim",
@@ -445,6 +474,8 @@
               { "<leader>ab", "<cmd>ClaudeCodeAdd %<cr>", desc = "Add current buffer" },
               { "<leader>aa", "<cmd>ClaudeCodeDiffAccept<cr>", desc = "Accept diff" },
               { "<leader>ad", "<cmd>ClaudeCodeDiffDeny<cr>", desc = "Deny diff" },
+              { "<leader>c", group = "Code" },
+              { "<leader>cf", "<cmd>lua require('conform').format()<cr>", desc = "Format file" },
               { "<leader>q", group = "Quit" },
               { "<leader>qq", "<cmd>q<cr>", desc = "Quit" },
               { "<leader>qQ", "<cmd>qa<cr>", desc = "Quit all" },
@@ -625,6 +656,17 @@
       vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
       vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
       vim.keymap.set('n', '<leader>d', vim.diagnostic.open_float)
+
+      -- Markdown formatting
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = "markdown",
+        callback = function()
+          vim.opt_local.textwidth = 80
+          vim.opt_local.wrap = true
+          vim.opt_local.linebreak = true
+          vim.opt_local.formatoptions:append("t")
+        end,
+      })
     '';
   };
 }
