@@ -99,11 +99,6 @@ in
     services.lorri.enable = true; # Nix shell helper
     programs.direnv.enable = true; # Directory-based environments
 
-    # Enable USB access for development boards
-    services.udev.packages = with pkgs; [
-      platformio
-      openocd
-    ];
 
     # Android development support
     programs.adb.enable = true;
