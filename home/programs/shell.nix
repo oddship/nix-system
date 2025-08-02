@@ -32,6 +32,9 @@
       tmd = "tmux-session --dev";
     };
     initContent = ''
+      # Add user-specific local bin directory to PATH
+      export PATH=$HOME/.local/bin:$PATH
+      # Add Go binaries to PATH
       export PATH=$HOME/go/bin:$PATH
       export EDITOR="vim"
 
