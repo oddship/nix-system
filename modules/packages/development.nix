@@ -34,6 +34,8 @@ in
       # Network tools
       nftables
       iptables
+      dig # DNS lookup utility
+      doggo # Modern DNS client
 
       # Syncthing
       syncthing
