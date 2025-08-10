@@ -33,6 +33,8 @@ in
       syncthingtray-minimal
       ktailctl
       font-manager
+      file
+      imagemagick
     ];
   };
 }
