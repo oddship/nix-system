@@ -36,6 +36,11 @@ in
       iptables
       dig # DNS lookup utility
       doggo # Modern DNS client
+      inetutils # Includes telnet, ftp, ping, rsh, etc.
+
+      # Archive tools
+      zip
+      unzip
 
       # Syncthing
       syncthing
