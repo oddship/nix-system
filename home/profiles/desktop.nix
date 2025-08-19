@@ -1,8 +1,8 @@
 { inputs, pkgs, ... }:
 let
   wallpaper = pkgs.fetchurl {
-    url = "https://w.wallhaven.cc/full/2y/wallhaven-2yrwzy.jpg";
-    hash = "sha256-OJBIdULF8iElf2GNl2Nmedh5msVSSWbid2RtYM5Cjog=";
+    url = "https://images.unsplash.com/photo-1644700057440-f05c649e21b9";
+    hash = "sha256-D1e6G+/5UfGMcDrJuKQXdRxlHaEk9tyM2W/n15LP79M=";
   };
 
   autostartPrograms = [
