@@ -30,6 +30,12 @@
       tmk = "tmux kill-session -t";
       tms = "tmux-session";
       tmd = "tmux-session --dev";
+
+      # Zellij aliases
+      zj = "za";
+      zja = "zellij attach";
+      zjl = "zellij list-sessions";
+      zjk = "zellij kill-session";
     };
     initContent = ''
       # Add user-specific local bin directory to PATH
@@ -84,6 +90,12 @@
           if [ -n "$session" ]; then
               tmux attach-session -t "$session"
           fi
+      }
+
+      # Zellij smart session management - uses folder name or provided name
+      za() {
+          local session_name=''${1:-$(basename "$PWD")}
+          zellij attach "$session_name" || zellij -s "$session_name"
       }
     '';
   };

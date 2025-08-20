@@ -19,6 +19,7 @@ in
       kitty
       bat # Better cat with syntax highlighting
       ncdu # NCurses disk usage analyzer
+      zellij # Terminal workspace/multiplexer
 
       # Development tools
       nomad

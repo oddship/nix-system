@@ -17,6 +17,7 @@ in
     ../programs/git.nix
     ../programs/neovim.nix
     ../programs/tmux.nix
+    ../programs/zellij.nix
   ];
 
   home = {
