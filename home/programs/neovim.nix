@@ -289,13 +289,13 @@
               enable_diagnostics = true,
               filesystem = {
                 filtered_items = {
-                  visible = false,
-                  hide_dotfiles = true,
-                  hide_gitignored = true,
+                  visible = true,
+                  hide_dotfiles = false,
+                  hide_gitignored = false,
                 },
                 follow_current_file = {
                   enabled = true,
-                  leave_dirs_open = false,
+                  leave_dirs_open = true,
                 },
                 use_libuv_file_watcher = true,
               },
@@ -326,13 +326,241 @@
           end,
         },
         
-        -- Git
+        -- Git (Enhanced for Code Review)
         {
           "lewis6991/gitsigns.nvim",
           config = function()
-            require('gitsigns').setup()
+            require('gitsigns').setup({
+              signs = {
+                add = { text = '│' },
+                change = { text = '│' },
+                delete = { text = '_' },
+                topdelete = { text = '‾' },
+                changedelete = { text = '~' },
+                untracked = { text = '┆' },
+              },
+              current_line_blame = true,
+              current_line_blame_opts = {
+                virt_text = true,
+                virt_text_pos = 'eol',
+                delay = 300,
+              },
+              current_line_blame_formatter = '<author>, <author_time:%Y-%m-%d> - <summary>',
+              preview_config = {
+                border = 'single',
+                style = 'minimal',
+                relative = 'cursor',
+                row = 0,
+                col = 1
+              },
+              on_attach = function(bufnr)
+                local gs = package.loaded.gitsigns
+                
+                local function map(mode, l, r, opts)
+                  opts = opts or {}
+                  opts.buffer = bufnr
+                  vim.keymap.set(mode, l, r, opts)
+                end
+                
+                -- Navigation
+                map('n', ']c', function()
+                  if vim.wo.diff then return ']c' end
+                  vim.schedule(function() gs.next_hunk() end)
+                  return '<Ignore>'
+                end, {expr=true})
+                
+                map('n', '[c', function()
+                  if vim.wo.diff then return '[c' end
+                  vim.schedule(function() gs.prev_hunk() end)
+                  return '<Ignore>'
+                end, {expr=true})
+                
+                -- Actions
+                map('n', '<leader>hs', gs.stage_hunk)
+                map('n', '<leader>hr', gs.reset_hunk)
+                map('v', '<leader>hs', function() gs.stage_hunk {vim.fn.line('.'), vim.fn.line('v')} end)
+                map('v', '<leader>hr', function() gs.reset_hunk {vim.fn.line('.'), vim.fn.line('v')} end)
+                map('n', '<leader>hS', gs.stage_buffer)
+                map('n', '<leader>hu', gs.undo_stage_hunk)
+                map('n', '<leader>hR', gs.reset_buffer)
+                map('n', '<leader>hp', gs.preview_hunk)
+                map('n', '<leader>hb', function() gs.blame_line{full=true} end)
+                map('n', '<leader>tb', gs.toggle_current_line_blame)
+                map('n', '<leader>hd', gs.diffthis)
+                map('n', '<leader>hD', function() gs.diffthis('~') end)
+                
+                -- Text object
+                map({'o', 'x'}, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
+              end
+            })
           end,
         },
+        
+        -- Superior Diff Viewer for Code Review
+        {
+          "sindrets/diffview.nvim",
+          config = function()
+            require('diffview').setup({
+              diff_binaries = false,
+              enhanced_diff_hl = false,
+              use_icons = true,
+              show_help_hints = true,
+              watch_index = true,
+              icons = {
+                folder_closed = "",
+                folder_open = "",
+              },
+              signs = {
+                fold_closed = "",
+                fold_open = "",
+                done = "✓",
+              },
+              view = {
+                default = {
+                  layout = "diff2_horizontal",
+                },
+                merge_tool = {
+                  layout = "diff3_horizontal",
+                  disable_diagnostics = true,
+                },
+              },
+              file_panel = {
+                listing_style = "tree",
+                tree_options = {
+                  flatten_dirs = true,
+                  folder_statuses = "only_folded",
+                },
+                win_config = {
+                  position = "left",
+                  width = 35,
+                },
+              },
+              keymaps = {
+                view = {
+                  { "n", "<tab>", require('diffview.actions').select_next_entry },
+                  { "n", "<s-tab>", require('diffview.actions').select_prev_entry },
+                  { "n", "[x", require('diffview.actions').prev_conflict },
+                  { "n", "]x", require('diffview.actions').next_conflict },
+                  { "n", "<leader>co", require('diffview.actions').conflict_choose("ours") },
+                  { "n", "<leader>ct", require('diffview.actions').conflict_choose("theirs") },
+                  { "n", "<leader>cb", require('diffview.actions').conflict_choose("base") },
+                  { "n", "<leader>ca", require('diffview.actions').conflict_choose("all") },
+                },
+              },
+            })
+          end,
+        },
+        
+        -- Modern Git Interface
+        {
+          "NeogitOrg/neogit",
+          dependencies = {
+            "nvim-lua/plenary.nvim",
+            "sindrets/diffview.nvim",
+            "nvim-telescope/telescope.nvim",
+          },
+          config = function()
+            require('neogit').setup({
+              disable_signs = false,
+              disable_hint = false,
+              disable_context_highlighting = false,
+              auto_refresh = true,
+              sort_branches = "-committerdate",
+              integrations = {
+                diffview = true,
+                telescope = true,
+              },
+              sections = {
+                untracked = {
+                  folded = false,
+                  hidden = false,
+                },
+                unstaged = {
+                  folded = false,
+                  hidden = false,
+                },
+                staged = {
+                  folded = false,
+                  hidden = false,
+                },
+                stashes = {
+                  folded = true,
+                  hidden = false,
+                },
+                unpulled = {
+                  folded = true,
+                  hidden = false,
+                },
+                unmerged = {
+                  folded = false,
+                  hidden = false,
+                },
+                recent = {
+                  folded = true,
+                  hidden = false,
+                },
+              },
+            })
+          end,
+        },
+        
+        -- GitHub PR/Issue Management
+        {
+          "pwntester/octo.nvim",
+          dependencies = {
+            "nvim-lua/plenary.nvim",
+            "nvim-telescope/telescope.nvim",
+            "nvim-tree/nvim-web-devicons",
+          },
+          config = function()
+            require('octo').setup({
+              use_local_fs = false,
+              enable_builtin = true,
+              default_remote = {"upstream", "origin"},
+              default_merge_method = "commit",
+              timeout = 5000,
+              ui = {
+                use_signcolumn = true,
+              },
+              issues = {
+                order_by = {
+                  field = "CREATED_AT",
+                  direction = "DESC"
+                }
+              },
+              pull_requests = {
+                order_by = {
+                  field = "CREATED_AT",
+                  direction = "DESC"
+                },
+                always_select_remote_on_create = false
+              },
+              file_panel = {
+                size = 10,
+                use_icons = true
+              },
+            })
+          end,
+        },
+        
+        -- Git Conflict Resolution
+        {
+          "akinsho/git-conflict.nvim",
+          version = "*",
+          config = function()
+            require('git-conflict').setup({
+              default_mappings = true,
+              default_commands = true,
+              disable_diagnostics = false,
+              list_opener = 'copen',
+              highlights = {
+                incoming = 'DiffAdd',
+                current = 'DiffText',
+              }
+            })
+          end,
+        },
+        
         { "tpope/vim-fugitive" },
         
         -- UI
@@ -449,9 +677,27 @@
               { "<leader>wv", "<cmd>vsplit<cr>", desc = "Split vertical" },
               { "<leader>wd", "<cmd>q<cr>", desc = "Close window" },
               { "<leader>g", group = "Git" },
-              { "<leader>gs", "<cmd>Telescope git_status<cr>", desc = "Status" },
+              { "<leader>gs", "<cmd>Neogit<cr>", desc = "Status (Neogit)" },
               { "<leader>gc", "<cmd>Telescope git_commits<cr>", desc = "Commits" },
               { "<leader>gb", "<cmd>Telescope git_branches<cr>", desc = "Branches" },
+              { "<leader>gd", "<cmd>DiffviewOpen<cr>", desc = "Diff View" },
+              { "<leader>gD", "<cmd>DiffviewClose<cr>", desc = "Close Diff View" },
+              { "<leader>gh", "<cmd>DiffviewFileHistory<cr>", desc = "File History" },
+              { "<leader>gH", "<cmd>DiffviewFileHistory %<cr>", desc = "Current File History" },
+              { "<leader>go", "<cmd>Octo<cr>", desc = "GitHub (Octo)" },
+              { "<leader>gp", "<cmd>Octo pr list<cr>", desc = "List PRs" },
+              { "<leader>gi", "<cmd>Octo issue list<cr>", desc = "List Issues" },
+              { "<leader>h", group = "Hunks" },
+              { "<leader>hp", desc = "Preview hunk" },
+              { "<leader>hs", desc = "Stage hunk" },
+              { "<leader>hr", desc = "Reset hunk" },
+              { "<leader>hS", desc = "Stage buffer" },
+              { "<leader>hR", desc = "Reset buffer" },
+              { "<leader>hu", desc = "Undo stage hunk" },
+              { "<leader>hb", desc = "Blame line" },
+              { "<leader>hd", desc = "Diff this" },
+              { "<leader>hD", desc = "Diff this ~" },
+              { "<leader>tb", desc = "Toggle line blame" },
               { "<leader>l", group = "LSP" },
               { "<leader>ld", "<cmd>Telescope lsp_definitions<cr>", desc = "Definitions" },
               { "<leader>lr", "<cmd>Telescope lsp_references<cr>", desc = "References" },
