@@ -326,126 +326,34 @@
           end,
         },
         
-        -- Git (Enhanced for Code Review)
-        {
-          "lewis6991/gitsigns.nvim",
-          config = function()
-            require('gitsigns').setup({
-              signs = {
-                add = { text = '│' },
-                change = { text = '│' },
-                delete = { text = '_' },
-                topdelete = { text = '‾' },
-                changedelete = { text = '~' },
-                untracked = { text = '┆' },
-              },
-              current_line_blame = true,
-              current_line_blame_opts = {
-                virt_text = true,
-                virt_text_pos = 'eol',
-                delay = 300,
-              },
-              current_line_blame_formatter = '<author>, <author_time:%Y-%m-%d> - <summary>',
-              preview_config = {
-                border = 'single',
-                style = 'minimal',
-                relative = 'cursor',
-                row = 0,
-                col = 1
-              },
-              on_attach = function(bufnr)
-                local gs = package.loaded.gitsigns
-                
-                local function map(mode, l, r, opts)
-                  opts = opts or {}
-                  opts.buffer = bufnr
-                  vim.keymap.set(mode, l, r, opts)
-                end
-                
-                -- Navigation
-                map('n', ']c', function()
-                  if vim.wo.diff then return ']c' end
-                  vim.schedule(function() gs.next_hunk() end)
-                  return '<Ignore>'
-                end, {expr=true})
-                
-                map('n', '[c', function()
-                  if vim.wo.diff then return '[c' end
-                  vim.schedule(function() gs.prev_hunk() end)
-                  return '<Ignore>'
-                end, {expr=true})
-                
-                -- Actions
-                map('n', '<leader>hs', gs.stage_hunk)
-                map('n', '<leader>hr', gs.reset_hunk)
-                map('v', '<leader>hs', function() gs.stage_hunk {vim.fn.line('.'), vim.fn.line('v')} end)
-                map('v', '<leader>hr', function() gs.reset_hunk {vim.fn.line('.'), vim.fn.line('v')} end)
-                map('n', '<leader>hS', gs.stage_buffer)
-                map('n', '<leader>hu', gs.undo_stage_hunk)
-                map('n', '<leader>hR', gs.reset_buffer)
-                map('n', '<leader>hp', gs.preview_hunk)
-                map('n', '<leader>hb', function() gs.blame_line{full=true} end)
-                map('n', '<leader>tb', gs.toggle_current_line_blame)
-                map('n', '<leader>hd', gs.diffthis)
-                map('n', '<leader>hD', function() gs.diffthis('~') end)
-                
-                -- Text object
-                map({'o', 'x'}, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
-              end
-            })
-          end,
-        },
         
-        -- Superior Diff Viewer for Code Review
+        -- Better Unified Diff Viewer
         {
-          "sindrets/diffview.nvim",
+          "echasnovski/mini.diff",
           config = function()
-            require('diffview').setup({
-              diff_binaries = false,
-              enhanced_diff_hl = false,
-              use_icons = true,
-              show_help_hints = true,
-              watch_index = true,
-              icons = {
-                folder_closed = "",
-                folder_open = "",
-              },
-              signs = {
-                fold_closed = "",
-                fold_open = "",
-                done = "✓",
-              },
+            require('mini.diff').setup({
               view = {
-                default = {
-                  layout = "diff2_horizontal",
+                style = "sign",
+                signs = {
+                  add = "▎",
+                  change = "▎",
+                  delete = "▁",
                 },
-                merge_tool = {
-                  layout = "diff3_horizontal",
-                  disable_diagnostics = true,
-                },
+                priority = 199,
               },
-              file_panel = {
-                listing_style = "tree",
-                tree_options = {
-                  flatten_dirs = true,
-                  folder_statuses = "only_folded",
-                },
-                win_config = {
-                  position = "left",
-                  width = 35,
-                },
+              mappings = {
+                apply = "<leader>ha",
+                reset = "<leader>hr",
+                textobject = "gh",
+                goto_first = "[H",
+                goto_prev = "[h",
+                goto_next = "]h",
+                goto_last = "]H",
               },
-              keymaps = {
-                view = {
-                  { "n", "<tab>", require('diffview.actions').select_next_entry },
-                  { "n", "<s-tab>", require('diffview.actions').select_prev_entry },
-                  { "n", "[x", require('diffview.actions').prev_conflict },
-                  { "n", "]x", require('diffview.actions').next_conflict },
-                  { "n", "<leader>co", require('diffview.actions').conflict_choose("ours") },
-                  { "n", "<leader>ct", require('diffview.actions').conflict_choose("theirs") },
-                  { "n", "<leader>cb", require('diffview.actions').conflict_choose("base") },
-                  { "n", "<leader>ca", require('diffview.actions').conflict_choose("all") },
-                },
+              options = {
+                algorithm = "histogram",
+                indent_heuristic = true,
+                linematch = 60,
               },
             })
           end,
@@ -680,24 +588,13 @@
               { "<leader>gs", "<cmd>Neogit<cr>", desc = "Status (Neogit)" },
               { "<leader>gc", "<cmd>Telescope git_commits<cr>", desc = "Commits" },
               { "<leader>gb", "<cmd>Telescope git_branches<cr>", desc = "Branches" },
-              { "<leader>gd", "<cmd>DiffviewOpen<cr>", desc = "Diff View" },
-              { "<leader>gD", "<cmd>DiffviewClose<cr>", desc = "Close Diff View" },
-              { "<leader>gh", "<cmd>DiffviewFileHistory<cr>", desc = "File History" },
-              { "<leader>gH", "<cmd>DiffviewFileHistory %<cr>", desc = "Current File History" },
+              { "<leader>gd", "<cmd>lua MiniDiff.toggle_overlay()<cr>", desc = "Toggle Diff Overlay" },
               { "<leader>go", "<cmd>Octo<cr>", desc = "GitHub (Octo)" },
               { "<leader>gp", "<cmd>Octo pr list<cr>", desc = "List PRs" },
               { "<leader>gi", "<cmd>Octo issue list<cr>", desc = "List Issues" },
-              { "<leader>h", group = "Hunks" },
-              { "<leader>hp", desc = "Preview hunk" },
-              { "<leader>hs", desc = "Stage hunk" },
+              { "<leader>h", group = "Hunks (Mini.diff)" },
+              { "<leader>ha", desc = "Apply hunk" },
               { "<leader>hr", desc = "Reset hunk" },
-              { "<leader>hS", desc = "Stage buffer" },
-              { "<leader>hR", desc = "Reset buffer" },
-              { "<leader>hu", desc = "Undo stage hunk" },
-              { "<leader>hb", desc = "Blame line" },
-              { "<leader>hd", desc = "Diff this" },
-              { "<leader>hD", desc = "Diff this ~" },
-              { "<leader>tb", desc = "Toggle line blame" },
               { "<leader>l", group = "LSP" },
               { "<leader>ld", "<cmd>Telescope lsp_definitions<cr>", desc = "Definitions" },
               { "<leader>lr", "<cmd>Telescope lsp_references<cr>", desc = "References" },
@@ -712,14 +609,12 @@
               { "<leader>lQ", "<cmd>Trouble qflist toggle<cr>", desc = "Quickfix List" },
               { "<leader>t", group = "Terminal" },
               { "<leader>tt", "<cmd>ToggleTerm<cr>", desc = "Toggle terminal" },
-              { "<leader>a", group = "AI/Claude Code" },
-              { "<leader>ac", "<cmd>ClaudeCode<cr>", desc = "Toggle Claude" },
-              { "<leader>af", "<cmd>ClaudeCodeFocus<cr>", desc = "Focus Claude" },
-              { "<leader>ar", "<cmd>ClaudeCode --resume<cr>", desc = "Resume Claude" },
-              { "<leader>aC", "<cmd>ClaudeCode --continue<cr>", desc = "Continue Claude" },
-              { "<leader>ab", "<cmd>ClaudeCodeAdd %<cr>", desc = "Add current buffer" },
-              { "<leader>aa", "<cmd>ClaudeCodeDiffAccept<cr>", desc = "Accept diff" },
-              { "<leader>ad", "<cmd>ClaudeCodeDiffDeny<cr>", desc = "Deny diff" },
+              { "<leader>m", group = "MCP" },
+              { "<leader>ms", "<cmd>MCPStart<cr>", desc = "Start MCP Server" },
+              { "<leader>mq", "<cmd>MCPStop<cr>", desc = "Stop MCP Server" },
+              { "<leader>mt", "<cmd>MCPToggle<cr>", desc = "Toggle MCP Server" },
+              { "<leader>mx", "<cmd>MCPStatus<cr>", desc = "MCP Status" },
+              { "<leader>md", "<cmd>MCPDebug<cr>", desc = "MCP Debug Info" },
               { "<leader>c", group = "Code" },
               { "<leader>cf", "<cmd>lua require('conform').format()<cr>", desc = "Format file" },
               { "<leader>q", group = "Quit" },
@@ -864,28 +759,30 @@
           end,
         },
         
-        -- Claude Code Integration
+        -- MCP Server for AI Integration
         {
-          "coder/claudecode.nvim",
-          dependencies = { "folke/snacks.nvim" },
-          config = true,
+          "rhnvrm/nvim-claudecode-mcp",
+          dependencies = {
+            "echasnovski/mini.diff",
+          },
+          event = "VeryLazy",
+          config = function()
+            require("nvim-claudecode-mcp").setup({
+              port_range = { min = 3000, max = 3999 },
+              auto_start = true,
+              selection_tracking = true,
+              diff = {
+                backend = "mini_diff", -- Use mini.diff for unified inline diffs
+              },
+            })
+          end,
           keys = {
-            { "<leader>a", nil, desc = "AI/Claude Code" },
-            { "<leader>ac", "<cmd>ClaudeCode<cr>", desc = "Toggle Claude" },
-            { "<leader>af", "<cmd>ClaudeCodeFocus<cr>", desc = "Focus Claude" },
-            { "<leader>ar", "<cmd>ClaudeCode --resume<cr>", desc = "Resume Claude" },
-            { "<leader>aC", "<cmd>ClaudeCode --continue<cr>", desc = "Continue Claude" },
-            { "<leader>ab", "<cmd>ClaudeCodeAdd %<cr>", desc = "Add current buffer" },
-            { "<leader>as", "<cmd>ClaudeCodeSend<cr>", mode = "v", desc = "Send to Claude" },
-            {
-              "<leader>as",
-              "<cmd>ClaudeCodeTreeAdd<cr>",
-              desc = "Add file",
-              ft = { "NvimTree", "neo-tree", "oil" },
-            },
-            -- Diff management
-            { "<leader>aa", "<cmd>ClaudeCodeDiffAccept<cr>", desc = "Accept diff" },
-            { "<leader>ad", "<cmd>ClaudeCodeDiffDeny<cr>", desc = "Deny diff" },
+            { "<leader>m", group = "MCP" },
+            { "<leader>ms", "<cmd>MCPStart<cr>", desc = "Start MCP Server" },
+            { "<leader>mq", "<cmd>MCPStop<cr>", desc = "Stop MCP Server" },
+            { "<leader>mt", "<cmd>MCPToggle<cr>", desc = "Toggle MCP Server" },
+            { "<leader>mx", "<cmd>MCPStatus<cr>", desc = "MCP Status" },
+            { "<leader>md", "<cmd>MCPDebug<cr>", desc = "MCP Debug Info" },
           },
         },
       })
