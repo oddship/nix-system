@@ -132,11 +132,15 @@
       require("lazy").setup({
         -- Theme
         {
-          "folke/tokyonight.nvim",
+          "catppuccin/nvim",
+          name = "catppuccin",
           lazy = false,
           priority = 1000,
           config = function()
-            vim.cmd.colorscheme("tokyonight-night")
+            require("catppuccin").setup({
+              flavour = "mocha", -- Set to mocha to match Ghostty
+            })
+            vim.cmd.colorscheme("catppuccin-mocha")
           end,
         },
         
@@ -477,7 +481,7 @@
           dependencies = { "nvim-tree/nvim-web-devicons" },
           config = function()
             require('lualine').setup {
-              options = { theme = 'tokyonight' },
+              options = { theme = 'catppuccin' },
             }
           end,
         },
