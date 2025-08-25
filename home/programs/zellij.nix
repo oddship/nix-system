@@ -11,7 +11,7 @@
     
     settings = {
       # Theme and appearance
-      theme = "default";
+      theme = "catppuccin-mocha";
       default_mode = "normal";
       mouse_mode = true;
       pane_frames = true;
