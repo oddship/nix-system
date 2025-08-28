@@ -71,6 +71,7 @@
     backupFileExtension = "bak";
     useGlobalPkgs = true;
     useUserPackages = true;
+    extraSpecialArgs = { inherit inputs; };
     users.rhnvrm = {
       imports = [ ./home.nix ];
       _module.args = {

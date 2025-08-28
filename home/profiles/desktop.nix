@@ -12,6 +12,7 @@ let
 in
 {
   imports = [
+    inputs.catppuccin.homeModules.catppuccin
     ../programs/shell.nix
     ../programs/terminal.nix
     ../programs/git.nix
@@ -19,6 +20,39 @@ in
     ../programs/tmux.nix
     ../programs/zellij.nix
   ];
+
+  # Catppuccin theme configuration
+  catppuccin = {
+    flavor = "mocha";
+    accent = "blue";
+  };
+
+  # GTK theming (manual since catppuccin GTK port was archived)
+  gtk = {
+    enable = true;
+    theme = {
+      name = "Catppuccin-Mocha-Standard-Blue-Dark";
+      package = pkgs.catppuccin-gtk.override {
+        accents = [ "blue" ];
+        size = "standard";
+        tweaks = [ "rimless" "black" ]; # optional tweaks
+        variant = "mocha";
+      };
+    };
+    iconTheme = {
+      name = "Papirus-Dark";
+      package = pkgs.catppuccin-papirus-folders.override {
+        accent = "blue";
+        flavor = "mocha";
+      };
+    };
+    cursorTheme = {
+      name = "Bibata-Modern-Classic"; # Keep your existing cursor
+      package = pkgs.bibata-cursors;
+    };
+  };
+
+  # Note: pointerCursor disabled since bibata-cursors is configured above
 
   home = {
     username = "rhnvrm";

@@ -35,6 +35,8 @@
 
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    catppuccin.url = "github:catppuccin/nix";
   };
 
   outputs =
@@ -45,6 +47,7 @@
       home-manager,
       agenix,
       nix-flatpak,
+      catppuccin,
       ...
     }@inputs:
     let
@@ -61,6 +64,7 @@
           home-manager.nixosModules.home-manager
           agenix.nixosModules.default
           nix-flatpak.nixosModules.nix-flatpak
+          catppuccin.nixosModules.catppuccin
 
           ./hosts/desktop/thinkpadx1/configuration.nix
         ];
