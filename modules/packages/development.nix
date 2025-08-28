@@ -27,8 +27,6 @@ in
       graphviz
       gh # GitHub CLI
       glab # GitLab CLI
-      nodePackages.prettier # Code formatter
-      yaml-language-server # YAML LSP support
 
       # Nix tooling
       inputs.agenix.packages.${pkgs.system}.default

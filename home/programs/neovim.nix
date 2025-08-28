@@ -50,6 +50,21 @@
       plenary-nvim # Required by many plugins
     ];
 
+    extraPackages = with pkgs; [
+      # Language servers
+      pyright           # Python LSP
+      nil               # Nix LSP
+      nodePackages.typescript-language-server  # TypeScript/JavaScript
+      gopls             # Go LSP
+      rust-analyzer     # Rust LSP
+      nodePackages.bash-language-server       # Bash LSP
+      nodePackages.vscode-langservers-extracted  # JSON/HTML/CSS/ESLint
+      yaml-language-server  # YAML LSP
+      
+      # Formatters and tools
+      nodePackages.prettier
+    ];
+
     extraConfig = ''
       " Basic settings
       set number
