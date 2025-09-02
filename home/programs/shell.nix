@@ -21,6 +21,7 @@
       ls = "eza --icons=always";
       sudo = "sudo --preserve-env=PATH env";
       zed = "zeditor";
+      claude = "claude --verbose";
 
       # Tmux aliases
       tm = "tmux";

@@ -32,6 +32,7 @@
     ../../../modules/packages/desktop.nix
     ../../../modules/packages/development.nix
     ../../../modules/packages/scripts.nix
+    ../../../modules/packages/libreoffice.nix
 
   ];
 
@@ -52,6 +53,7 @@
   packages.desktop.enable = true;
   packages.development.enable = true;
   packages.scripts.enable = true;
+  packages.libreoffice.enable = true;
 
   # Desktop-specific user configuration
   users.users.rhnvrm.extraGroups = [ "docker" ];
