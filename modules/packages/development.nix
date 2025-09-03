@@ -27,6 +27,9 @@ in
       graphviz
       gh # GitHub CLI
       glab # GitLab CLI
+      lazygit # Git TUI
+      ast-grep # Structural search and replace
+      delta # Better git diffs
 
       # Nix tooling
       inputs.agenix.packages.${pkgs.system}.default

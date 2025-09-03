@@ -51,11 +51,11 @@
     lidSwitch = "ignore";
     lidSwitchDocked = "ignore";
     lidSwitchExternalPower = "ignore";
-    extraConfig = ''
-      IdleAction=ignore
-      HandlePowerKey=ignore
-      HandleSuspendKey=ignore
-    '';
+    settings.Login = {
+      IdleAction = "ignore";
+      HandlePowerKey = "ignore";
+      HandleSuspendKey = "ignore";
+    };
   };
 
   environment.systemPackages = map lib.lowPrio [

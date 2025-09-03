@@ -19,6 +19,7 @@ in
     ../programs/neovim.nix
     ../programs/tmux.nix
     ../programs/zellij.nix
+    ../programs/lazygit.nix
   ];
 
   # Catppuccin theme configuration
