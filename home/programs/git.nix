@@ -22,6 +22,15 @@
       };
     };
 
+    aliases = {
+      wta = "!f() { \
+        inbox_dir=\"$HOME/Documents/Code/inbox/git-worktrees\"; \
+        current_dir=$(basename \"$PWD\"); \
+        branch_name=\"$1\"; \
+        git worktree add \"$inbox_dir/$current_dir/$branch_name\" -b \"$branch_name\"; \
+      }; f";
+    };
+
     includes = [
       {
         path = gitConfigExtra; # TODO: need to figure out a better way to do this
