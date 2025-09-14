@@ -636,7 +636,9 @@
               { "<leader>md", "<cmd>MCPDebug<cr>", desc = "MCP Debug Info" },
               { "<leader>c", group = "Code" },
               { "<leader>cf", "<cmd>lua require('conform').format()<cr>", desc = "Format file" },
-              { "<leader>q", group = "Quit" },
+              { "<leader>p", group = "Preview" },
+              { "<leader>pm", "<cmd>RenderMarkdown toggle<cr>", desc = "Toggle markdown preview" },
+              { "<leader>mq", group = "Quit" },
               { "<leader>qq", "<cmd>q<cr>", desc = "Quit" },
               { "<leader>qQ", "<cmd>qa<cr>", desc = "Quit all" },
             })
@@ -646,6 +648,53 @@
         { "easymotion/vim-easymotion" },
         { "justinmk/vim-sneak" },
         { "tpope/vim-surround" },
+        
+        -- Markdown Preview (render in-neovim)
+        {
+          "MeanderingProgrammer/render-markdown.nvim",
+          opts = {
+            file_types = { "markdown", "md" },
+            heading = {
+              sign = true,
+              icons = { "󰲡 ", "󰲣 ", "󰲥 ", "󰲧 ", "󰲩 ", "󰲫 " },
+              position = "overlay",
+            },
+            code = {
+              sign = true,
+              style = "full",
+              position = "left",
+              language_pad = 2,
+              disable_background = { "diffview", "fugitive", "neo-tree" },
+            },
+            dash = {
+              enabled = true,
+              icon = "—",
+            },
+            bullet = {
+              icons = { "●", "○", "◆", "◇" },
+            },
+            checkbox = {
+              checked = { icon = "✅", scope_highlight = "@markup.strikethrough" },
+              unchecked = { icon = "⬜" },
+            },
+            quote = {
+              icon = "▎",
+              repeat_linebreak = true,
+            },
+            pipe_table = {
+              border = {
+                "┌", "┬", "┐",
+                "├", "┼", "┤",
+                "└", "┴", "┘",
+              },
+              alignment_indicator = "┬",
+              head = "┌┬┐",
+              row = "├┼┤",
+              foot = "└┴┘",
+            },
+          },
+          ft = { "markdown", "md" },
+        },
         
         -- Terminal
         {
