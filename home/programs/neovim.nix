@@ -264,6 +264,7 @@
               auto_install = true,
               highlight = { enable = true },
               indent = { enable = true },
+              folding = { enable = true },
             }
           end,
         },
@@ -848,6 +849,11 @@
           },
         },
       })
+
+      -- Enable Treesitter-based folding
+      vim.opt.foldmethod = "expr"
+      vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+      vim.opt.foldenable = false
 
       -- Additional keymaps
       vim.keymap.set('i', 'jk', '<Esc>')
