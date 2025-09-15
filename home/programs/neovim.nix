@@ -587,6 +587,8 @@
               { "<leader>s", group = "Search" },
               { "<leader>ss", "<cmd>Telescope live_grep<cr>", desc = "Search text" },
               { "<leader>sf", "<cmd>Telescope find_files<cr>", desc = "Search files" },
+              { "<leader>sz", "<cmd>Files<cr>", desc = "Fuzzy search files (fzf)" },
+              { "<leader>sc", "<cmd>Rg<cr>", desc = "Fuzzy search contents (fzf)" },
               { "<leader>sh", "<cmd>Telescope help_tags<cr>", desc = "Help tags" },
               { "<leader>sr", "<cmd>lua require('spectre').open()<cr>", desc = "Search & Replace" },
               { "<leader>sw", "<cmd>lua require('spectre').open_visual({select_word=true})<cr>", desc = "Search current word" },
@@ -651,7 +653,9 @@
         { "easymotion/vim-easymotion" },
         { "justinmk/vim-sneak" },
         { "tpope/vim-surround" },
-        
+        { "junegunn/fzf", name = "fzf" },
+        { "junegunn/fzf.vim", name = "fzf.vim", dependencies = "fzf" },
+
         -- Markdown Preview (render in-neovim)
         {
           "MeanderingProgrammer/render-markdown.nvim",
