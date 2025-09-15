@@ -21,10 +21,4 @@
     };
   };
 
-  # Rofi launcher
-  programs.rofi = {
-    enable = true;
-    package = pkgs.rofi-wayland;
-    font = "Noto Sans Medium 11";
-  };
-}
+  }
