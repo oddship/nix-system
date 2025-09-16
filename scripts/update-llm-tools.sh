@@ -19,6 +19,7 @@ tools=(
     "@anthropic-ai/claude-code"
     "@google/gemini-cli" 
     "@sourcegraph/amp"
+    "@openai/codex"
 )
 
 # Update each tool
