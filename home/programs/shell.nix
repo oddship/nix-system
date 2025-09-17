@@ -37,6 +37,8 @@
       zjl = "zellij list-sessions";
       zjk = "zellij kill-session";
       zjf = "zf";
+
+      # Git worktree aliases
     };
     initContent = ''
       # Add user-specific local bin directory to PATH
@@ -97,6 +99,15 @@
       za() {
           local session_name=''${1:-$(basename "$PWD")}
           zellij attach "$session_name" || zellij -s "$session_name"
+      }
+
+      # Git worktree cd function
+      cdgw() {
+          local dir
+          dir=$(git-worktree-search)
+          if [[ -n "$dir" ]]; then
+              cd "$dir"
+          fi
       }
 
       # Fuzzy Zellij session selector - combines zjl + za with fzf
