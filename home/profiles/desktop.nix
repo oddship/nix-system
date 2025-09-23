@@ -28,6 +28,9 @@ in
     accent = "blue";
   };
 
+  # Enable catppuccin for specific applications
+  catppuccin.ghostty.enable = true;
+
   # GTK theming (manual since catppuccin GTK port was archived)
   gtk = {
     enable = true;

@@ -15,7 +15,6 @@
     enable = true;
     enableZshIntegration = true;
     settings = {
-      theme = "catppuccin-mocha";
       # Additional keybind for Claude Code
       keybind = "shift+enter=text:\\n";
     };
