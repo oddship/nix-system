@@ -23,6 +23,7 @@
     };
 
     aliases = {
+      tree = "log --graph --oneline --all --decorate --author-date-order";
       wta = "!f() { \
         inbox_dir=\"$HOME/Documents/Code/inbox/git-worktrees\"; \
         current_dir=$(basename \"$PWD\"); \
