@@ -48,10 +48,10 @@
 
   # This laptop is a server, so we don't want it to suspend or hibernate
   services.logind = {
-    lidSwitch = "ignore";
-    lidSwitchDocked = "ignore";
-    lidSwitchExternalPower = "ignore";
     settings.Login = {
+      HandleLidSwitch = "ignore";
+      HandleLidSwitchDocked = "ignore";
+      HandleLidSwitchExternalPower = "ignore";
       IdleAction = "ignore";
       HandlePowerKey = "ignore";
       HandleSuspendKey = "ignore";
