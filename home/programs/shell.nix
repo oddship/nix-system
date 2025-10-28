@@ -60,6 +60,13 @@
         export PS1="❄️  $PS1"
       fi
 
+      # Function to print timestamp before each prompt
+      prompt_timestamp() {
+        print -rP "%F{242}%T%f"
+      }
+      # Add to precmd hook array (runs before each prompt)
+      precmd_functions+=(prompt_timestamp)
+
       # Find and cd function using fzf
       fcd() {
           local dir
