@@ -108,10 +108,10 @@ in
   ];
 
   xdg.mimeApps.defaultApplications = {
-    "text/html" = [ "zen.desktop" ];
-    "text/xml" = [ "zen.desktop" ];
-    "x-scheme-handler/http" = [ "zen.desktop" ];
-    "x-scheme-handler/https" = [ "zen.desktop" ];
+    "text/html" = [ "zen-beta.desktop" ];
+    "text/xml" = [ "zen-beta.desktop" ];
+    "x-scheme-handler/http" = [ "zen-beta.desktop" ];
+    "x-scheme-handler/https" = [ "zen-beta.desktop" ];
   };
 
   dconf.settings = {
@@ -125,7 +125,7 @@ in
         "com.mitchellh.ghostty.desktop"
         "ticktick.desktop"
         "obsidian.desktop"
-        "zen.desktop"
+        "zen-beta.desktop"
         "code.desktop"
         "dev.zed.Zed.desktop"
       ];
