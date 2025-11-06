@@ -35,7 +35,7 @@ in
   gtk = {
     enable = true;
     theme = {
-      name = "Catppuccin-Mocha-Standard-Blue-Dark";
+      name = "catppuccin-mocha-blue-standard+rimless,black";
       package = pkgs.catppuccin-gtk.override {
         accents = [ "blue" ];
         size = "standard";

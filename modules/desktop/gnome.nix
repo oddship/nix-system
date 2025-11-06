@@ -13,6 +13,22 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    # GUI sudo prompt for CLI tools
+    security.sudo.extraConfig = ''
+      Defaults env_keep += "SUDO_ASKPASS"
+    '';
+    environment.sessionVariables.SUDO_ASKPASS =
+      let
+        askpass = pkgs.writeShellApplication {
+          name = "sudo-askpass";
+          runtimeInputs = [ pkgs.zenity ];
+          text = ''
+            zenity --password --title="Authentication Required"
+          '';
+        };
+      in
+      "${askpass}/bin/sudo-askpass";
+
     # X11 and GNOME
     services.xserver.enable = true;
     services.displayManager.gdm.enable = true;
@@ -51,6 +67,7 @@ in
 
     # GNOME utilities
     environment.systemPackages = with pkgs; [
+      zenity # For GUI sudo prompts
       gnome-tweaks
       gnome-extension-manager
       bibata-cursors
@@ -66,7 +83,7 @@ in
         nerd-fonts.fira-code
         nerd-fonts.jetbrains-mono
         font-awesome_5
-        noto-fonts-emoji
+        noto-fonts-color-emoji
         noto-fonts
         jetbrains-mono
         inter

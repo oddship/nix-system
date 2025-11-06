@@ -28,10 +28,10 @@
       };
     };
 
-    # Eventually, we should switch this to nixpkgs. Currently we are
-    # using a binary distribution of zen-browser.
+    # Using 0xc000022070's zen-browser flake which handles hash mismatches better
+    # by re-uploading artifacts instead of relying on upstream replaceable artifacts
     zen-browser = {
-      url = "github:youwen5/zen-browser-flake";
+      url = "github:0xc000022070/zen-browser-flake";
 
       inputs.nixpkgs.follows = "nixpkgs";
     };
