@@ -160,10 +160,7 @@ fmt:
     find {{flake_path}} -name "*.nix" -exec nixfmt {} +
     @echo -e "${GREEN}Formatting complete${NC}"
 
-# Run home-manager switch
-home user=`whoami`:
-    @echo -e "${BLUE}Switching home-manager for {{user}}...${NC}"
-    home-manager switch --flake {{flake_path}}#{{user}}@{{hostname}}
+# Note: home-manager is integrated with NixOS, use 'just switch' instead
 
 # Backup current system
 backup name=`date +%Y%m%d-%H%M%S`:

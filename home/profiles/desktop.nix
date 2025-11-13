@@ -20,6 +20,7 @@ in
     ../programs/tmux.nix
     ../programs/zellij.nix
     ../programs/lazygit.nix
+    ../programs/claude-skills.nix
   ];
 
   # Catppuccin theme configuration
