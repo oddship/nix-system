@@ -37,8 +37,20 @@ in
     # GNOME keyring
     security.pam.services.login.enableGnomeKeyring = true;
 
-    # Wayland optimizations
-    environment.sessionVariables.NIXOS_OZONE_WL = "1";
+    # Intel graphics optimization
+    hardware.graphics = {
+      enable = true;
+      extraPackages = with pkgs; [
+        intel-media-driver # VAAPI (iHD)
+        intel-compute-runtime # OpenCL
+      ];
+    };
+
+    # Wayland and graphics optimizations
+    environment.sessionVariables = {
+      NIXOS_OZONE_WL = "1"; # Wayland support for Electron apps
+      LIBVA_DRIVER_NAME = "iHD"; # Force Intel iHD driver
+    };
 
     # Remove unwanted GNOME packages
     environment.gnome.excludePackages = with pkgs; [

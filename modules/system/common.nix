@@ -20,6 +20,13 @@
     ];
   };
 
+  # Automatic garbage collection
+  nix.gc = {
+    automatic = lib.mkDefault true;
+    dates = lib.mkDefault "weekly";
+    options = lib.mkDefault "--delete-older-than 30d";
+  };
+
   # Common localization
   time.timeZone = lib.mkDefault "Asia/Kolkata";
   i18n.defaultLocale = lib.mkDefault "en_US.UTF-8";
@@ -69,4 +76,10 @@
 
   # Users should not be mutable by default
   users.mutableUsers = lib.mkDefault false;
+
+  # Security hardening
+  # TODO: Verify if AppArmor should be enabled
+  # Known issues: Requires reboot, may conflict with LXD/Incus containers,
+  # service reload failures after nixos-rebuild (reboot fixes this)
+  # security.apparmor.enable = lib.mkDefault true;
 }

@@ -7,7 +7,7 @@
   };
 
   # Use latest kernel by default for better hardware support
-  # boot.kernelPackages = lib.mkDefault pkgs.linuxPackages_latest;
+  boot.kernelPackages = lib.mkDefault pkgs.linuxPackages_latest;
 
   # Enable kernel modules for common hardware
   boot.initrd.availableKernelModules = lib.mkDefault [

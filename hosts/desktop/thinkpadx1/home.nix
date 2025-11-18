@@ -27,15 +27,8 @@ in
   home.stateVersion = "24.11";
   # Host-specific packages (additional to desktop profile)
   home.packages = with pkgs; [
-    # Additional CLI tools for this host
-    curl
-    wget
-    ripgrep
-    fd
-    age
-    tree
-    jq
-    ncdu
+    # Only truly host-specific packages here
+    # Common packages moved to desktop profile
     websocat
   ];
 
