@@ -91,6 +91,7 @@ in
     gnomeExtensions.clipboard-history
     gnomeExtensions.just-perfection
     gnomeExtensions.blur-my-shell
+    gnomeExtensions.vitals
 
     git
     curl
@@ -141,6 +142,7 @@ in
         "clipboard-history@alexsaveau.dev"
         "just-perfection-desktop@just-perfection"
         "blur-my-shell@aunetx"
+        "vitals@corecoding.com"
       ];
     };
 
@@ -201,6 +203,16 @@ in
       whitelist = [ ];
       blur = true;
       dynamic-opacity = false;
+    };
+
+    "org/gnome/shell/extensions/vitals" = {
+      show-storage = true;
+      show-voltage = true;
+      show-memory = true;
+      show-processor = true;
+      show-temperature = true;
+      show-fan = true;
+      show-network = true;
     };
 
     "org/gnome/shell/extensions/workspace-indicator" = {
