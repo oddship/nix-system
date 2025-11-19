@@ -30,6 +30,7 @@ in
       lazygit # Git TUI
       ast-grep # Structural search and replace
       delta # Better git diffs
+      inputs.antigravity-nix.packages.${pkgs.system}.default
 
       # Nix tooling
       inputs.agenix.packages.${pkgs.system}.default
