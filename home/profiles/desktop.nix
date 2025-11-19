@@ -20,7 +20,6 @@ in
     ../programs/tmux.nix
     ../programs/zellij.nix
     ../programs/lazygit.nix
-    ../programs/amp.nix
     ../programs/claude-skills.nix
   ];
 
