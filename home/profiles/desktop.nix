@@ -89,7 +89,6 @@ in
     gnomeExtensions.appindicator
     gnomeExtensions.clipboard-history
     gnomeExtensions.just-perfection
-    gnomeExtensions.blur-my-shell
     gnomeExtensions.astra-monitor
 
     git
@@ -140,7 +139,6 @@ in
         "workspace-indicator@gnome-shell-extensions.gcampax.github.com"
         "clipboard-history@alexsaveau.dev"
         "just-perfection-desktop@just-perfection"
-        "blur-my-shell@aunetx"
         "monitor@astraext.github.io"
       ];
     };
@@ -196,12 +194,6 @@ in
       "workspace-wrap-around" = true;
       "animation" = 1;
       "workspace-switcher-should-show" = true;
-    };
-
-    "org/gnome/shell/extensions/blur-my-shell/applications" = {
-      whitelist = [ ];
-      blur = true;
-      dynamic-opacity = false;
     };
 
     "org/gnome/shell/extensions/astra-monitor" = {
