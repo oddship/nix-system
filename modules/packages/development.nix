@@ -31,10 +31,10 @@ in
       ast-grep # Structural search and replace
       delta # Better git diffs
       libxcrypt # Provides libcrypt for building packages
-      inputs.antigravity-nix.packages.${pkgs.system}.default
+      inputs.antigravity-nix.packages.${pkgs.stdenv.hostPlatform.system}.default
 
       # Nix tooling
-      inputs.agenix.packages.${pkgs.system}.default
+      inputs.agenix.packages.${pkgs.stdenv.hostPlatform.system}.default
 
       # Network tools
       nftables

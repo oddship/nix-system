@@ -17,14 +17,14 @@ in
     environment.systemPackages = with pkgs; [
       # Browsers
       chromium
-      inputs.zen-browser.packages.${pkgs.system}.default
+      inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
 
       # Productivity
       obsidian
       ticktick
 
       # Communication
-      inputs.claude-desktop.packages.${pkgs.system}.claude-desktop-with-fhs
+      inputs.claude-desktop.packages.${pkgs.stdenv.hostPlatform.system}.claude-desktop-with-fhs
 
       # Utilities
       cliphist

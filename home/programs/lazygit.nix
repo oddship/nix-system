@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 {
   programs.lazygit = {
     enable = true;
@@ -7,7 +12,10 @@
         # Catppuccin Mocha theme colors
         theme = {
           lightTheme = false;
-          activeBorderColor = [ "#89b4fa" "bold" ]; # Blue
+          activeBorderColor = [
+            "#89b4fa"
+            "bold"
+          ]; # Blue
           inactiveBorderColor = [ "#45475a" ]; # Surface1
           optionsTextColor = [ "#cdd6f4" ]; # Text
           selectedLineBgColor = [ "#313244" ]; # Surface0
@@ -45,7 +53,7 @@
           "*" = "#a6e3a1"; # Green
         };
       };
-      
+
       # Configure editor to open in new Ghostty terminal
       os = {
         editPreset = "";
@@ -118,13 +126,13 @@
           increaseContextInDiffView = "}";
           decreaseContextInDiffView = "{";
         };
-        
+
         status = {
           checkForUpdate = "u";
           recentRepos = "<enter>";
           allBranchesLogGraph = "a";
         };
-        
+
         files = {
           commitChanges = "c";
           commitChangesWithoutHook = "w";
@@ -142,7 +150,7 @@
           openMergeTool = "M";
           openStatusFilter = "<c-b>";
         };
-        
+
         branches = {
           createPullRequest = "o";
           viewPullRequestOptions = "O";
@@ -159,7 +167,7 @@
           setUpstream = "u";
           fetchRemote = "f";
         };
-        
+
         commits = {
           squashDown = "s";
           renameCommit = "r";
@@ -182,29 +190,29 @@
           openLogMenu = "<c-l>";
           viewBisectOptions = "b";
         };
-        
+
         stash = {
           popStash = "g";
           renameStash = "r";
         };
-        
+
         commitFiles = {
           checkoutCommitFile = "c";
         };
-        
+
         main = {
           toggleSelectHunk = "a";
           pickBothHunks = "b";
           editSelectHunk = "E";
         };
-        
+
         submodules = {
           init = "i";
           update = "u";
           bulkMenu = "b";
         };
       };
-      
+
       # Git configuration
       git = {
         paging = {
@@ -235,26 +243,26 @@
         parseEmoji = false;
         diffContextSize = 3;
       };
-      
+
       # Update configuration
       update = {
         method = "prompt";
         days = 14;
       };
-      
+
       # Refresh configuration
       refresher = {
         refreshInterval = 10;
         fetchInterval = 60;
       };
-      
+
       # Confirmation settings
       confirmOnQuit = false;
       quitOnTopLevelReturn = false;
-      
+
       # Disable mouse for better terminal experience
       disableStartupPopups = false;
-      
+
       # Custom commands
       customCommands = [
         {

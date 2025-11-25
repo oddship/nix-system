@@ -55,15 +55,14 @@
       catppuccin,
       ...
     }@inputs:
-    let
-      system = "x86_64-linux";
-    in
     {
       nixosConfigurations."oddship-thinkpad-x1" = nixpkgs.lib.nixosSystem {
-        inherit system;
         specialArgs = { inherit inputs; };
         modules = [
-          { nixpkgs.config.allowUnfree = true; }
+          {
+            nixpkgs.hostPlatform = "x86_64-linux";
+            nixpkgs.config.allowUnfree = true;
+          }
 
           disko.nixosModules.disko
           home-manager.nixosModules.home-manager
@@ -76,10 +75,12 @@
       };
 
       nixosConfigurations."oddship-ux303" = nixpkgs.lib.nixosSystem {
-        inherit system;
         specialArgs = { inherit inputs; };
         modules = [
-          { nixpkgs.config.allowUnfree = true; }
+          {
+            nixpkgs.hostPlatform = "x86_64-linux";
+            nixpkgs.config.allowUnfree = true;
+          }
 
           disko.nixosModules.disko
           home-manager.nixosModules.home-manager
@@ -92,10 +93,12 @@
       };
 
       nixosConfigurations."oddship-beagle" = nixpkgs.lib.nixosSystem {
-        inherit system;
         specialArgs = { inherit inputs; };
         modules = [
-          { nixpkgs.config.allowUnfree = true; }
+          {
+            nixpkgs.hostPlatform = "x86_64-linux";
+            nixpkgs.config.allowUnfree = true;
+          }
 
           disko.nixosModules.disko
           home-manager.nixosModules.home-manager

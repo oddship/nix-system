@@ -40,7 +40,10 @@ in
       package = pkgs.catppuccin-gtk.override {
         accents = [ "blue" ];
         size = "standard";
-        tweaks = [ "rimless" "black" ]; # optional tweaks
+        tweaks = [
+          "rimless"
+          "black"
+        ]; # optional tweaks
         variant = "mocha";
       };
     };

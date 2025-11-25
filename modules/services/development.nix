@@ -99,7 +99,6 @@ in
     services.lorri.enable = true; # Nix shell helper
     programs.direnv.enable = true; # Directory-based environments
 
-
     # Android development support
     programs.adb.enable = true;
 
