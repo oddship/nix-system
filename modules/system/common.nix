@@ -6,6 +6,9 @@
     auto-optimise-store = true;
     builders-use-substitutes = true;
 
+    # Allow your user to use substituters from flakes
+    trusted-users = [ "root" "@wheel" ];
+
     experimental-features = [
       "flakes"
       "nix-command"

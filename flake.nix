@@ -42,6 +42,8 @@
       url = "github:jacopone/antigravity-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
   };
 
   outputs =
@@ -53,6 +55,7 @@
       agenix,
       nix-flatpak,
       catppuccin,
+      chaotic,
       ...
     }@inputs:
     {
@@ -69,6 +72,7 @@
           agenix.nixosModules.default
           nix-flatpak.nixosModules.nix-flatpak
           catppuccin.nixosModules.catppuccin
+          chaotic.nixosModules.default
 
           ./hosts/desktop/thinkpadx1/configuration.nix
         ];
