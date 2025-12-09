@@ -50,6 +50,7 @@ in
     environment.sessionVariables = {
       NIXOS_OZONE_WL = "1"; # Wayland support for Electron apps
       LIBVA_DRIVER_NAME = "iHD"; # Force Intel iHD driver
+      MESA_DEBUG = "silent"; # Suppress Mesa Vulkan driver warnings
     };
 
     # Remove unwanted GNOME packages
