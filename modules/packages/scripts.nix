@@ -44,6 +44,9 @@ let
                   wl-clipboard
                   # Markdown rendering
                   pandoc
+                  # HTTP/JSON tools
+                  curl
+                  jq
                 ]
               )
             }

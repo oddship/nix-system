@@ -7,7 +7,10 @@
     builders-use-substitutes = true;
 
     # Allow your user to use substituters from flakes
-    trusted-users = [ "root" "@wheel" ];
+    trusted-users = [
+      "root"
+      "@wheel"
+    ];
 
     experimental-features = [
       "flakes"
