@@ -79,7 +79,8 @@
               just
               jq
               curl
-              agenix
+            ] ++ [
+              agenix.packages.${system}.default
             ];
 
             shellHook = ''
