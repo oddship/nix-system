@@ -33,23 +33,36 @@ in
       enable = true;
       email = cfg.webserver.email;
 
-      virtualHosts = lib.mapAttrs' (
-        name: site: {
-          name = site.domain;
-          value = {
-            extraConfig = ''
+      # Generate both HTTP and HTTPS hosts for each site
+      # HTTP is needed because Cloudflare proxy sends HTTP to origin
+      virtualHosts = lib.foldl' (acc: item: acc // item) {} (
+        lib.mapAttrsToList (
+          name: site:
+          let
+            commonConfig = ''
               root * ${site.root}
               file_server
               encode gzip
-
-              # DNS-01 challenge for Let's Encrypt behind Cloudflare proxy
-              tls {
-                dns cloudflare {env.CLOUDFLARE_DNS_API_TOKEN}
-              }
             '';
-          };
-        }
-      ) cfg.staticSites;
+          in {
+            # HTTPS host with TLS
+            "${site.domain}" = {
+              extraConfig = ''
+                ${commonConfig}
+
+                # DNS-01 challenge for Let's Encrypt behind Cloudflare proxy
+                tls {
+                  dns cloudflare {env.CLOUDFLARE_DNS_API_TOKEN}
+                }
+              '';
+            };
+            # HTTP host (for Cloudflare proxy origin requests)
+            "http://${site.domain}" = {
+              extraConfig = commonConfig;
+            };
+          }
+        ) cfg.staticSites
+      );
     };
 
     networking.firewall.allowedTCPPorts = [

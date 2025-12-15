@@ -44,19 +44,28 @@
   services.server = {
     enable = true;
     webserver.enable = true;
+    staticSites.oddship = {
+      domain = "oddship.net";
+      root = inputs.oddship-site.packages.${pkgs.system}.default;
+    };
   };
 
   # agenix secret (host key injected by terraform during install)
   age.secrets.cloudflare-api-token.file = ../../../secrets/cloudflare-api-token.age;
 
-  # Caddy DNS-01 challenge
+  # Caddy DNS-01 challenge - use agenix secret via script wrapper
+  # Use list format ["" "new"] to clear previous ExecStart and set new one
   systemd.services.caddy = {
     serviceConfig = {
       LoadCredential = "cloudflare-token:${config.age.secrets.cloudflare-api-token.path}";
+      ExecStart = lib.mkForce [
+        ""  # Clear previous ExecStart
+        (pkgs.writeShellScript "caddy-start" ''
+          export CLOUDFLARE_DNS_API_TOKEN=$(cat $CREDENTIALS_DIRECTORY/cloudflare-token)
+          exec ${config.services.caddy.package}/bin/caddy run --config /etc/caddy/caddy_config --adapter caddyfile
+        '')
+      ];
     };
-    preStart = ''
-      export CLOUDFLARE_DNS_API_TOKEN=$(cat $CREDENTIALS_DIRECTORY/cloudflare-token)
-    '';
   };
 
   system.stateVersion = "24.11";

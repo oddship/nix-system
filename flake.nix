@@ -44,6 +44,10 @@
     };
 
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
+
+    oddship-site = {
+      url = "github:oddship/oddship.github.io";
+    };
   };
 
   outputs =
