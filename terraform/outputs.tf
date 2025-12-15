@@ -12,3 +12,8 @@ output "server_name" {
   value       = hcloud_server.web.name
   description = "Server name"
 }
+
+output "nixos_anywhere_result" {
+  value       = module.nixos_anywhere.result
+  description = "nixos-anywhere deployment result"
+}

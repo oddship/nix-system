@@ -1,6 +1,7 @@
-{ config, lib, pkgs, inputs, ... }:
+{ config, lib, pkgs, inputs, modulesPath, ... }:
 {
   imports = [
+    (modulesPath + "/profiles/qemu-guest.nix")
     ./disko-config.nix
     ../../../modules/services/server.nix
   ];
@@ -8,8 +9,8 @@
   networking.hostName = "oddship-web";
 
   # Boot loader - GRUB required for Hetzner Cloud
+  # no need to set devices, disko will add all devices that have a EF02 partition to the list already
   boot.loader.grub = {
-    enable = true;
     efiSupport = true;
     efiInstallAsRemovable = true;
   };
@@ -37,6 +38,11 @@
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKsBh6mM1T0HyG8Gp4doFEo8izvF8snx4wJXmkyzZCBw hello@rohanverma.net"
     ];
   };
+
+  # Root SSH key (needed for terraform nixos-rebuild)
+  users.users.root.openssh.authorizedKeys.keys = [
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKsBh6mM1T0HyG8Gp4doFEo8izvF8snx4wJXmkyzZCBw hello@rohanverma.net"
+  ];
 
   # Enable sudo for wheel group
   security.sudo.wheelNeedsPassword = false;

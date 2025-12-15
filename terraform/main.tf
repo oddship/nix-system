@@ -67,6 +67,32 @@ resource "hcloud_firewall_attachment" "web" {
   server_ids  = [hcloud_server.web.id]
 }
 
+# nixos-anywhere - Install NixOS on the server
+module "nixos_anywhere" {
+  source = "github.com/nix-community/nixos-anywhere//terraform/all-in-one"
+
+  # The flake attributes for the NixOS system
+  nixos_system_attr      = "..#nixosConfigurations.oddship-web.config.system.build.toplevel"
+  nixos_partitioner_attr = "..#nixosConfigurations.oddship-web.config.system.build.diskoScript"
+
+  # Target host details
+  target_host = hcloud_server.web.ipv4_address
+  target_user = "root"
+  target_port = 22
+
+  # Use instance_id to track when to reinstall
+  instance_id = hcloud_server.web.id
+
+  # SSH key for installation (read from file)
+  install_ssh_key = file(var.ssh_private_key_path)
+
+  # Enable debug logging to see what's happening
+  debug_logging = var.debug_logging
+
+  # Build on remote to avoid large uploads
+  build_on_remote = true
+}
+
 # Cloudflare - oddship.net
 data "cloudflare_zone" "oddship" {
   name = "oddship.net"
@@ -87,3 +113,4 @@ resource "cloudflare_record" "oddship_www" {
   type    = "CNAME"
   proxied = true
 }
+
