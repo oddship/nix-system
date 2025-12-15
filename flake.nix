@@ -145,5 +145,36 @@
           ./hosts/servers/beagle/configuration.nix
         ];
       };
+
+      nixosConfigurations."oddship-web" = nixpkgs.lib.nixosSystem {
+        specialArgs = { inherit inputs; };
+        modules = [
+          {
+            nixpkgs.hostPlatform = "x86_64-linux";
+            nixpkgs.config.allowUnfree = true;
+
+            # Overlay for Caddy with Cloudflare DNS plugin
+            nixpkgs.overlays = [
+              (final: prev: {
+                caddy = prev.caddy.override {
+                  externalPlugins = [
+                    {
+                      name = "cloudflare";
+                      repo = "github.com/caddy-dns/cloudflare";
+                      version = "89f16b99c18ef49c8bb470a82f895bce01cbaece";
+                    }
+                  ];
+                  vendorHash = "sha256-/SqoOEnt4DhVle7sObnFYSD0Ioga3TQI6UUoEewPx7E=";
+                };
+              })
+            ];
+          }
+
+          disko.nixosModules.disko
+          agenix.nixosModules.default
+
+          ./hosts/servers/oddship-web/configuration.nix
+        ];
+      };
     };
 }
