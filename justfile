@@ -106,16 +106,6 @@ rollback:
     @echo -e "${YELLOW}Rolling back to previous generation...${NC}"
     sudo nixos-rebuild switch --rollback
 
-# Deploy to remote host
-deploy host target:
-    @echo -e "${BLUE}Deploying {{host}} to {{target}}...${NC}"
-    nixos-rebuild switch --flake {{flake_path}}#{{host}} --target-host {{target}} --use-remote-sudo
-
-# Initialize a new host with nixos-anywhere
-init-host host target:
-    @echo -e "${BLUE}Initializing new host {{host}} at {{target}}...${NC}"
-    nix run github:nix-community/nixos-anywhere -- --flake {{flake_path}}#{{host}} --target-host nixos@{{target}}
-
 # Edit system configuration
 edit host=hostname:
     $EDITOR {{flake_path}}/hosts/*/{{host}}/configuration.nix
@@ -323,6 +313,77 @@ tofu-output:
 tofu-ip:
     @cd terraform && tofu output -raw server_ip
 
+# ──────────────────────────────────────────────────────────────
+# NixOS Deployment (nixos-anywhere + nixos-rebuild)
+# ──────────────────────────────────────────────────────────────
+
+# Bootstrap NixOS on a server (gets IP from terraform)
+# Usage: just bootstrap oddship-web
+bootstrap host:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    echo -e "${BLUE}Bootstrapping NixOS on {{host}}...${NC}"
+
+    # Get server IP from terraform (assumes server name matches host)
+    SERVER_IP=$(cd terraform && tofu output -json | jq -r '.server_ip.value')
+
+    if [ -z "$SERVER_IP" ] || [ "$SERVER_IP" = "null" ]; then
+        echo -e "${RED}Error: Could not get server IP from terraform${NC}"
+        echo "Make sure terraform has been applied first: just tofu-apply"
+        exit 1
+    fi
+
+    echo -e "${YELLOW}Target: root@$SERVER_IP${NC}"
+    echo -e "${YELLOW}This will WIPE the server and install NixOS${NC}"
+    read -p "Continue? [y/N]: " confirm
+    [ "$confirm" = "y" ] || exit 0
+
+    nix run github:nix-community/nixos-anywhere -- \
+        --flake .#{{host}} \
+        --target-host root@$SERVER_IP
+
+    echo -e "${GREEN}✓ NixOS bootstrapped on {{host}}${NC}"
+    echo -e "${BLUE}You can now deploy updates with: just deploy {{host}}${NC}"
+
+# Deploy configuration updates to a server (gets IP from terraform)
+# Usage: just deploy oddship-web
+deploy host:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    echo -e "${BLUE}Deploying {{host}}...${NC}"
+
+    SERVER_IP=$(cd terraform && tofu output -json | jq -r '.server_ip.value')
+
+    if [ -z "$SERVER_IP" ] || [ "$SERVER_IP" = "null" ]; then
+        echo -e "${RED}Error: Could not get server IP from terraform${NC}"
+        exit 1
+    fi
+
+    echo -e "${YELLOW}Target: rhnvrm@$SERVER_IP${NC}"
+    nixos-rebuild switch --flake .#{{host}} \
+        --target-host rhnvrm@$SERVER_IP --use-remote-sudo
+
+    echo -e "${GREEN}✓ Deployed {{host}}${NC}"
+
+# Manual bootstrap (for when you have IP but no terraform)
+# Usage: just bootstrap-manual oddship-web root@167.235.62.179
+bootstrap-manual host target:
+    @echo -e "${BLUE}Bootstrapping NixOS on {{host}} at {{target}}...${NC}"
+    @echo -e "${YELLOW}This will WIPE the server and install NixOS${NC}"
+    @read -p "Continue? [y/N]: " confirm && [ "$$confirm" = "y" ] || exit 0
+    nix run github:nix-community/nixos-anywhere -- \
+        --flake .#{{host}} \
+        --target-host {{target}}
+    @echo -e "${GREEN}✓ NixOS bootstrapped${NC}"
+
+# Manual deploy (for when you have IP but no terraform)
+# Usage: just deploy-manual oddship-web rhnvrm@167.235.62.179
+deploy-manual host target:
+    @echo -e "${BLUE}Deploying {{host}} to {{target}}...${NC}"
+    nixos-rebuild switch --flake .#{{host}} \
+        --target-host {{target}} --use-remote-sudo
+    @echo -e "${GREEN}✓ Deployed{{NC}"
+
 # Help command
 help:
     @echo -e "${BLUE}=== NixOS Management Commands ===${NC}"
@@ -342,6 +403,12 @@ help:
     @echo "  just tofu-destroy   - Destroy all infrastructure"
     @echo "  just tofu-ip        - Show server IP"
     @echo ""
+    @echo "NixOS Deployment:"
+    @echo "  just bootstrap <host>       - Install NixOS (auto-gets IP from terraform)"
+    @echo "  just deploy <host>          - Deploy updates (auto-gets IP from terraform)"
+    @echo "  just bootstrap-manual <h> <t> - Install NixOS with manual IP"
+    @echo "  just deploy-manual <h> <t>    - Deploy updates with manual IP"
+    @echo ""
     @echo "Script management:"
     @echo "  just list-scripts   - List available scripts"
     @echo "  just new-script <n> - Create new script template"
@@ -351,7 +418,6 @@ help:
     @echo "Advanced commands:"
     @echo "  just test           - Test configuration in VM"
     @echo "  just diff           - Show diff with current system"
-    @echo "  just deploy <h> <t> - Deploy to remote host"
     @echo "  just secret edit <n>- Edit encrypted secret"
     @echo ""
     @echo "Run 'just --list' for all commands"
