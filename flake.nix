@@ -152,26 +152,27 @@
           {
             nixpkgs.hostPlatform = "x86_64-linux";
             nixpkgs.config.allowUnfree = true;
-
-            # Overlay for Caddy with Cloudflare DNS plugin
-            nixpkgs.overlays = [
-              (final: prev: {
-                caddy = prev.caddy.override {
-                  externalPlugins = [
-                    {
-                      name = "cloudflare";
-                      repo = "github.com/caddy-dns/cloudflare";
-                      version = "89f16b99c18ef49c8bb470a82f895bce01cbaece";
-                    }
-                  ];
-                  vendorHash = "sha256-/SqoOEnt4DhVle7sObnFYSD0Ioga3TQI6UUoEewPx7E=";
-                };
-              })
-            ];
           }
 
           disko.nixosModules.disko
           agenix.nixosModules.default
+
+          # Caddy with Cloudflare DNS plugin (2025 best practice)
+          (
+            { pkgs, ... }:
+            {
+              nixpkgs.overlays = [
+                (final: prev: {
+                  caddy-with-cloudflare = prev.caddy.withPlugins {
+                    plugins = [ "github.com/caddy-dns/cloudflare@v0.2.3-0.20251204174556-6dc1fbb7e925" ];
+                    hash = "sha256-SFx321gGSjead35aeqU16EXdl3Z3pW9exK6kK3L1+C8=";
+                  };
+                })
+              ];
+
+              services.caddy.package = pkgs.caddy-with-cloudflare;
+            }
+          )
 
           ./hosts/servers/oddship-web/configuration.nix
         ];
