@@ -270,6 +270,59 @@ script-help name:
         echo -e "${RED}Script not found: {{name}}.sh${NC}"; \
     fi
 
+# ──────────────────────────────────────────────────────────────
+# Infrastructure Management (OpenTofu + Hetzner + Cloudflare)
+# ──────────────────────────────────────────────────────────────
+
+# Get Hetzner API token (with validation)
+@_get-token:
+    ./scripts/get-hetzner-token.sh
+
+# Get Cloudflare API token
+@_get-cf-token:
+    cd secrets && agenix -d cloudflare-api-token.age | tr -d '\n\r\t '
+
+# Initialize OpenTofu
+tofu-init:
+    @echo -e "${BLUE}Initializing OpenTofu...${NC}"
+    cd terraform && tofu init
+
+# Plan infrastructure changes
+tofu-plan:
+    @echo -e "${BLUE}Planning infrastructure changes...${NC}"
+    cd terraform && \
+      TF_VAR_hcloud_token="$(just _get-token)" \
+      TF_VAR_cloudflare_token="$(just _get-cf-token)" \
+      tofu plan
+
+# Apply infrastructure changes
+tofu-apply:
+    @echo -e "${YELLOW}Applying infrastructure changes...${NC}"
+    cd terraform && \
+      TF_VAR_hcloud_token="$(just _get-token)" \
+      TF_VAR_cloudflare_token="$(just _get-cf-token)" \
+      tofu apply -auto-approve
+    @echo -e "${GREEN}Infrastructure applied successfully${NC}"
+
+# Destroy infrastructure (requires confirmation)
+tofu-destroy:
+    @echo -e "${RED}WARNING: This will destroy all infrastructure managed by OpenTofu${NC}"
+    @read -p "Are you sure you want to destroy? [y/N]: " confirm && [ "$$confirm" = "y" ] || exit 1
+    @echo -e "${YELLOW}Destroying infrastructure...${NC}"
+    cd terraform && \
+      TF_VAR_hcloud_token="$(just _get-token)" \
+      TF_VAR_cloudflare_token="$(just _get-cf-token)" \
+      tofu destroy -auto-approve
+    @echo -e "${GREEN}Infrastructure destroyed${NC}"
+
+# Show infrastructure outputs
+tofu-output:
+    @cd terraform && tofu output -json
+
+# Show server IP
+tofu-ip:
+    @cd terraform && tofu output -raw server_ip
+
 # Help command
 help:
     @echo -e "${BLUE}=== NixOS Management Commands ===${NC}"
@@ -281,6 +334,13 @@ help:
     @echo "  just clean-build    - Remove build artifacts (result symlinks)"
     @echo "  just clean-all      - Full cleanup (generations + artifacts)"
     @echo "  just search <pkg>   - Search for packages"
+    @echo ""
+    @echo "Infrastructure commands (OpenTofu):"
+    @echo "  just tofu-init      - Initialize OpenTofu"
+    @echo "  just tofu-plan      - Plan infrastructure changes"
+    @echo "  just tofu-apply     - Apply infrastructure changes"
+    @echo "  just tofu-destroy   - Destroy all infrastructure"
+    @echo "  just tofu-ip        - Show server IP"
     @echo ""
     @echo "Script management:"
     @echo "  just list-scripts   - List available scripts"

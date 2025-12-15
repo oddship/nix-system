@@ -22,4 +22,12 @@ in
     rhnvrm_ed25519
     ux303
   ];
+  "hetzner-api-token.age".publicKeys = [
+    rhnvrm_ed25519
+    thinkpadx1
+  ];
+  "cloudflare-api-token.age".publicKeys = [
+    rhnvrm_ed25519
+    thinkpadx1
+  ];
 }

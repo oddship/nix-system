@@ -56,9 +56,40 @@
       nix-flatpak,
       catppuccin,
       chaotic,
+      flake-utils,
       ...
     }@inputs:
+    let
+      systems = [ "x86_64-linux" "aarch64-linux" ];
+      forAllSystems = nixpkgs.lib.genAttrs systems;
+    in
     {
+      # Development shell with OpenTofu and infrastructure tools
+      devShells = forAllSystems (system:
+        let
+          pkgs = import nixpkgs {
+            inherit system;
+            config.allowUnfree = true;
+          };
+        in
+        {
+          default = pkgs.mkShell {
+            buildInputs = with pkgs; [
+              opentofu
+              just
+              jq
+              curl
+              agenix
+            ];
+
+            shellHook = ''
+              echo "Infrastructure dev shell loaded"
+              echo "Available commands: tofu, just, jq, agenix"
+            '';
+          };
+        }
+      );
+
       nixosConfigurations."oddship-thinkpad-x1" = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
         modules = [
