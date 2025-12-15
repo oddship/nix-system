@@ -7,6 +7,13 @@
 
   networking.hostName = "oddship-web";
 
+  # Boot loader - GRUB required for Hetzner Cloud
+  boot.loader.grub = {
+    enable = true;
+    efiSupport = true;
+    efiInstallAsRemovable = true;
+  };
+
   # Enable nix flakes
   nix.settings.experimental-features = [
     "nix-command"
