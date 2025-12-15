@@ -382,7 +382,7 @@ deploy-manual host target:
     @echo -e "${BLUE}Deploying {{host}} to {{target}}...${NC}"
     nixos-rebuild switch --flake .#{{host}} \
         --target-host {{target}} --use-remote-sudo
-    @echo -e "${GREEN}✓ Deployed{{NC}"
+    @echo -e "${GREEN}✓ Deployed${NC}"
 
 # Help command
 help:
