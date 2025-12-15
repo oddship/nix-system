@@ -446,11 +446,11 @@
         "nixpkgs": "nixpkgs_5"
       },
       "locked": {
-        "lastModified": 1765803163,
-        "narHash": "sha256-4tYG+cb33FVLgL7nprS48cFLSkHgYpKeoCu1nQx17Uo=",
+        "lastModified": 1765811721,
+        "narHash": "sha256-XPVIlpN9tUZAy2idTbAuR+Bp7Z7iEpxtJYV9H93sh7I=",
         "owner": "oddship",
         "repo": "oddship.github.io",
-        "rev": "e4f66a5317e059cb790e2599adca11b3f33ac742",
+        "rev": "2e7a0d7627e06cc441ba90f6e31b14989ff4901d",
         "type": "github"
       },
       "original": {
