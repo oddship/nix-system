@@ -296,14 +296,20 @@ tofu-apply:
 
 # Destroy infrastructure (requires confirmation)
 tofu-destroy:
-    @echo -e "${RED}WARNING: This will destroy all infrastructure managed by OpenTofu${NC}"
-    @read -p "Are you sure you want to destroy? [y/N]: " confirm && [ "$$confirm" = "y" ] || exit 1
-    @echo -e "${YELLOW}Destroying infrastructure...${NC}"
+    #!/usr/bin/env bash
+    set -euo pipefail
+    echo -e "${RED}WARNING: This will destroy all infrastructure managed by OpenTofu${NC}"
+    read -p "Are you sure you want to destroy? [y/N]: " confirm
+    if [ "$confirm" != "y" ]; then
+        echo "Cancelled."
+        exit 1
+    fi
+    echo -e "${YELLOW}Destroying infrastructure...${NC}"
     cd terraform && \
       TF_VAR_hcloud_token="$(just _get-token)" \
       TF_VAR_cloudflare_token="$(just _get-cf-token)" \
       tofu destroy -auto-approve
-    @echo -e "${GREEN}Infrastructure destroyed${NC}"
+    echo -e "${GREEN}Infrastructure destroyed${NC}"
 
 # Show infrastructure outputs
 tofu-output:
