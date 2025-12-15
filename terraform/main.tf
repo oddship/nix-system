@@ -8,7 +8,21 @@ terraform {
       source  = "cloudflare/cloudflare"
       version = "~> 4.0"
     }
+    tls = {
+      source  = "hashicorp/tls"
+      version = "~> 4.0"
+    }
+    local = {
+      source  = "hashicorp/local"
+      version = "~> 2.4"
+    }
   }
+}
+
+# Generate a stable SSH host key for the server
+# This allows us to encrypt agenix secrets for the server BEFORE it exists
+resource "tls_private_key" "host_ed25519" {
+  algorithm = "ED25519"
 }
 
 provider "hcloud" {
@@ -67,6 +81,22 @@ resource "hcloud_firewall_attachment" "web" {
   server_ids  = [hcloud_server.web.id]
 }
 
+# Script to inject the pre-generated SSH host key
+# This allows agenix to decrypt secrets using this known key
+resource "local_file" "extra_files_script" {
+  filename        = "${path.module}/extra-files.sh"
+  file_permission = "0755"
+  content         = <<-EOF
+    #!/usr/bin/env bash
+    # Install pre-generated SSH host key so agenix can decrypt secrets
+    mkdir -p etc/ssh
+    echo '${tls_private_key.host_ed25519.private_key_openssh}' > etc/ssh/ssh_host_ed25519_key
+    echo '${tls_private_key.host_ed25519.public_key_openssh}' > etc/ssh/ssh_host_ed25519_key.pub
+    chmod 600 etc/ssh/ssh_host_ed25519_key
+    chmod 644 etc/ssh/ssh_host_ed25519_key.pub
+  EOF
+}
+
 # nixos-anywhere - Install NixOS on the server
 module "nixos_anywhere" {
   source = "github.com/nix-community/nixos-anywhere//terraform/all-in-one"
@@ -91,6 +121,9 @@ module "nixos_anywhere" {
 
   # Build on remote to avoid large uploads
   build_on_remote = true
+
+  # Inject secrets via extra files script
+  extra_files_script = local_file.extra_files_script.filename
 }
 
 # Cloudflare - oddship.net

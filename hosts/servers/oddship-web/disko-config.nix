@@ -1,4 +1,5 @@
-# Example to create a bios compatible gpt partition
+# LVM-based disk layout for Hetzner Cloud VPS
+# Uses LVM to avoid partition label timing issues at boot (disko #736, #739)
 # From: https://github.com/nix-community/nixos-anywhere-examples
 { lib, ... }:
 {
