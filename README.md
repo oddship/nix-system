@@ -44,11 +44,12 @@ nix-system/
 
 ## 🖥️ Hosts
 
-| Host                  | Type    | Description                                       |
-| --------------------- | ------- | ------------------------------------------------- |
-| `oddship-thinkpad-x1` | Desktop | Primary workstation with GNOME, development tools |
-| `oddship-ux303`       | Server  | Laptop running as server, WiFi enabled            |
-| `oddship-beagle`      | Server  | Basic server configuration                        |
+| Host                  | Type    | Description                                             |
+| --------------------- | ------- | ------------------------------------------------------- |
+| `oddship-thinkpad-x1` | Desktop | Primary workstation with GNOME, development tools       |
+| `oddship-ux303`       | Server  | Laptop running as server, WiFi enabled                  |
+| `oddship-beagle`      | Server  | Basic server configuration                              |
+| `oddship-web`         | Server  | Hetzner VPS - Caddy web server with Cloudflare DNS-01  |
 
 ## 🔧 Key Features
 
@@ -95,6 +96,117 @@ User-specific configurations including:
 - GNOME customization
 
 See [home/README.md](home/README.md) for details.
+
+## ☁️ Infrastructure Deployment (Hetzner + Cloudflare)
+
+This repo supports automated infrastructure provisioning with OpenTofu (Terraform fork) for cloud servers.
+
+### Prerequisites
+
+```bash
+# Enter development shell (provides tofu, just, jq, agenix)
+nix develop
+```
+
+### Workflow
+
+**1. Encrypt API Tokens** (one-time setup):
+
+```bash
+cd secrets
+
+# Hetzner API token (64 characters)
+echo -n "your-64-char-hetzner-token" | agenix -e hetzner-api-token.age
+
+# Cloudflare API token (40 characters)
+echo -n "your-cloudflare-token" | agenix -e cloudflare-api-token.age
+```
+
+**2. Provision Infrastructure**:
+
+```bash
+# Initialize OpenTofu
+just tofu-init
+
+# Review planned changes
+just tofu-plan
+
+# Apply infrastructure (creates VPS, DNS records, firewall)
+just tofu-apply
+
+# Get server IP
+just tofu-ip
+```
+
+**3. Bootstrap NixOS** (automated - gets IP from terraform):
+
+```bash
+# Install NixOS on the server (wipes existing OS!)
+just bootstrap oddship-web
+```
+
+This will:
+- Auto-fetch server IP from terraform outputs
+- Ask for confirmation before wiping
+- Install NixOS via nixos-anywhere
+- Reboot into NixOS
+
+**4. Deploy Updates** (after initial bootstrap):
+
+```bash
+# Deploy configuration changes
+just deploy oddship-web
+```
+
+### Adding More Servers
+
+**1. Add to `terraform/main.tf`**:
+
+```hcl
+resource "hcloud_server" "api" {
+  name = "oddship-api"
+  server_type = "cpx11"
+  # ... rest of config ...
+}
+
+output "api_server_ip" {
+  value = hcloud_server.api.ipv4_address
+}
+```
+
+**2. Add to `flake.nix`**:
+
+```nix
+nixosConfigurations."oddship-api" = nixpkgs.lib.nixosSystem {
+  # ... configuration ...
+};
+```
+
+**3. Deploy**:
+
+```bash
+just tofu-apply              # Provision VPS
+just bootstrap oddship-api   # Install NixOS (auto-gets IP!)
+```
+
+### Manual IP Deployment
+
+If you have a server IP but no terraform:
+
+```bash
+# Bootstrap with manual IP
+just bootstrap-manual oddship-web root@167.235.62.179
+
+# Deploy updates with manual IP
+just deploy-manual oddship-web rhnvrm@167.235.62.179
+```
+
+### Infrastructure Cleanup
+
+```bash
+# Destroy all infrastructure (CAREFUL!)
+just tofu-destroy
+```
 
 ## 🚀 Installation
 
