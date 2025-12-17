@@ -42,6 +42,7 @@ in
       dig # DNS lookup utility
       doggo # Modern DNS client
       inetutils # Includes telnet, ftp, ping, rsh, etc.
+      lsof # List open files and network connections
 
       # Archive tools
       zip
