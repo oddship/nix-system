@@ -64,12 +64,16 @@
       ...
     }@inputs:
     let
-      systems = [ "x86_64-linux" "aarch64-linux" ];
+      systems = [
+        "x86_64-linux"
+        "aarch64-linux"
+      ];
       forAllSystems = nixpkgs.lib.genAttrs systems;
     in
     {
       # Development shell with OpenTofu and infrastructure tools
-      devShells = forAllSystems (system:
+      devShells = forAllSystems (
+        system:
         let
           pkgs = import nixpkgs {
             inherit system;
@@ -78,14 +82,17 @@
         in
         {
           default = pkgs.mkShell {
-            buildInputs = with pkgs; [
-              opentofu
-              just
-              jq
-              curl
-            ] ++ [
-              agenix.packages.${system}.default
-            ];
+            buildInputs =
+              with pkgs;
+              [
+                opentofu
+                just
+                jq
+                curl
+              ]
+              ++ [
+                agenix.packages.${system}.default
+              ];
 
             shellHook = ''
               echo "Infrastructure dev shell loaded"

@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.services.server;
 in
@@ -35,7 +40,7 @@ in
 
       # Generate both HTTP and HTTPS hosts for each site
       # HTTP is needed because Cloudflare proxy sends HTTP to origin
-      virtualHosts = lib.foldl' (acc: item: acc // item) {} (
+      virtualHosts = lib.foldl' (acc: item: acc // item) { } (
         lib.mapAttrsToList (
           name: site:
           let
@@ -44,7 +49,8 @@ in
               file_server
               encode gzip
             '';
-          in {
+          in
+          {
             # HTTPS host with TLS
             "${site.domain}" = {
               extraConfig = ''

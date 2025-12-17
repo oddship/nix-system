@@ -1,4 +1,11 @@
-{ config, lib, pkgs, inputs, modulesPath, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  modulesPath,
+  ...
+}:
 {
   imports = [
     (modulesPath + "/profiles/qemu-guest.nix")
@@ -15,8 +22,14 @@
   };
 
   nix.settings = {
-    experimental-features = [ "nix-command" "flakes" ];
-    trusted-users = [ "root" "rhnvrm" ]; # for nixos-rebuild --target-host
+    experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
+    trusted-users = [
+      "root"
+      "rhnvrm"
+    ]; # for nixos-rebuild --target-host
   };
 
   services.openssh = {
@@ -46,7 +59,7 @@
     webserver.enable = true;
     staticSites.oddship = {
       domain = "oddship.net";
-      root = inputs.oddship-site.packages.${pkgs.system}.default;
+      root = inputs.oddship-site.packages.${pkgs.stdenv.hostPlatform.system}.default;
     };
   };
 
@@ -59,7 +72,7 @@
     serviceConfig = {
       LoadCredential = "cloudflare-token:${config.age.secrets.cloudflare-api-token.path}";
       ExecStart = lib.mkForce [
-        ""  # Clear previous ExecStart
+        "" # Clear previous ExecStart
         (pkgs.writeShellScript "caddy-start" ''
           export CLOUDFLARE_DNS_API_TOKEN=$(cat $CREDENTIALS_DIRECTORY/cloudflare-token)
           exec ${config.services.caddy.package}/bin/caddy run --config /etc/caddy/caddy_config --adapter caddyfile
