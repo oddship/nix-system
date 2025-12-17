@@ -1,3 +1,6 @@
 result
 .memory
 *.local.*
+terraform/.terraform/
+terraform/*.tfstate*
+terraform/.terraform.lock.hcl
