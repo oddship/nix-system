@@ -20,6 +20,7 @@ tools=(
     "@sourcegraph/amp"
     "@openai/codex"
     "opencode-ai"
+    "@mariozechner/pi-coding-agent"
 )
 
 # Capture old versions before updating
