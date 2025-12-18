@@ -109,6 +109,7 @@ in
     eza
     ncdu
     websocat
+    libnotify
   ];
 
   xdg.mimeApps.defaultApplications = {
