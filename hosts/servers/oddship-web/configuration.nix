@@ -61,6 +61,10 @@
       domain = "oddship.net";
       root = inputs.oddship-site.packages.${pkgs.stdenv.hostPlatform.system}.default;
     };
+    staticSites.rohanverma = {
+      domain = "rohanverma.net";
+      root = inputs.rohanverma-site.packages.${pkgs.stdenv.hostPlatform.system}.default;
+    };
   };
 
   # agenix secret (host key injected by terraform during install)

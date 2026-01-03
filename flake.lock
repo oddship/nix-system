@@ -216,6 +216,24 @@
         "type": "github"
       }
     },
+    "flake-utils_4": {
+      "inputs": {
+        "systems": "systems_5"
+      },
+      "locked": {
+        "lastModified": 1731533236,
+        "narHash": "sha256-l0KFg5HjrsfsO/JpG+r7fRrqm12kzFHyUHqHCVpMMbI=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "11707dc2f618dd54ca8739b309ec4fc024de578b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -440,6 +458,22 @@
         "type": "github"
       }
     },
+    "nixpkgs_6": {
+      "locked": {
+        "lastModified": 1748370509,
+        "narHash": "sha256-QlL8slIgc16W5UaI3w7xHQEP+Qmv/6vSNTpoZrrSlbk=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "4faa5f5321320e49a78ae7848582f684d64783e9",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "oddship-site": {
       "inputs": {
         "flake-utils": "flake-utils_3",
@@ -459,6 +493,25 @@
         "type": "github"
       }
     },
+    "rohanverma-site": {
+      "inputs": {
+        "flake-utils": "flake-utils_4",
+        "nixpkgs": "nixpkgs_6"
+      },
+      "locked": {
+        "lastModified": 1767452518,
+        "narHash": "sha256-XCZuzhJoKE5JRsbDwz4bPKsO1W5HWJhFiX26jN1fhYQ=",
+        "owner": "rhnvrm",
+        "repo": "rohanverma.net",
+        "rev": "571582f71594b0b1be92dc046a5cd6b504d161d1",
+        "type": "github"
+      },
+      "original": {
+        "owner": "rhnvrm",
+        "repo": "rohanverma.net",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "agenix": "agenix",
@@ -472,6 +525,7 @@
         "nix-flatpak": "nix-flatpak",
         "nixpkgs": "nixpkgs_4",
         "oddship-site": "oddship-site",
+        "rohanverma-site": "rohanverma-site",
         "zen-browser": "zen-browser"
       }
     },
@@ -542,6 +596,21 @@
       }
     },
     "systems_4": {
+      "locked": {
+        "lastModified": 1681028828,
+        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
+        "owner": "nix-systems",
+        "repo": "default",
+        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-systems",
+        "repo": "default",
+        "type": "github"
+      }
+    },
+    "systems_5": {
       "locked": {
         "lastModified": 1681028828,
         "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",

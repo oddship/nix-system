@@ -48,6 +48,10 @@
     oddship-site = {
       url = "github:oddship/oddship.github.io";
     };
+
+    rohanverma-site = {
+      url = "github:rhnvrm/rohanverma.net";
+    };
   };
 
   outputs =
