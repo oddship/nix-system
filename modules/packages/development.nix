@@ -48,6 +48,9 @@ in
       zip
       unzip
 
+      # Android development
+      android-tools
+
       # Syncthing
       syncthing
     ];
