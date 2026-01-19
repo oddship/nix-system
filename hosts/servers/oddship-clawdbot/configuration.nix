@@ -64,8 +64,12 @@
     ln -sfn /run/current-system/sw/bin/ln /bin/ln
   '';
 
-  # Secret for Discord bot token
-  age.secrets.discord-bot-token.file = ../../../secrets/discord-bot-token.age;
+  # Secret for Discord bot token (readable by rhnvrm for clawdbot)
+  age.secrets.discord-bot-token = {
+    file = ../../../secrets/discord-bot-token.age;
+    owner = "rhnvrm";
+    group = "users";
+  };
 
   system.stateVersion = "24.11";
 }

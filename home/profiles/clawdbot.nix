@@ -6,51 +6,30 @@
 }:
 {
   imports = [
-    inputs.nix-clawdbot.homeManagerModules.clawdbot
     ../programs/shell.nix
   ];
 
   home.username = "rhnvrm";
   home.homeDirectory = "/home/rhnvrm";
 
-  programs.clawdbot = {
-    enable = true;
+  # Install clawdbot CLI
+  home.packages = [ pkgs.clawdbot ];
 
-    # Disable first-party plugins (peekaboo is macOS-only)
-    firstParty = {
-      peekaboo.enable = false;
-      summarize.enable = false;
-      oracle.enable = false;
+  # Systemd user service for clawdbot gateway
+  # Config is managed via CLI, not nix
+  systemd.user.services.clawdbot-gateway = {
+    Unit = {
+      Description = "Clawdbot gateway";
+      After = [ "network.target" ];
     };
-
-    # Main instance
-    instances.default = {
-      enable = true;
-
-      # Systemd service for Linux
-      systemd = {
-        enable = true;
-        unitName = "clawdbot-gateway";
-      };
-
-      # Anthropic API
-      providers.anthropic = { };
+    Service = {
+      Type = "simple";
+      ExecStart = "${pkgs.clawdbot}/bin/clawdbot gateway";
+      Restart = "on-failure";
+      RestartSec = 5;
     };
-
-    # Disable plugins
-    plugins = [ ];
-
-    # Upstream clawdbot config for Discord channel
-    config = {
-      channels.discord = {
-        enabled = true;
-        tokenFile = "/run/agenix/discord-bot-token";
-        dm = {
-          enabled = true;
-          policy = "pairing";
-        };
-        groupPolicy = "allowlist";
-      };
+    Install = {
+      WantedBy = [ "default.target" ];
     };
   };
 
