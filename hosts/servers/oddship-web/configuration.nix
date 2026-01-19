@@ -45,6 +45,7 @@
     extraGroups = [ "wheel" ];
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKsBh6mM1T0HyG8Gp4doFEo8izvF8snx4wJXmkyzZCBw hello@rohanverma.net"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGCDqQWyaZr2+cYr+fwvBGnLAd4e6yRGMlgRyp5LgAOV github-actions-deploy"
     ];
   };
 

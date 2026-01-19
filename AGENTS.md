@@ -37,6 +37,20 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `just deploy <host> <target>` - Deploy to remote host
 - `just init-host <host> <target>` - Initialize new host with nixos-anywhere
 
+### Clawdbot Server Management
+- `just clawdbot-init` - Initialize clawdbot terraform
+- `just clawdbot-init-key` - Generate host key for agenix
+- `just clawdbot-provision` - Provision clawdbot server
+- `just clawdbot-ip` - Get clawdbot server IP
+- `just clawdbot-deploy` - Deploy config updates to clawdbot
+- `just clawdbot-setup` - Full setup workflow
+
+### Clawdbot Commands (on remote host)
+- `clawdbot doctor` - Health check
+- `clawdbot pairing list discord` - List pending Discord pairings
+- `clawdbot pairing approve discord <CODE>` - Approve Discord user
+- `journalctl --user -u clawdbot-gateway -f` - View clawdbot logs
+
 ## Architecture
 
 This is a modular, flake-based NixOS configuration with three main architectural layers:
@@ -113,6 +127,7 @@ in
 - **oddship-thinkpad-x1**: Primary desktop workstation (GNOME, development tools)
 - **oddship-ux303**: Laptop server configuration (WiFi enabled)
 - **oddship-beagle**: Basic server configuration
+- **oddship-clawdbot**: Hetzner VPS running clawdbot AI gateway (Discord)
 
 ## Custom Scripts
 

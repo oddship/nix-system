@@ -52,6 +52,11 @@
     rohanverma-site = {
       url = "github:rhnvrm/rohanverma.net";
     };
+
+    nix-clawdbot = {
+      url = "github:clawdbot/nix-clawdbot";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -190,6 +195,30 @@
           )
 
           ./hosts/servers/oddship-web/configuration.nix
+        ];
+      };
+
+      nixosConfigurations."oddship-clawdbot" = nixpkgs.lib.nixosSystem {
+        specialArgs = { inherit inputs; };
+        modules = [
+          {
+            nixpkgs.hostPlatform = "x86_64-linux";
+            nixpkgs.config.allowUnfree = true;
+            # Add nix-clawdbot overlay for pkgs.clawdbot
+            nixpkgs.overlays = [ inputs.nix-clawdbot.overlays.default ];
+          }
+
+          disko.nixosModules.disko
+          agenix.nixosModules.default
+          home-manager.nixosModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.users.rhnvrm = import ./home/profiles/clawdbot.nix;
+            home-manager.extraSpecialArgs = { inherit inputs; };
+          }
+
+          ./hosts/servers/oddship-clawdbot/configuration.nix
         ];
       };
     };

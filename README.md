@@ -49,7 +49,8 @@ nix-system/
 | `oddship-thinkpad-x1` | Desktop | Primary workstation with GNOME, development tools       |
 | `oddship-ux303`       | Server  | Laptop running as server, WiFi enabled                  |
 | `oddship-beagle`      | Server  | Basic server configuration                              |
-| `oddship-web`         | Server  | Hetzner VPS - Caddy web server with Cloudflare DNS-01  |
+| `oddship-web`         | Server  | Hetzner VPS - Caddy web server with Cloudflare DNS-01   |
+| `oddship-clawdbot`    | Server  | Hetzner VPS - Clawdbot AI gateway (Discord)             |
 
 ## 🔧 Key Features
 

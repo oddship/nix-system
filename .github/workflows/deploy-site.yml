@@ -1,0 +1,69 @@
+name: Deploy Site
+
+on:
+  repository_dispatch:
+    types: [deploy-rohanverma-site, deploy-oddship-site]
+  workflow_dispatch:
+    inputs:
+      site:
+        description: 'Site to deploy'
+        required: true
+        default: 'rohanverma-site'
+        type: choice
+        options:
+          - rohanverma-site
+          - oddship-site
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v27
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Determine which site to update
+        id: site
+        run: |
+          if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
+            case "${{ github.event.action }}" in
+              deploy-rohanverma-site) echo "input=rohanverma-site" >> $GITHUB_OUTPUT ;;
+              deploy-oddship-site) echo "input=oddship-site" >> $GITHUB_OUTPUT ;;
+            esac
+          else
+            echo "input=${{ inputs.site }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Update flake input
+        run: nix flake lock --update-input ${{ steps.site.outputs.input }}
+
+      - name: Commit flake.lock
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add flake.lock
+          git diff --staged --quiet && echo "No changes to commit" && exit 0
+          git commit -m "chore: update ${{ steps.site.outputs.input }}"
+          git push
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Deploy to server
+        run: |
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=accept-new \
+            rhnvrm@${{ secrets.DEPLOY_HOST }} \
+            "cd /tmp && \
+             git clone --depth 1 https://github.com/oddship/nix-system.git nix-deploy-$$ && \
+             cd nix-deploy-$$ && \
+             sudo nixos-rebuild switch --flake .#oddship-web && \
+             cd / && rm -rf /tmp/nix-deploy-$$"
