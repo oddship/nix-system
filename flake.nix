@@ -185,7 +185,7 @@
                 (final: prev: {
                   caddy-with-cloudflare = prev.caddy.withPlugins {
                     plugins = [ "github.com/caddy-dns/cloudflare@v0.2.3-0.20251204174556-6dc1fbb7e925" ];
-                    hash = "sha256-SFx321gGSjead35aeqU16EXdl3Z3pW9exK6kK3L1+C8=";
+                    hash = "sha256-htrfa7whiIK2pqtKl6pKFby928dCkMmJp3Hu0e3JBX4=";
                   };
                 })
               ];
