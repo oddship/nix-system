@@ -32,7 +32,11 @@
   };
 
   # Claude CLI for OAuth setup (run `claude setup-token` on server)
-  environment.systemPackages = with pkgs; [ claude-code ];
+  # gh CLI for GitHub operations
+  environment.systemPackages = with pkgs; [
+    claude-code
+    gh
+  ];
 
   users.users.rhnvrm = {
     isNormalUser = true;

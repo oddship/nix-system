@@ -2,9 +2,11 @@
   config,
   lib,
   pkgs,
-  gitConfigExtra ? "",
   ...
 }:
+let
+  gitConfigExtra = config._module.args.gitConfigExtra or "";
+in
 {
   # Git configuration
   programs.git = {
@@ -27,10 +29,8 @@
       };
     };
 
-    includes = [
-      {
-        path = gitConfigExtra; # TODO: need to figure out a better way to do this
-      }
+    includes = lib.mkIf (gitConfigExtra != "") [
+      { path = gitConfigExtra; }
     ];
   };
 

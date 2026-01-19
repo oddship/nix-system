@@ -7,6 +7,7 @@
 {
   imports = [
     ../programs/shell.nix
+    ../programs/git.nix
   ];
 
   home.username = "rhnvrm";
