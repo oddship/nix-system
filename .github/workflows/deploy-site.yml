@@ -66,7 +66,7 @@ jobs:
           ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=accept-new \
             rhnvrm@${{ secrets.DEPLOY_HOST }} \
             "cd /tmp && \
-             git clone --depth 1 https://github.com/oddship/nix-system.git nix-deploy-$$ && \
-             cd nix-deploy-$$ && \
+             curl -sL https://github.com/oddship/nix-system/archive/refs/heads/master.tar.gz | tar xz && \
+             cd nix-system-master && \
              sudo nixos-rebuild switch --flake .#oddship-web && \
-             cd / && rm -rf /tmp/nix-deploy-$$"
+             cd / && rm -rf /tmp/nix-system-master"
