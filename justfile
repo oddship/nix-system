@@ -184,12 +184,16 @@ self-update:
 secret action name="":
     @if [ "{{action}}" = "edit" ] && [ -n "{{name}}" ]; then \
         echo -e "${BLUE}Editing secret: {{name}}${NC}"; \
-        agenix -e {{flake_path}}/secrets/{{name}}.age; \
+        cd {{flake_path}}/secrets && agenix -e {{name}}.age; \
+    elif [ "{{action}}" = "rekey" ]; then \
+        echo -e "${BLUE}Re-keying all secrets...${NC}"; \
+        cd {{flake_path}}/secrets && agenix -r; \
+        echo -e "${GREEN}Secrets re-keyed${NC}"; \
     elif [ "{{action}}" = "list" ]; then \
         echo -e "${BLUE}=== Secrets ===${NC}"; \
         ls -la {{flake_path}}/secrets/*.age 2>/dev/null || echo "No secrets found"; \
     else \
-        echo -e "${RED}Usage: just secret [edit|list] [name]${NC}"; \
+        echo -e "${RED}Usage: just secret [edit|rekey|list] [name]${NC}"; \
     fi
 
 # Create module structure for refactoring
@@ -525,6 +529,13 @@ help:
     @echo "  just server-setup-secrets - Configure agenix (step 2)"
     @echo "  just server-provision    - Deploy server (step 3)"
     @echo ""
+    @echo "Clawdbot Server:"
+    @echo "  just clawdbot-init       - Initialize clawdbot terraform"
+    @echo "  just clawdbot-init-key   - Generate host key"
+    @echo "  just clawdbot-provision  - Provision server"
+    @echo "  just clawdbot-ip         - Get server IP"
+    @echo "  just clawdbot-deploy     - Deploy config updates"
+    @echo ""
     @echo "NixOS Deployment:"
     @echo "  just bootstrap <host>       - Install NixOS (auto-gets IP from terraform)"
     @echo "  just deploy <host>          - Deploy updates (auto-gets IP from terraform)"
@@ -543,3 +554,60 @@ help:
     @echo "  just secret edit <n>- Edit encrypted secret"
     @echo ""
     @echo "Run 'just --list' for all commands"
+
+# ──────────────────────────────────────────────────────────────
+# Clawdbot Infrastructure (separate from oddship-web)
+# ──────────────────────────────────────────────────────────────
+
+# Initialize clawdbot terraform
+clawdbot-init: _check-infra-deps
+    @echo -e "${BLUE}Initializing clawdbot terraform...${NC}"
+    cd terraform/clawdbot && tofu init
+
+# Generate clawdbot host key
+clawdbot-init-key: _check-infra-deps
+    #!/usr/bin/env bash
+    set -euo pipefail
+    cd {{justfile_directory()}}
+    TOKEN=$(./scripts/get-hetzner-token.sh)
+    cd terraform/clawdbot
+    echo -e "${BLUE}Generating clawdbot host key...${NC}"
+    TF_VAR_hcloud_token="$TOKEN" \
+      tofu apply -target=tls_private_key.host_ed25519 -auto-approve
+    echo -e "${GREEN}Host key generated. Update secrets/secrets.nix with:${NC}"
+    tofu output -raw host_ed25519_public_key
+
+# Provision clawdbot server
+clawdbot-provision: _check-infra-deps
+    #!/usr/bin/env bash
+    set -euo pipefail
+    cd {{justfile_directory()}}
+    TOKEN=$(./scripts/get-hetzner-token.sh)
+    cd terraform/clawdbot
+    echo -e "${BLUE}Provisioning clawdbot server...${NC}"
+    TF_VAR_hcloud_token="$TOKEN" \
+      tofu apply -auto-approve
+    echo -e "${GREEN}Server provisioned${NC}"
+
+# Get clawdbot server IP
+clawdbot-ip: _check-infra-deps
+    @cd terraform/clawdbot && tofu output -raw server_ip
+
+# Deploy config to clawdbot
+clawdbot-deploy: _check-infra-deps
+    #!/usr/bin/env bash
+    set -euo pipefail
+    echo -e "${BLUE}Deploying to clawdbot...${NC}"
+    SERVER_IP=$(cd {{justfile_directory()}}/terraform/clawdbot && tofu output -raw server_ip)
+    nixos-rebuild switch --flake .#oddship-clawdbot \
+        --target-host rhnvrm@$SERVER_IP --use-remote-sudo
+    echo -e "${GREEN}Deployed to clawdbot${NC}"
+
+# Full clawdbot setup workflow
+clawdbot-setup: clawdbot-init clawdbot-init-key
+    @echo ""
+    @echo -e "${GREEN}=== Next Steps ===${NC}"
+    @echo "1. Update secrets/secrets.nix with the host key above"
+    @echo "2. Run: just secret edit discord-bot-token"
+    @echo "3. Run: cd secrets && agenix -r"
+    @echo "4. Run: just clawdbot-provision"

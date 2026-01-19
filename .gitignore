@@ -1,6 +1,14 @@
 result
 .memory
 *.local.*
+
+# Terraform (oddship-web)
 terraform/.terraform/
 terraform/*.tfstate*
 terraform/.terraform.lock.hcl
+
+# Terraform (clawdbot)
+terraform/clawdbot/.terraform/
+terraform/clawdbot/*.tfstate*
+terraform/clawdbot/.terraform.lock.hcl
+terraform/clawdbot/extra-files.sh
