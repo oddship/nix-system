@@ -35,6 +35,7 @@ in
       font-manager
       file
       imagemagick
+      psmisc # provides killall, fuser, pstree
     ];
   };
 }
