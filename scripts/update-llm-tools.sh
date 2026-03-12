@@ -32,10 +32,15 @@ done
 
 echo -e "${BLUE}Updating Node.js LLM CLI tools...${NC}"
 
-# Update each tool
+# Install missing tools, update existing ones
 for tool in "${tools[@]}"; do
-    echo -e "${YELLOW}Updating ${tool}...${NC}"
-    npm update -g "$tool"
+    if [ "${old_versions[$tool]}" = "not installed" ]; then
+        echo -e "${YELLOW}Installing ${tool}...${NC}"
+        npm install -g "$tool"
+    else
+        echo -e "${YELLOW}Updating ${tool}...${NC}"
+        npm update -g "$tool"
+    fi
 done
 
 echo -e "${GREEN}All LLM tools updated successfully!${NC}"

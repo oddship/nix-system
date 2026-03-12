@@ -117,6 +117,9 @@
           {
             nixpkgs.hostPlatform = "x86_64-linux";
             nixpkgs.config.allowUnfree = true;
+            chaotic.nyx.overlay.flakeNixpkgs.config = {
+              allowUnfree = true;
+            };
           }
 
           disko.nixosModules.disko
