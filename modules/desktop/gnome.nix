@@ -43,6 +43,7 @@ in
       extraPackages = with pkgs; [
         intel-media-driver # VAAPI (iHD)
         intel-compute-runtime # OpenCL
+        vulkan-loader # Vulkan runtime (needed for GPU compute in sandboxed agents)
       ];
     };
 
