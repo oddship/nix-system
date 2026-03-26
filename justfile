@@ -623,3 +623,57 @@ clawdbot-setup: clawdbot-init clawdbot-init-key
     @echo "2. Run: just secret edit discord-bot-token"
     @echo "3. Run: cd secrets && agenix -r"
     @echo "4. Run: just clawdbot-provision"
+# ──────────────────────────────────────────────────────────────
+# rhnvrm-private Infrastructure (IPv6-only personal server)
+# ──────────────────────────────────────────────────────────────
+
+# Initialize rhnvrm-private terraform
+rhnvrm-init: _check-infra-deps
+    @echo -e "${BLUE}Initializing rhnvrm-private terraform...${NC}"
+    cd terraform/rhnvrm-private && tofu init
+
+# Generate rhnvrm-private host key
+rhnvrm-init-key: _check-infra-deps
+    #!/usr/bin/env bash
+    set -euo pipefail
+    cd {{justfile_directory()}}
+    TOKEN=$(./scripts/get-hetzner-token.sh)
+    cd terraform/rhnvrm-private
+    echo -e "${BLUE}Generating rhnvrm-private host key...${NC}"
+    TF_VAR_hcloud_token="$TOKEN" \
+      tofu apply -target=tls_private_key.host_ed25519 -auto-approve
+    echo -e "${GREEN}Host key generated. Update secrets/secrets.nix with:${NC}"
+    tofu output -raw host_ed25519_public_key
+
+# Provision rhnvrm-private server
+rhnvrm-provision: _check-infra-deps
+    #!/usr/bin/env bash
+    set -euo pipefail
+    cd {{justfile_directory()}}
+    TOKEN=$(./scripts/get-hetzner-token.sh)
+    cd terraform/rhnvrm-private
+    echo -e "${BLUE}Provisioning rhnvrm-private server...${NC}"
+    TF_VAR_hcloud_token="$TOKEN" \
+      tofu apply -auto-approve
+    echo -e "${GREEN}Server provisioned${NC}"
+
+# Get rhnvrm-private server IPv6
+rhnvrm-ip: _check-infra-deps
+    @cd terraform/rhnvrm-private && tofu output -raw server_ipv6
+
+# SSH into rhnvrm-private
+rhnvrm-ssh: _check-infra-deps
+    #!/usr/bin/env bash
+    set -euo pipefail
+    SERVER_IPV6=$(cd {{justfile_directory()}}/terraform/rhnvrm-private && tofu output -raw server_ipv6)
+    ssh rhnvrm@"[${SERVER_IPV6}]"
+
+# Deploy config to rhnvrm-private
+rhnvrm-deploy: _check-infra-deps
+    #!/usr/bin/env bash
+    set -euo pipefail
+    echo -e "${BLUE}Deploying to rhnvrm-private...${NC}"
+    SERVER_IPV6=$(cd {{justfile_directory()}}/terraform/rhnvrm-private && tofu output -raw server_ipv6)
+    nixos-rebuild switch --flake .#rhnvrm-private \
+        --target-host rhnvrm@"[${SERVER_IPV6}]" --use-remote-sudo
+    echo -e "${GREEN}Deployed to rhnvrm-private${NC}"

@@ -224,5 +224,28 @@
           ./hosts/servers/oddship-clawdbot/configuration.nix
         ];
       };
+
+      nixosConfigurations."rhnvrm-private" = nixpkgs.lib.nixosSystem {
+        specialArgs = { inherit inputs; };
+        modules = [
+          {
+            nixpkgs.hostPlatform = "x86_64-linux";
+            nixpkgs.config.allowUnfree = true;
+            nixpkgs.overlays = [
+              (final: prev: {
+                caddy-with-tailscale = prev.caddy.withPlugins {
+                  plugins = [ "github.com/tailscale/caddy-tailscale@v0.0.0-20250207163903-69a970c84556" ];
+                  hash = "sha256-oOW8PmJnqZkiDoU1eDFuMH2DNzd1O0oguQJgP3IdnDs=";
+                };
+              })
+            ];
+          }
+
+          disko.nixosModules.disko
+          agenix.nixosModules.default
+
+          ./hosts/servers/rhnvrm-private/configuration.nix
+        ];
+      };
     };
 }
