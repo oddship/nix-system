@@ -13,6 +13,8 @@ hostname := `hostname`
 flake_path := justfile_directory()
 current_system := if os() == "linux" { "x86_64-linux" } else { "unknown" }
 
+
+
 # Colors for output
 export BLUE := '\033[0;34m'
 export GREEN := '\033[0;32m'
@@ -472,11 +474,21 @@ deploy host:
     set -euo pipefail
     echo -e "${BLUE}Deploying {{host}}...${NC}"
 
-    SERVER_IP=$(cd terraform && tofu output -json | jq -r '.server_ip.value')
+    SERVER_IP=$(cd terraform && tofu output -json 2>/dev/null | jq -r '.server_ip.value' 2>/dev/null || true)
 
     if [ -z "$SERVER_IP" ] || [ "$SERVER_IP" = "null" ]; then
-        echo -e "${RED}Error: Could not get server IP from terraform${NC}"
-        exit 1
+        # Fallback: resolve IP from known domain when terraform state is unavailable
+        case "{{host}}" in
+            oddship-web) SERVER_IP=$(dig +short oddship.net @1.1.1.1 | head -1) ;;
+            oddship-clawdbot) SERVER_IP=$(cd {{justfile_directory()}}/terraform/clawdbot && tofu output -raw server_ip 2>/dev/null || true) ;;
+            *) ;;
+        esac
+        if [ -z "$SERVER_IP" ]; then
+            echo -e "${RED}Error: Could not determine IP for {{host}}${NC}"
+            echo "Use: just deploy-manual {{host}} rhnvrm@<ip>"
+            exit 1
+        fi
+        echo -e "${YELLOW}Using DNS-resolved IP (no terraform state)${NC}"
     fi
 
     echo -e "${YELLOW}Target: rhnvrm@$SERVER_IP${NC}"
