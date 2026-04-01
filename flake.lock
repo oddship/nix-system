@@ -595,11 +595,11 @@
         "nixpkgs": "nixpkgs_7"
       },
       "locked": {
-        "lastModified": 1775071986,
-        "narHash": "sha256-GNSe6p1w43o7oIiedaljH5rRgxhhRUtj1LxlprU4n4c=",
+        "lastModified": 1775075530,
+        "narHash": "sha256-miABzCqvQBvTdlDl0B2MBeHemP3+22XCXRdpuQwN+fc=",
         "owner": "rhnvrm",
         "repo": "rohanverma.net",
-        "rev": "7644db74dfe40834b86dd49911cf623cea0d3171",
+        "rev": "2289975b652b0582ea8c72072f0ba735dc878b17",
         "type": "github"
       },
       "original": {
