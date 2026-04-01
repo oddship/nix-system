@@ -20,24 +20,8 @@
 
   networking.hostName = "rhnvrm-private";
 
-  # IPv6-only static networking for Hetzner
-  networking.useDHCP = false;
-  networking.interfaces.ens3 = {
-    ipv6.addresses = [
-      {
-        address = "PLACEHOLDER_IPV6";
-        prefixLength = 64;
-      }
-    ];
-  };
-  networking.defaultGateway6 = {
-    address = "fe80::1";
-    interface = "ens3";
-  };
-  networking.nameservers = [
-    "2a01:4ff:ff00::add:1"
-    "2a01:4ff:ff00::add:2"
-  ];
+  # Hetzner Cloud networking — DHCP for IPv4, SLAAC for IPv6
+  networking.useDHCP = true;
 
   boot.loader.grub = {
     efiSupport = true;

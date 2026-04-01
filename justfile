@@ -665,7 +665,7 @@ rhnvrm-ip: _check-infra-deps
 rhnvrm-ssh: _check-infra-deps
     #!/usr/bin/env bash
     set -euo pipefail
-    SERVER_IPV6=$(cd {{justfile_directory()}}/terraform/rhnvrm-private && tofu output -raw server_ipv6)
+    SERVER_IP=$(cd {{justfile_directory()}}/terraform/rhnvrm-private && tofu output -raw server_ipv4)
     ssh rhnvrm@"[${SERVER_IPV6}]"
 
 # Deploy config to rhnvrm-private
@@ -673,7 +673,7 @@ rhnvrm-deploy: _check-infra-deps
     #!/usr/bin/env bash
     set -euo pipefail
     echo -e "${BLUE}Deploying to rhnvrm-private...${NC}"
-    SERVER_IPV6=$(cd {{justfile_directory()}}/terraform/rhnvrm-private && tofu output -raw server_ipv6)
+    SERVER_IP=$(cd {{justfile_directory()}}/terraform/rhnvrm-private && tofu output -raw server_ipv4)
     nixos-rebuild switch --flake .#rhnvrm-private \
-        --target-host rhnvrm@"[${SERVER_IPV6}]" --use-remote-sudo
+        --target-host root@"${SERVER_IP}"
     echo -e "${GREEN}Deployed to rhnvrm-private${NC}"

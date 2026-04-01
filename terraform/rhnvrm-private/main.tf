@@ -39,7 +39,7 @@ resource "hcloud_server" "rhnvrm" {
   ssh_keys    = [data.hcloud_ssh_key.default.id]
 
   public_net {
-    ipv4_enabled = false
+    ipv4_enabled = true
     ipv6_enabled = true
   }
 }
@@ -81,7 +81,7 @@ module "nixos_anywhere" {
 
   nixos_system_attr      = "../..#nixosConfigurations.rhnvrm-private.config.system.build.toplevel"
   nixos_partitioner_attr = "../..#nixosConfigurations.rhnvrm-private.config.system.build.diskoScript"
-  target_host            = "[${hcloud_server.rhnvrm.ipv6_address}]"
+  target_host            = hcloud_server.rhnvrm.ipv4_address
   target_user            = "root"
   target_port            = 22
   instance_id            = hcloud_server.rhnvrm.id

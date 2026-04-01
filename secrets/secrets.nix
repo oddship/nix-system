@@ -6,7 +6,7 @@ let
   ux303 = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIN+P0DWqkyUAV26Gh2vBP7LnUV/VhehvMXsnBU0QLAi2";
   oddship_web = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIENlny0k4YL4ZoLY2A8Z82n4PyK2pR0XtiM7S9KgPOGV"; # hetzner vps
   oddship_clawdbot = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFtR4K88f2Wl0BWHRmmaa/o5uOh4oaaLNL2yPvziRVya"; # update with key from: just clawdbot-init-key
-  rhnvrm_private = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEYdlXCCxbiYuNUGgM+3Oc8vH3PlfHn7dPVR+/NNV4ti";
+  rhnvrm_private = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF34dEsYMaBx0Fx02Ik/gEVII9ViSNlP17l+mFhtOk+K";
   systems = [
     oddship_web
     oddship_clawdbot
