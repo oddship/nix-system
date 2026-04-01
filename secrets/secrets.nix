@@ -39,4 +39,8 @@ in
     rhnvrm_ed25519
     oddship_clawdbot
   ];
+  "umami-app-secret.age".publicKeys = [
+    rhnvrm_ed25519
+    oddship_web
+  ];
 }

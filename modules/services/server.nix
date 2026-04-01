@@ -31,6 +31,21 @@ in
       );
       default = { };
     };
+
+    reverseProxySites = lib.mkOption {
+      type = lib.types.attrsOf (
+        lib.types.submodule {
+          options = {
+            domain = lib.mkOption { type = lib.types.str; };
+            upstream = lib.mkOption {
+              type = lib.types.str;
+              description = "Upstream URL to proxy to (e.g. http://127.0.0.1:3000)";
+            };
+          };
+        }
+      );
+      default = { };
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -41,7 +56,8 @@ in
       # Generate both HTTP and HTTPS hosts for each site
       # HTTP is needed because Cloudflare proxy sends HTTP to origin
       virtualHosts = lib.foldl' (acc: item: acc // item) { } (
-        lib.mapAttrsToList (
+        # Static sites
+        (lib.mapAttrsToList (
           name: site:
           let
             commonConfig = ''
@@ -67,7 +83,31 @@ in
               extraConfig = commonConfig;
             };
           }
-        ) cfg.staticSites
+        ) cfg.staticSites)
+        ++
+        # Reverse proxy sites
+        (lib.mapAttrsToList (
+          name: site:
+          let
+            commonConfig = ''
+              reverse_proxy ${site.upstream}
+            '';
+          in
+          {
+            "${site.domain}" = {
+              extraConfig = ''
+                ${commonConfig}
+
+                tls {
+                  dns cloudflare {env.CLOUDFLARE_DNS_API_TOKEN}
+                }
+              '';
+            };
+            "http://${site.domain}" = {
+              extraConfig = commonConfig;
+            };
+          }
+        ) cfg.reverseProxySites)
       );
     };
 

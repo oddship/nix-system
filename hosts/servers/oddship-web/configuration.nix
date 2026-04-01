@@ -66,10 +66,28 @@
       domain = "rohanverma.net";
       root = inputs.rohanverma-site.packages.${pkgs.stdenv.hostPlatform.system}.default;
     };
+    reverseProxySites.umami = {
+      domain = "analytics.rohanverma.net";
+      upstream = "http://127.0.0.1:3000";
+    };
   };
 
-  # agenix secret (host key injected by terraform during install)
+  # Umami web analytics
+  services.umami = {
+    enable = true;
+    createPostgresqlDatabase = true;
+  };
+
+  # Load APP_SECRET from agenix-managed file
+  systemd.services.umami.serviceConfig.EnvironmentFile = config.age.secrets.umami-app-secret.path;
+
+  # agenix secrets (host key injected by terraform during install)
   age.secrets.cloudflare-api-token.file = ../../../secrets/cloudflare-api-token.age;
+  age.secrets.umami-app-secret = {
+    file = ../../../secrets/umami-app-secret.age;
+    owner = "umami";
+    group = "umami";
+  };
 
   # Caddy DNS-01 challenge - use agenix secret via script wrapper
   # Use list format ["" "new"] to clear previous ExecStart and set new one
