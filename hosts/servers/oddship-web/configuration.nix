@@ -76,10 +76,10 @@
   services.umami = {
     enable = true;
     createPostgresqlDatabase = true;
+    settings = {
+      APP_SECRET_FILE = config.age.secrets.umami-app-secret.path;
+    };
   };
-
-  # Load APP_SECRET from agenix-managed file
-  systemd.services.umami.serviceConfig.EnvironmentFile = config.age.secrets.umami-app-secret.path;
 
   # agenix secrets (host key injected by terraform during install)
   age.secrets.cloudflare-api-token.file = ../../../secrets/cloudflare-api-token.age;
