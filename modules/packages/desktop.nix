@@ -28,7 +28,7 @@ in
       wl-clipboard
       pritunl-ssh
       syncthingtray-minimal
-      ktailctl
+      gnomeExtensions.tailscale-qs
       font-manager
       file
       imagemagick

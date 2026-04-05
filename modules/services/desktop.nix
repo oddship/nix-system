@@ -37,6 +37,19 @@ in
 
     # Network services
     services.tailscale.enable = true;
+
+    # Allow GUI tools (extensions) to control Tailscale without sudo
+    systemd.services.tailscale-operator = {
+      description = "Set Tailscale operator for GUI control";
+      after = [ "tailscaled.service" ];
+      wants = [ "tailscaled.service" ];
+      wantedBy = [ "multi-user.target" ];
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+        ExecStart = "${pkgs.tailscale}/bin/tailscale set --operator=rhnvrm";
+      };
+    };
     services.netbird.enable = true;
 
     # File synchronization

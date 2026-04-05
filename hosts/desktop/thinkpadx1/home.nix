@@ -13,7 +13,6 @@ let
   # TODO: syncthingtray does not work on first boot correctly
   autostartPrograms = [
     pkgs.syncthingtray-minimal
-    pkgs.ktailctl
   ];
 in
 {
@@ -60,12 +59,6 @@ in
             # Assume that it was made with makeDesktopEntry, which exposes a
             # text attribute with the contents of the .desktop file
             text = pkg.desktopItem.text;
-          }
-        # For ktailctl, /share/applications/org.fkoehler.KTailctl.desktop is the name so add a manual
-        # entry for it
-        else if pkg.pname == "ktailctl" then
-          {
-            source = (pkg + "/share/applications/org.fkoehler.KTailctl.desktop");
           }
         else
           {

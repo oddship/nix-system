@@ -7,7 +7,6 @@ let
 
   autostartPrograms = [
     pkgs.syncthingtray-minimal
-    pkgs.ktailctl
   ];
 in
 {
@@ -158,6 +157,7 @@ in
         "clipboard-history@alexsaveau.dev"
         "just-perfection-desktop@just-perfection"
         "monitor@astraext.github.io"
+        "tailscale-gnome-qs@tailscale-qs.github.io"
       ];
     };
 
@@ -251,12 +251,6 @@ in
             # Assume that it was made with makeDesktopEntry, which exposes a
             # text attribute with the contents of the .desktop file
             text = pkg.desktopItem.text;
-          }
-        # For ktailctl, /share/applications/org.fkoehler.KTailctl.desktop is the name so add a manual
-        # entry for it
-        else if pkg.pname == "ktailctl" then
-          {
-            source = (pkg + "/share/applications/org.fkoehler.KTailctl.desktop");
           }
         else
           {
