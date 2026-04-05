@@ -54,15 +54,15 @@
       # Language servers
       pyright # Python LSP
       nil # Nix LSP
-      nodePackages.typescript-language-server # TypeScript/JavaScript
+      typescript-language-server # TypeScript/JavaScript
       gopls # Go LSP
       rust-analyzer # Rust LSP
-      nodePackages.bash-language-server # Bash LSP
-      nodePackages.vscode-langservers-extracted # JSON/HTML/CSS/ESLint
+      bash-language-server # Bash LSP
+      vscode-langservers-extracted # JSON/HTML/CSS/ESLint
       yaml-language-server # YAML LSP
 
       # Formatters and tools
-      nodePackages.prettier
+      prettier
     ];
 
     extraConfig = ''
@@ -128,7 +128,7 @@
       " Color scheme (set in Lua config after plugin loads)
     '';
 
-    extraLuaConfig = ''
+    initLua = ''
       -- Bootstrap lazy.nvim
       local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
       if not vim.loop.fs_stat(lazypath) then

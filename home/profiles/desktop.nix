@@ -35,6 +35,15 @@ in
   # GTK theming (manual since catppuccin GTK port was archived)
   gtk = {
     enable = true;
+    gtk4.theme = {
+      name = "catppuccin-mocha-blue-standard+rimless,black";
+      package = pkgs.catppuccin-gtk.override {
+        accents = [ "blue" ];
+        size = "standard";
+        tweaks = [ "rimless" "black" ];
+        variant = "mocha";
+      };
+    };
     theme = {
       name = "catppuccin-mocha-blue-standard+rimless,black";
       package = pkgs.catppuccin-gtk.override {
@@ -66,6 +75,10 @@ in
     username = "rhnvrm";
     homeDirectory = "/home/rhnvrm";
     stateVersion = "24.11";
+    sessionVariables = {
+      # rage uses this for passphrase prompts instead of /dev/tty
+      PINENTRY_PROGRAM = "${pkgs.pinentry-gnome3}/bin/pinentry-gnome3";
+    };
   };
 
   home.packages = with pkgs; [
@@ -99,7 +112,8 @@ in
     wget
     ripgrep
     fd
-    age
+    rage
+    pinentry-gnome3
     tree
     jq
     sqlite

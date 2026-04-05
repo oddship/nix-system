@@ -22,14 +22,16 @@
   # Enable resolved for better DNS management
   services.resolved = {
     enable = lib.mkDefault true;
-    dnssec = lib.mkDefault "true";
-    domains = [ "~." ];
-    fallbackDns = [
-      "1.1.1.1"
-      "1.0.0.1"
-      "2606:4700:4700::1111"
-      "2606:4700:4700::1001"
-    ];
+    settings.Resolve = {
+      DNSSEC = lib.mkDefault "true";
+      Domains = [ "~." ];
+      FallbackDNS = [
+        "1.1.1.1"
+        "1.0.0.1"
+        "2606:4700:4700::1111"
+        "2606:4700:4700::1001"
+      ];
+    };
   };
 
   # Network optimization

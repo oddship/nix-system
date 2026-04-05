@@ -75,7 +75,7 @@
     tmux
     just
     neovim
-    nixfmt-rfc-style
+    nixfmt
     nixd
     nil
   ];
