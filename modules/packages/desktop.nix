@@ -28,6 +28,7 @@ in
       wl-clipboard
       pritunl-ssh
       syncthingtray-minimal
+      # Overridden in flake.nix to the maintained tailscale-qs fork for GNOME 49+
       gnomeExtensions.tailscale-qs
       font-manager
       file

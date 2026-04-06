@@ -157,6 +157,7 @@ in
         "clipboard-history@alexsaveau.dev"
         "just-perfection-desktop@just-perfection"
         "monitor@astraext.github.io"
+        # Maintained fork UUID; packaged via flake overlay for GNOME 49/50 support
         "tailscale-gnome-qs@tailscale-qs.github.io"
       ];
     };

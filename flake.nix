@@ -105,6 +105,41 @@
           {
             nixpkgs.hostPlatform = "x86_64-linux";
             nixpkgs.config.allowUnfree = true;
+            nixpkgs.overlays = [
+              (final: prev: {
+                gnomeExtensions = prev.gnomeExtensions // {
+                  tailscale-qs = prev.stdenvNoCC.mkDerivation {
+                    pname = "gnome-shell-extension-tailscale-qs";
+                    version = "5-unstable-2026-04-06";
+
+                    src = prev.fetchFromGitHub {
+                      owner = "tailscale-qs";
+                      repo = "tailscale-gnome-qs";
+                      rev = "3120bcb98d7ee44b013a06d7553358821c825762";
+                      hash = "sha256-12V8SuwUf/qnGEkmDQ2Lf1EMWB5/EKn0namqsw3YY/E=";
+                    };
+
+                    dontBuild = true;
+
+                    installPhase = ''
+                      runHook preInstall
+                      mkdir -p $out/share/gnome-shell/extensions
+                      cp -r tailscale-gnome-qs@tailscale-qs.github.io                         $out/share/gnome-shell/extensions/
+                      runHook postInstall
+                    '';
+
+                    passthru.extensionUuid = "tailscale-gnome-qs@tailscale-qs.github.io";
+
+                    meta = with prev.lib; {
+                      description = "GNOME Quick Settings extension for Tailscale";
+                      homepage = "https://github.com/tailscale-qs/tailscale-gnome-qs";
+                      license = licenses.gpl3Plus;
+                      platforms = platforms.linux;
+                    };
+                  };
+                };
+              })
+            ];
             chaotic.nyx.overlay.flakeNixpkgs.config = {
               allowUnfree = true;
             };
