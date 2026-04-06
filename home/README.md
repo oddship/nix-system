@@ -28,7 +28,7 @@ Complete desktop user environment profile.
 - Desktop packages (btop, htop, development tools)
 - GNOME extensions and dconf settings
 - XDG mime associations
-- Autostart applications (syncthingtray)
+- Autostart applications (syncthingtray, netbird-ui)
 
 **Key Features:**
 - GNOME shell customization (extensions, keybindings, favorites)

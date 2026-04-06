@@ -181,7 +181,7 @@ Desktop application packages.
 - Browsers (Chromium, Zen Browser)
 - Productivity apps (Obsidian, TickTick)
 - Communication (Claude Desktop)
-- Utilities (cliphist, syncthingtray, Tailscale QS GNOME extension)
+- Utilities (cliphist, syncthingtray, Tailscale QS GNOME extension, netbird-ui)
 
 **Usage:**
 ```nix

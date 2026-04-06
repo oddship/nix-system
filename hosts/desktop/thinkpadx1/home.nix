@@ -13,6 +13,7 @@ let
   # TODO: syncthingtray does not work on first boot correctly
   autostartPrograms = [
     pkgs.syncthingtray-minimal
+    pkgs.netbird-ui
   ];
 in
 {
@@ -59,6 +60,11 @@ in
             # Assume that it was made with makeDesktopEntry, which exposes a
             # text attribute with the contents of the .desktop file
             text = pkg.desktopItem.text;
+          }
+        # Some packages ship desktop files that do not match pname.
+        else if pkg.pname == "netbird-ui" then
+          {
+            source = (pkg + "/share/applications/netbird.desktop");
           }
         else
           {

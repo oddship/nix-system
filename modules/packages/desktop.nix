@@ -30,6 +30,7 @@ in
       syncthingtray-minimal
       # Overridden in flake.nix to the maintained tailscale-qs fork for GNOME 49+
       gnomeExtensions.tailscale-qs
+      netbird-ui
       font-manager
       file
       imagemagick
