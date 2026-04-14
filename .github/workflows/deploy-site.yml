@@ -48,13 +48,14 @@ jobs:
       - name: Commit flake.lock
         run: |
           set -euo pipefail
+          branch="${GITHUB_REF_NAME:-$(git rev-parse --abbrev-ref HEAD)}"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add flake.lock
           git diff --staged --quiet && echo "No changes to commit" && exit 0
           git commit -m "chore: update ${{ steps.site.outputs.input }}"
-          git pull --rebase origin master
-          git push
+          git pull --rebase origin "$branch"
+          git push origin "HEAD:$branch"
 
       - name: Setup SSH
         run: |
@@ -64,14 +65,10 @@ jobs:
           ssh-keyscan -H ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts 2>/dev/null || true
 
       - name: Deploy to server
+        env:
+          NIX_SSHOPTS: -i ~/.ssh/deploy_key -o StrictHostKeyChecking=accept-new -o ServerAliveInterval=60 -o ServerAliveCountMax=10
         run: |
-          ssh -i ~/.ssh/deploy_key \
-            -o StrictHostKeyChecking=accept-new \
-            -o ServerAliveInterval=60 \
-            -o ServerAliveCountMax=10 \
-            rhnvrm@${{ secrets.DEPLOY_HOST }} \
-            "cd /tmp && \
-             curl -sL https://github.com/oddship/nix-system/archive/refs/heads/master.tar.gz | tar xz && \
-             cd nix-system-master && \
-             sudo nixos-rebuild switch --flake .#oddship-web && \
-             cd / && rm -rf /tmp/nix-system-master"
+          nix run nixpkgs#nixos-rebuild -- switch \
+            --flake .#oddship-web \
+            --target-host rhnvrm@${{ secrets.DEPLOY_HOST }} \
+            --sudo

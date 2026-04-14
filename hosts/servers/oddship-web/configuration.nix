@@ -7,7 +7,7 @@
   ...
 }:
 let
-  enableS3SiteCanary = false; # flip after agenix secrets exist, GitHub secrets are set, and the first tarball is uploaded
+  enableS3SiteCanary = true; # canary enabled: oddship-web serves rohanverma.net via s3site + Garage over Tailscale
   s3siteListen = "127.0.0.1:9001";
   garageEndpoint = "http://rhnvrm-private:3900";
   s3siteHostedSites = {
