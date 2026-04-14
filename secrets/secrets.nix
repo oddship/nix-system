@@ -47,6 +47,14 @@ in
     rhnvrm_ed25519
     oddship_web
   ];
+  "oddship-web-linkpage-rohan-password.age".publicKeys = [
+    rhnvrm_ed25519
+    oddship_web
+  ];
+  "oddship-web-linkpage-oddship-password.age".publicKeys = [
+    rhnvrm_ed25519
+    oddship_web
+  ];
   "rhnvrm-private-env.age".publicKeys = [
     rhnvrm_ed25519
     rhnvrm_private

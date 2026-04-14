@@ -20,7 +20,7 @@
 
     flake-utils.url = "github:numtide/flake-utils";
 
-# Using 0xc000022070's zen-browser flake which handles hash mismatches better
+    # Using 0xc000022070's zen-browser flake which handles hash mismatches better
     # by re-uploading artifacts instead of relying on upstream replaceable artifacts
     zen-browser = {
       url = "github:0xc000022070/zen-browser-flake";
@@ -36,6 +36,12 @@
     };
 
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
+
+    linkpage = {
+      url = "github:rhnvrm/linkpage";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-utils.follows = "flake-utils";
+    };
 
     s3site = {
       url = "github:rhnvrm/s3site/feat-hosted-service-v1";
@@ -199,6 +205,7 @@
 
           disko.nixosModules.disko
           agenix.nixosModules.default
+          inputs.linkpage.nixosModules.default
 
           # Caddy with Cloudflare DNS plugin (2025 best practice)
           (

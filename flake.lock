@@ -280,6 +280,29 @@
         "type": "github"
       }
     },
+    "linkpage": {
+      "inputs": {
+        "flake-utils": [
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1776156383,
+        "narHash": "sha256-zmDTR/gAugxE9nE2rhA+SlXnSfDqXZCvxnWn+4bq8aA=",
+        "owner": "rhnvrm",
+        "repo": "linkpage",
+        "rev": "a30c28d436b206e8642d4a3a4f95314f341615d6",
+        "type": "github"
+      },
+      "original": {
+        "owner": "rhnvrm",
+        "repo": "linkpage",
+        "type": "github"
+      }
+    },
     "nix-flatpak": {
       "locked": {
         "lastModified": 1711997201,
@@ -408,6 +431,7 @@
         "disko": "disko",
         "flake-utils": "flake-utils_2",
         "home-manager": "home-manager_3",
+        "linkpage": "linkpage",
         "nix-flatpak": "nix-flatpak",
         "nixpkgs": "nixpkgs_4",
         "s3site": "s3site",

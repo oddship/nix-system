@@ -20,6 +20,45 @@ let
       key = "sites/rohanverma.net.tar.gz";
     };
   };
+  rohanLinkpagePort = 8030;
+  oddshipLinkpagePort = 8031;
+  linkpageSocial = {
+    github = "https://github.com/rhnvrm";
+    twitter = "https://x.com/rhnvrm";
+    linkedin = "https://www.linkedin.com/in/rhnvrm/";
+  };
+  linkpageLinks = [
+    {
+      url = "https://rohanverma.net";
+      message = "Rohan Verma";
+      description = "Writing, notes, and projects";
+      weight = 100;
+    }
+    {
+      url = "https://oddship.net";
+      message = "Oddship";
+      description = "Projects, experiments, and products";
+      weight = 90;
+    }
+    {
+      url = "https://github.com/rhnvrm";
+      message = "GitHub";
+      description = "Open-source projects";
+      weight = 80;
+    }
+    {
+      url = "https://x.com/rhnvrm";
+      message = "Twitter / X";
+      description = "Thoughts and updates";
+      weight = 70;
+    }
+    {
+      url = "https://www.linkedin.com/in/rhnvrm/";
+      message = "LinkedIn";
+      description = "Professional profile";
+      weight = 60;
+    }
+  ];
 in
 {
   imports = [
@@ -89,6 +128,38 @@ in
         domain = "analytics.rohanverma.net";
         upstream = "http://127.0.0.1:3000";
       };
+      rohanLinks = {
+        domain = "links.rohanverma.net";
+        upstream = "http://127.0.0.1:${toString rohanLinkpagePort}";
+      };
+      oddshipLinks = {
+        domain = "links.oddship.net";
+        upstream = "http://127.0.0.1:${toString oddshipLinkpagePort}";
+      };
+    };
+  };
+
+  services.linkpage.instances = {
+    rohanverma = {
+      enable = true;
+      port = rohanLinkpagePort;
+      pageTitle = "Rohan Verma";
+      pageIntro = "Writing, code, and side projects.";
+      social = linkpageSocial;
+      declarative = true;
+      links = linkpageLinks;
+      auth.passwordFile = config.age.secrets."oddship-web-linkpage-rohan-password".path;
+    };
+
+    oddship = {
+      enable = true;
+      port = oddshipLinkpagePort;
+      pageTitle = "Oddship";
+      pageIntro = "Projects, experiments, and notes by Rohan Verma.";
+      social = linkpageSocial;
+      declarative = true;
+      links = linkpageLinks;
+      auth.passwordFile = config.age.secrets."oddship-web-linkpage-oddship-password".path;
     };
   };
 
@@ -131,6 +202,18 @@ in
   # agenix secrets (host key injected by terraform during install)
   age.secrets.cloudflare-api-token.file = ../../../secrets/cloudflare-api-token.age;
   age.secrets.umami-app-secret.file = ../../../secrets/umami-app-secret.age;
+  age.secrets."oddship-web-linkpage-rohan-password" = {
+    file = ../../../secrets/oddship-web-linkpage-rohan-password.age;
+    owner = "root";
+    group = "root";
+    mode = "0400";
+  };
+  age.secrets."oddship-web-linkpage-oddship-password" = {
+    file = ../../../secrets/oddship-web-linkpage-oddship-password.age;
+    owner = "root";
+    group = "root";
+    mode = "0400";
+  };
 
   age.secrets.oddship-web-s3site-env = lib.mkIf enableS3SiteHostedSites {
     file = ../../../secrets/oddship-web-s3site-env.age;

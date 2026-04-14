@@ -147,6 +147,14 @@ resource "cloudflare_record" "oddship_www" {
   proxied = true
 }
 
+resource "cloudflare_record" "oddship_links" {
+  zone_id = data.cloudflare_zone.oddship.id
+  name    = "links"
+  content = hcloud_server.web.ipv4_address
+  type    = "A"
+  proxied = true
+}
+
 # Cloudflare - rohanverma.net
 data "cloudflare_zone" "rohanverma" {
   name = "rohanverma.net"
@@ -155,6 +163,14 @@ data "cloudflare_zone" "rohanverma" {
 resource "cloudflare_record" "rohanverma_analytics" {
   zone_id = data.cloudflare_zone.rohanverma.id
   name    = "analytics"
+  content = hcloud_server.web.ipv4_address
+  type    = "A"
+  proxied = true
+}
+
+resource "cloudflare_record" "rohanverma_links" {
+  zone_id = data.cloudflare_zone.rohanverma.id
+  name    = "links"
   content = hcloud_server.web.ipv4_address
   type    = "A"
   proxied = true
