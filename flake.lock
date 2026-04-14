@@ -476,11 +476,11 @@
         "nixpkgs": "nixpkgs_6"
       },
       "locked": {
-        "lastModified": 1776165148,
-        "narHash": "sha256-cl8jgTPQ+znu1S55m6EIo4phm+wATC7EBDNNS5pGa78=",
+        "lastModified": 1776165278,
+        "narHash": "sha256-ncLzW6e8MX1xLFRtDVjWJCutJM/SCGQeHHFt1TDScSI=",
         "owner": "rhnvrm",
         "repo": "rohanverma.net",
-        "rev": "099b0eacb3ce9568a50734e481bc224d7264506f",
+        "rev": "05ebdf6a1d036b963866fc1ce3aa3ba5334a3593",
         "type": "github"
       },
       "original": {
