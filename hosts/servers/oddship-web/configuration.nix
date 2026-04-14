@@ -7,7 +7,7 @@
   ...
 }:
 let
-  enableS3SiteCanary = true; # canary enabled: oddship-web serves rohanverma.net via s3site + Garage over Tailscale
+  enableS3SiteCanary = false; # rollback: keep rohanverma.net on static root until oddship-web has a valid tailscale auth key
   s3siteListen = "127.0.0.1:9001";
   garageEndpoint = "http://rhnvrm-private:3900";
   s3siteHostedSites = {
