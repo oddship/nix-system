@@ -81,6 +81,8 @@ Payload shape:
 TAILSCALE_AUTH_KEY=...
 ```
 
+The first canary rollout showed that `oddship-web` still needs a valid host auth key. A failed key causes `tailscale-auth.service` to exit and breaks the canary until it is rolled back.
+
 ### GitHub Actions deploy SSH key
 Purpose: SSH from GitHub Actions into `oddship-web` as `rhnvrm`.
 
