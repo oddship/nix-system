@@ -24,6 +24,7 @@ in
       # Development tools
       nomad
       uv
+      bun
       graphviz
       gh # GitHub CLI
       glab # GitLab CLI
