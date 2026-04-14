@@ -39,6 +39,14 @@ in
     rhnvrm_ed25519
     oddship_web
   ];
+  "oddship-web-s3site-env.age".publicKeys = [
+    rhnvrm_ed25519
+    oddship_web
+  ];
+  "oddship-web-tailscale-auth.age".publicKeys = [
+    rhnvrm_ed25519
+    oddship_web
+  ];
   "rhnvrm-private-env.age".publicKeys = [
     rhnvrm_ed25519
     rhnvrm_private

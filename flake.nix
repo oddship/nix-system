@@ -37,12 +37,9 @@
 
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
 
-    oddship-site = {
-      url = "github:oddship/oddship.github.io";
-    };
-
-    rohanverma-site = {
-      url = "github:rhnvrm/rohanverma.net";
+    s3site = {
+      url = "github:rhnvrm/s3site/feat-hosted-service-v1";
+      inputs.flake-utils.follows = "flake-utils";
     };
 
   };
@@ -211,7 +208,7 @@
                 (final: prev: {
                   caddy-with-cloudflare = prev.caddy.withPlugins {
                     plugins = [ "github.com/caddy-dns/cloudflare@v0.2.3-0.20251204174556-6dc1fbb7e925" ];
-                    hash = "sha256-IA1h2PBQIy0zisXvLHf8XcmsohvpvKLBMopgTXN0GzI=";
+                    hash = "sha256-uSAfUzhqI5/bA0rxEnQBOsiU5JZBC9DnwzBROjU6QwM=";
                   };
                 })
               ];

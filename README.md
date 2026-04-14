@@ -98,6 +98,10 @@ User-specific configurations including:
 
 See [home/README.md](home/README.md) for details.
 
+## 📘 Deployment Notes
+
+- [`docs/s3site-garage-canary.md`](docs/s3site-garage-canary.md) — `rohanverma.net` canary path using `s3site` on `oddship-web`, Garage on `rhnvrm-private`, and Tailscale for private reachability.
+
 ## ☁️ Infrastructure Deployment (Hetzner + Cloudflare)
 
 This repo supports automated infrastructure provisioning with OpenTofu (Terraform fork) for cloud servers.
