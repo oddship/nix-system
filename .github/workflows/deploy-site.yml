@@ -47,11 +47,13 @@ jobs:
 
       - name: Commit flake.lock
         run: |
+          set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add flake.lock
           git diff --staged --quiet && echo "No changes to commit" && exit 0
           git commit -m "chore: update ${{ steps.site.outputs.input }}"
+          git pull --rebase origin master
           git push
 
       - name: Setup SSH
@@ -59,11 +61,14 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan -H ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts 2>/dev/null
+          ssh-keyscan -H ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts 2>/dev/null || true
 
       - name: Deploy to server
         run: |
-          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=accept-new \
+          ssh -i ~/.ssh/deploy_key \
+            -o StrictHostKeyChecking=accept-new \
+            -o ServerAliveInterval=60 \
+            -o ServerAliveCountMax=10 \
             rhnvrm@${{ secrets.DEPLOY_HOST }} \
             "cd /tmp && \
              curl -sL https://github.com/oddship/nix-system/archive/refs/heads/master.tar.gz | tar xz && \

@@ -45,6 +45,11 @@
       url = "github:rhnvrm/rohanverma.net";
     };
 
+    s3site = {
+      url = "github:rhnvrm/s3site/feat-hosted-service-v1";
+      inputs.flake-utils.follows = "flake-utils";
+    };
+
   };
 
   outputs =

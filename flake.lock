@@ -451,6 +451,22 @@
         "type": "github"
       }
     },
+    "nixpkgs_7": {
+      "locked": {
+        "lastModified": 1775710090,
+        "narHash": "sha256-ar3rofg+awPB8QXDaFJhJ2jJhu+KqN/PRCXeyuXR76E=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "4c1018dae018162ec878d42fec712642d214fdfa",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "oddship-site": {
       "inputs": {
         "flake-utils": "flake-utils_3",
@@ -502,6 +518,7 @@
         "nixpkgs": "nixpkgs_4",
         "oddship-site": "oddship-site",
         "rohanverma-site": "rohanverma-site",
+        "s3site": "s3site",
         "zen-browser": "zen-browser"
       }
     },
@@ -523,6 +540,28 @@
       "original": {
         "owner": "oxalica",
         "repo": "rust-overlay",
+        "type": "github"
+      }
+    },
+    "s3site": {
+      "inputs": {
+        "flake-utils": [
+          "flake-utils"
+        ],
+        "nixpkgs": "nixpkgs_7"
+      },
+      "locked": {
+        "lastModified": 1776124632,
+        "narHash": "sha256-Cc7awPmhAGFTgADYjZdJfVwTtxotMJ6vQrymZIzSyMk=",
+        "owner": "rhnvrm",
+        "repo": "s3site",
+        "rev": "e7acb98cd360214262ace7d1030f713cddb0258a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "rhnvrm",
+        "ref": "feat-hosted-service-v1",
+        "repo": "s3site",
         "type": "github"
       }
     },

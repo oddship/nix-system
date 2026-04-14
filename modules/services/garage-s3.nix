@@ -31,6 +31,10 @@ in
     systemd.services.garage.serviceConfig.EnvironmentFile = config.age.secrets.rhnvrm-private-env.path;
     # Garage reads GARAGE_RPC_SECRET from env if rpc_secret not in config
 
+    # Expose the S3 API to Tailscale peers only. This lets oddship-web and CI
+    # reach Garage privately without opening it on the public internet.
+    networking.firewall.interfaces.tailscale0.allowedTCPPorts = [ 3900 ];
+
     environment.systemPackages = [ pkgs.garage ]; # CLI for bootstrap
   };
 }

@@ -40,6 +40,28 @@ let
       bind tailscale/term
       reverse_proxy localhost:7681
     }
+
+    :80 {
+      bind tailscale/steward
+      tailscale_auth
+
+      reverse_proxy localhost:3100 {
+        header_up -X-Webauth-User
+        header_up -X-Webauth-Name
+        header_up -Tailscale-User-Login
+        header_up -Tailscale-User-Name
+        header_up -Tailscale-User-Profile-Pic
+        header_up -Tailscale-Tailnet
+
+        header_up X-Steward-Proxy caddy-tailscale
+        header_up X-Webauth-User {http.auth.user.tailscale_login}
+        header_up X-Webauth-Name {http.auth.user.tailscale_name}
+        header_up Tailscale-User-Login {http.auth.user.tailscale_login}
+        header_up Tailscale-User-Name {http.auth.user.tailscale_name}
+        header_up Tailscale-User-Profile-Pic {http.auth.user.tailscale_profile_picture}
+        header_up Tailscale-Tailnet {http.auth.user.tailscale_tailnet}
+      }
+    }
   '';
 in
 {
