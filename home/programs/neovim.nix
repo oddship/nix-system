@@ -44,6 +44,8 @@
     viAlias = true;
     vimAlias = true;
     defaultEditor = true;
+    withRuby = true;
+    withPython3 = true;
 
     plugins = with pkgs.vimPlugins; [
       # Bootstrap plugin manager
