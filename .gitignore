@@ -1,5 +1,7 @@
 result
 .memory
+.codex
+.codex/
 *.local.*
 
 # Terraform (oddship-web)

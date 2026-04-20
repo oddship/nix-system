@@ -17,6 +17,7 @@ in
     environment.systemPackages = with pkgs; [
       # Browsers
       chromium
+      google-chrome
       inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
 
       # Productivity
