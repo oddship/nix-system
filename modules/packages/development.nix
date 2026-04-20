@@ -31,6 +31,7 @@ in
       lazygit # Git TUI
       ast-grep # Structural search and replace
       delta # Better git diffs
+      bubblewrap # Provides bwrap sandboxing tool
       libxcrypt # Provides libcrypt for building packages
       inputs.antigravity-nix.packages.${pkgs.stdenv.hostPlatform.system}.default
 
