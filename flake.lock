@@ -467,16 +467,15 @@
         "nixpkgs": "nixpkgs_5"
       },
       "locked": {
-        "lastModified": 1776124632,
+        "lastModified": 1776769298,
         "narHash": "sha256-Cc7awPmhAGFTgADYjZdJfVwTtxotMJ6vQrymZIzSyMk=",
         "owner": "rhnvrm",
         "repo": "s3site",
-        "rev": "e7acb98cd360214262ace7d1030f713cddb0258a",
+        "rev": "37f65b77d9c7eadcecd62897ebf26c7584c2ee4f",
         "type": "github"
       },
       "original": {
         "owner": "rhnvrm",
-        "ref": "feat-hosted-service-v1",
         "repo": "s3site",
         "type": "github"
       }

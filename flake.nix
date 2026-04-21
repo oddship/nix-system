@@ -44,7 +44,7 @@
     };
 
     s3site = {
-      url = "github:rhnvrm/s3site/feat-hosted-service-v1";
+      url = "github:rhnvrm/s3site";
       inputs.flake-utils.follows = "flake-utils";
     };
 
