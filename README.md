@@ -1,345 +1,130 @@
-# NixOS System Configuration
+# nix-system
 
-A modular, flake-based NixOS configuration for personal systems with declarative
-disk management, secrets handling, and home-manager integration.
+Personal NixOS repo for my laptops, desktop setup, and small Hetzner-hosted
+services. It keeps the system builds, Home Manager config, agenix secrets,
+helper scripts, and the minimum OpenTofu needed to bootstrap and redeploy the
+machines I actually run.
 
-## 🚀 Quick Start
+The repo-local READMEs are still the main map of the tree. The `docs/`
+directory is the smaller published subset, built as a GitHub Pages site with
+[moat](https://github.com/oddship/moat).
+
+## Current hosts
+
+| Host | Role | Notes |
+| --- | --- | --- |
+| `oddship-thinkpad-x1` | workstation | Main desktop/laptop setup with GNOME, Home Manager, development tools, and the full personal shell/editor stack. |
+| `oddship-ux303` | laptop server | Repurposed laptop host. Wi-Fi stays enabled and lid suspend is disabled so it can sit around as a small server. |
+| `oddship-beagle` | minimal server | Small baseline NixOS box with SSH and the shared user setup. |
+| `oddship-web` | public web host | Hetzner VM running Caddy, Umami, two Linkpage instances, and `s3site` for hosted static sites. |
+| `rhnvrm-private` | private services host | Hetzner VM for Garage S3, Gitea, Vaultwarden, a web terminal, and Tailscale-only internal access. |
+
+The authoritative host list lives in `flake.nix`.
+
+## Repo layout
+
+- `flake.nix` — system definitions, overlays, inputs, and the infra dev shell
+- `justfile` — operational entrypoint for checks, builds, deploys, and infra wrappers
+- `hosts/` — host-specific NixOS configs
+- `modules/` — reusable NixOS modules grouped by domain
+- `home/` — Home Manager profiles and per-program config
+- `scripts/` — personal shell helpers, wrapped into the system via `modules/packages/scripts.nix`
+- `terraform/` — OpenTofu for `oddship-web` and `rhnvrm-private`
+- `docs/` — smaller notes/reference set, now also usable as a moat site
+- `secrets/` — agenix-managed secrets and recipients
+
+## Common commands
+
+`justfile` is meant to be the front door.
 
 ```bash
-# Build without switching
-just build
-
-# Build and switch to new configuration
-just switch
-
-# Update flake inputs
+just help
+just check
+just build <host>
+just switch <host>
+just diff <host>
+just fmt
 just update
-
-# See all available commands
-just --list
+just secret list
+just secret edit <name>
 ```
 
-## 📁 Repository Structure
+For `build`, `switch`, `debug`, and `diff`, the `host` argument defaults to the
+current hostname.
 
-```
-nix-system/
-├── flake.nix           # Flake definition with inputs and outputs
-├── flake.lock          # Locked flake dependencies
-├── justfile            # Task automation (like Makefile)
-├── modules/            # Reusable NixOS modules
-│   ├── system/         # Core system configs
-│   ├── desktop/        # Desktop environments
-│   ├── services/       # System services
-│   ├── users/          # User management
-│   ├── packages/       # Package collections
-│   └── hardware/       # Hardware profiles
-├── home/               # Home-manager configs
-│   ├── profiles/       # Complete user profiles
-│   └── programs/       # Program configurations
-├── hosts/              # Host-specific configs
-│   ├── desktop/        # Desktop machines
-│   └── servers/        # Server machines
-└── secrets/            # Encrypted secrets (agenix)
-```
+## Provisioning and deploy flows
 
-## 🖥️ Hosts
+### `oddship-web`
 
-| Host                  | Type    | Description                                             |
-| --------------------- | ------- | ------------------------------------------------------- |
-| `oddship-thinkpad-x1` | Desktop | Primary workstation with GNOME, development tools       |
-| `oddship-ux303`       | Server  | Laptop running as server, WiFi enabled                  |
-| `oddship-beagle`      | Server  | Basic server configuration                              |
-| `oddship-web`         | Server  | Hetzner VPS - Caddy web server with Cloudflare DNS-01   |
-| `oddship-clawdbot`    | Server  | Hetzner VPS - Clawdbot AI gateway (Discord)             |
-
-## 🔧 Key Features
-
-- **Modular Design**: Reusable modules for easy configuration composition
-- **Flakes**: Reproducible builds with locked dependencies
-- **Disko**: Declarative disk partitioning
-- **Agenix**: Encrypted secrets management
-- **Home-Manager**: User environment management
-- **Printing**: CUPS with Epson driver support and auto-discovery
-- **Just**: Simple task automation
-
-## 📦 Module System
-
-### System Modules
-
-- `common.nix` - Base system configuration
-- `boot.nix` - Bootloader setup
-- `networking.nix` - Network configuration
-
-### Desktop Modules
-
-- `gnome.nix` - GNOME desktop environment
-
-### Service Modules
-
-- `openssh.nix` - SSH server
-- `desktop.nix` - Desktop services (audio, VPN, sync, printing)
-- `development.nix` - Development tools (Docker, Steam)
-
-### Package Modules
-
-- `desktop.nix` - Desktop applications
-- `development.nix` - Development tools
-
-See [modules/README.md](modules/README.md) for detailed documentation.
-
-## 🏠 Home-Manager
-
-User-specific configurations including:
-
-- Shell environment (zsh with oh-my-zsh)
-- Terminal emulators (Kitty, Ghostty)
-- Development tools (Neovim, Git)
-- GNOME customization
-
-See [home/README.md](home/README.md) for details.
-
-## 📘 Deployment Notes
-
-- [`docs/s3site-garage-canary.md`](docs/s3site-garage-canary.md) — `rohanverma.net` canary path using `s3site` on `oddship-web`, Garage on `rhnvrm-private`, and Tailscale for private reachability.
-
-## ☁️ Infrastructure Deployment (Hetzner + Cloudflare)
-
-This repo supports automated infrastructure provisioning with OpenTofu (Terraform fork) for cloud servers.
-
-### Prerequisites
+For the public web box, use the wrapped workflow instead of driving `tofu`
+manually unless you are debugging the stack.
 
 ```bash
-# Enter development shell (provides tofu, just, jq, agenix)
 nix develop
-```
-
-### Workflow
-
-**1. Encrypt API Tokens** (one-time setup):
-
-```bash
-cd secrets
-
-# Hetzner API token (64 characters)
-echo -n "your-64-char-hetzner-token" | agenix -e hetzner-api-token.age
-
-# Cloudflare API token (40 characters)
-echo -n "your-cloudflare-token" | agenix -e cloudflare-api-token.age
-```
-
-**2. Provision Infrastructure**:
-
-```bash
-# Initialize OpenTofu
-just tofu-init
-
-# Review planned changes
-just tofu-plan
-
-# Apply infrastructure (creates VPS, DNS records, firewall)
-just tofu-apply
-
-# Get server IP
-just tofu-ip
-```
-
-**3. Bootstrap NixOS** (automated - gets IP from terraform):
-
-```bash
-# Install NixOS on the server (wipes existing OS!)
-just bootstrap oddship-web
-```
-
-This will:
-- Auto-fetch server IP from terraform outputs
-- Ask for confirmation before wiping
-- Install NixOS via nixos-anywhere
-- Reboot into NixOS
-
-**4. Deploy Updates** (after initial bootstrap):
-
-```bash
-# Deploy configuration changes
+just server-init-key
+just server-setup-secrets
+just server-provision
 just deploy oddship-web
 ```
 
-### Adding More Servers
-
-**1. Add to `terraform/main.tf`**:
-
-```hcl
-resource "hcloud_server" "api" {
-  name = "oddship-api"
-  server_type = "cpx11"
-  # ... rest of config ...
-}
-
-output "api_server_ip" {
-  value = hcloud_server.api.ipv4_address
-}
-```
-
-**2. Add to `flake.nix`**:
-
-```nix
-nixosConfigurations."oddship-api" = nixpkgs.lib.nixosSystem {
-  # ... configuration ...
-};
-```
-
-**3. Deploy**:
+Or run the full bootstrap in one shot:
 
 ```bash
-just tofu-apply              # Provision VPS
-just bootstrap oddship-api   # Install NixOS (auto-gets IP!)
+nix develop
+just server-setup
 ```
 
-### Manual IP Deployment
-
-If you have a server IP but no terraform:
+Useful follow-ups:
 
 ```bash
-# Bootstrap with manual IP
-just bootstrap-manual oddship-web root@167.235.62.179
-
-# Deploy updates with manual IP
-just deploy-manual oddship-web rhnvrm@167.235.62.179
+just tofu-ip
+just deploy oddship-web
 ```
 
-### Infrastructure Cleanup
+### `rhnvrm-private`
+
+`rhnvrm-private` has its own OpenTofu stack under `terraform/rhnvrm-private/`
+and its own `just` wrappers.
 
 ```bash
-# Destroy all infrastructure (CAREFUL!)
-just tofu-destroy
+nix develop
+just rhnvrm-init
+just rhnvrm-init-key
+just rhnvrm-provision
+just rhnvrm-deploy
 ```
 
-## 🚀 Installation
-
-### New Host
-
-1. Boot NixOS installer
-2. Partition disks according to your disko configuration
-3. Clone this repository:
-   ```bash
-   git clone https://github.com/oddship/nix-system.git
-   cd nix-system
-   ```
-4. Install:
-   ```bash
-   sudo nixos-install --flake .#hostname
-   ```
-
-### Remote Deployment
+Useful follow-ups:
 
 ```bash
-# Deploy to remote host
-just deploy hostname root@ip-address
-
-# Or use nixos-anywhere for fresh installation
-nix run github:nix-community/nixos-anywhere -- --flake .#hostname --target-host root@ip-address
+just rhnvrm-ip
+just rhnvrm-deploy
 ```
 
-## 🔐 Secrets Management
+## Docs
 
-Secrets are managed using [agenix](https://github.com/ryantm/agenix):
+The repo now has two doc layers:
+
+1. repo-local READMEs that explain how the tree is organized
+2. `docs/`, which is the smaller public-facing subset built with moat
+
+Local moat preview:
 
 ```bash
-# Edit a secret
-agenix -e secrets/secret-name.age
-
-# Reference in configuration
-config.age.secrets.secret-name.path
+go install github.com/oddship/moat@latest
+moat build docs/ _site/
+moat serve _site/
 ```
 
-## 🛠️ Common Operations
+The GitHub Pages workflow for that site lives in `.github/workflows/docs.yml`.
+Once deployed, the site will be at `https://oddship.github.io/nix-system/`.
 
-### System Management
+## Where to read next
 
-```bash
-# Check configuration for errors
-just check
-
-# Show diff before switching
-just diff
-
-# Rollback to previous generation
-just rollback
-
-# Garbage collect old generations
-just clean
-```
-
-### Development
-
-```bash
-# Open Nix REPL with flake
-just repl
-
-# Search for packages
-just search package-name
-
-# Format all Nix files
-just fmt
-```
-
-### Printing
-
-```bash
-# Print a file
-lp filename
-
-# Check print queue
-lpstat -o
-
-# Open CUPS web interface
-firefox http://localhost:631
-
-# GUI printer configuration
-system-config-printer
-```
-
-### Module Creation
-
-```bash
-# Create a new module
-just new-module category name
-```
-
-## 📝 Adding a New Host
-
-1. Create host directory:
-
-   ```bash
-   mkdir -p hosts/desktop/newhostname
-   ```
-
-2. Add configuration files:
-
-   - `configuration.nix` - Main system config
-   - `hardware-configuration.nix` - Hardware-specific config
-   - `disko-config.nix` - Disk layout (if using disko)
-
-3. Add to `flake.nix`:
-
-   ```nix
-   nixosConfigurations."newhostname" = nixpkgs.lib.nixosSystem {
-     inherit system;
-     specialArgs = { inherit inputs; };
-     modules = commonModules ++ [
-       ./hosts/desktop/newhostname/configuration.nix
-     ];
-   };
-   ```
-
-4. Import relevant modules in the host configuration
-
-## 🤝 Contributing
-
-1. Keep modules focused and single-purpose
-2. Use `mkDefault` for overridable defaults
-3. Document module options and usage
-4. Test changes with `just check` before committing
-
-## 📄 License
-
-This configuration is personal but feel free to take inspiration from it.
+- [`home/README.md`](home/README.md)
+- [`modules/README.md`](modules/README.md)
+- [`scripts/README.md`](scripts/README.md)
+- [`skills/README.md`](skills/README.md)
+- [`terraform/README.md`](terraform/README.md)
+- [`hosts/servers/oddship-web/README.md`](hosts/servers/oddship-web/README.md)
+- [`docs/`](docs/)

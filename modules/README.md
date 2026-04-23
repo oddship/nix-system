@@ -1,303 +1,84 @@
-# NixOS Modules Documentation
+# modules
 
-This directory contains reusable NixOS modules that provide a modular and maintainable configuration structure. Each module focuses on a specific aspect of the system configuration.
+Reusable NixOS modules live here. The layout is intentionally boring: group
+modules by what they configure, keep shared logic out of host files, and only
+push things into a module when there is a real reuse or abstraction boundary.
 
-## Module Structure
+## Directory map
 
-All modules follow the standard NixOS module pattern:
-```nix
-{ config, lib, pkgs, ... }:
-{
-  options = { /* module options */ };
-  config = { /* module configuration */ };
-}
-```
+### `system/`
 
-## Available Modules
+Shared system-level defaults.
 
-### System Modules (`system/`)
+- `common.nix` — base Nix settings, locale/timezone, common packages, and other
+  machine-wide defaults
+- `boot.nix` — bootloader and boot-time defaults
+- `networking.nix` — NetworkManager, nftables, Avahi, and resolver setup
 
-#### `common.nix`
-Core system configuration shared across all hosts.
+### `desktop/`
 
-**Provides:**
-- Nix daemon settings (flakes, caching, substituters)
-- Locale and timezone configuration (defaults to Asia/Kolkata)
-- Console and shell settings
-- Essential system packages (vim, wget, git, curl, htop, tmux, just, neovim)
-- Firmware update support
-- System version management
+Desktop environment modules.
 
-**Usage:**
-```nix
-imports = [ ./modules/system/common.nix ];
-```
+- `gnome.nix` — GNOME session, fonts, desktop defaults, and related packages
 
-#### `boot.nix`
-Boot loader configuration.
+### `services/`
 
-**Provides:**
-- systemd-boot as default bootloader
-- EFI variables support
-- Common kernel modules for hardware support
-- Clean /tmp on boot
+Service modules range from general workstation services to host-specific server
+building blocks.
 
-**Usage:**
-```nix
-imports = [ ./modules/system/boot.nix ];
-```
+- `openssh.nix` — small SSH baseline
+- `desktop.nix` — PipeWire, Tailscale operator setup, Netbird, Syncthing, and
+  printing
+- `development.nix` — Docker, Steam, libvirt/Podman toggles, lorri, direnv,
+  Android tools, and similar host services
+- `server.nix` — public Caddy wrapper for static sites and reverse proxies
+- `s3site.nix` — service wrapper around the `s3site` binary and its hosted-site
+  config
+- `tailscale-node.nix` — headless Tailscale auth for `rhnvrm-private`
+- `garage-s3.nix` — Garage S3 service for the private box
+- `gitea-private.nix` — internal Gitea instance
+- `vaultwarden-private.nix` — internal Vaultwarden instance
+- `caddy-tailscale.nix` — Tailscale-authenticated Caddy front door for private
+  services
+- `web-terminal.nix` — `ttyd`-based web terminal
 
-#### `networking.nix`
-Network configuration and optimization.
+### `packages/`
 
-**Provides:**
-- NetworkManager for network management
-- Modern firewall with nftables
-- mDNS/Avahi for local network discovery
-- systemd-resolved for DNS management
-- TCP optimization settings
+System package groups.
 
-**Usage:**
-```nix
-imports = [ ./modules/system/networking.nix ];
-```
+- `desktop.nix` — GUI apps for the workstation
+- `development.nix` — CLI/dev packages and a few repo-specific tools
+- `libreoffice.nix` — LibreOffice bundle behind its own flag
+- `scripts.nix` — wraps the repo's shell helpers into installable commands
 
-### Desktop Modules (`desktop/`)
+### `users/`
 
-#### `gnome.nix`
-GNOME desktop environment configuration.
+- `rhnvrm.nix` — base user account definition and common account-level packages
 
-**Options:**
-- `desktop.gnome.enable` - Enable GNOME desktop environment
+### `hardware/`
 
-**Provides:**
-- GNOME desktop with GDM display manager
-- Minimal GNOME installation (removes many default apps)
-- Font configuration (JetBrains Mono, Fira Code, Inter, etc.)
-- Touchpad and Bluetooth support
-- QMK keyboard support
-- Essential GNOME utilities (tweaks, extension-manager)
+- `laptop.nix` — currently a placeholder for laptop-specific shared hardware
+  behavior
 
-**Usage:**
-```nix
-{
-  imports = [ ./modules/desktop/gnome.nix ];
-  desktop.gnome.enable = true;
-}
-```
+## How current hosts compose these modules
 
-### Service Modules (`services/`)
+A few examples from the live host set:
 
-#### `openssh.nix`
-OpenSSH server configuration.
+- `oddship-thinkpad-x1` pulls in the shared system modules, the GNOME module,
+  the user module, desktop services, development services, and package groups
+- `oddship-web` stays much thinner and mainly uses `services/server.nix` plus
+  `services/s3site.nix`, with host-local config for Linkpage and Umami
+- `rhnvrm-private` composes several service modules from `modules/services/`
+  because that host is mostly a private-service box
 
-**Provides:**
-- SSH server with Ed25519 host keys
-- Secure default configuration
+## Conventions
 
-**Usage:**
-```nix
-imports = [ ./modules/services/openssh.nix ];
-```
+This repo is not trying to invent a framework on top of NixOS modules. The
+conventions are simple:
 
-#### `desktop.nix`
-Desktop-specific services.
+- keep options under a sensible namespace like `services.foo` or `packages.bar`
+- gate optional behavior with `mkEnableOption`
+- keep shared behavior in modules and host-specific values in `hosts/`
+- avoid extracting a module until there is an actual reuse or readability win
 
-**Options:**
-- `services.desktop.enable` - Enable desktop services
-- `services.desktop.printing.enable` - Enable printing services (default: true)
-- `services.desktop.printing.epson.enable` - Enable Epson printer drivers (default: true)
-
-**Provides:**
-- PipeWire audio system
-- Tailscale and Netbird VPN
-- Syncthing file synchronization
-- CUPS printing service with Epson drivers
-- Avahi for printer auto-discovery
-- system-config-printer GUI tool
-- Firewall rules for printing (port 631)
-
-**Usage:**
-```nix
-{
-  imports = [ ./modules/services/desktop.nix ];
-  services.desktop.enable = true;
-}
-```
-
-#### `development.nix`
-Development environment services.
-
-**Options:**
-- `services.development.enable` - Enable development services
-- `services.development.docker.enable` - Enable Docker
-- `services.development.docker.storageDriver` - Docker storage driver (default: overlay2)
-- `services.development.gaming.enable` - Enable Steam gaming support
-
-**Provides:**
-- Docker containerization with auto-prune
-- Steam gaming platform with gamemode
-- Development tool services (lorri, direnv)
-- Android ADB support
-- Wireshark network analysis
-
-**Usage:**
-```nix
-{
-  imports = [ ./modules/services/development.nix ];
-  services.development = {
-    enable = true;
-    docker.enable = true;
-    gaming.enable = true;
-  };
-}
-```
-
-### User Modules (`users/`)
-
-#### `rhnvrm.nix`
-User configuration for rhnvrm.
-
-**Provides:**
-- User account with zsh shell
-- SSH authorized keys
-- Essential user packages (git, neovim, firefox, vscode, zed)
-- Wheel and networkmanager groups
-
-**Usage:**
-```nix
-imports = [ ./modules/users/rhnvrm.nix ];
-```
-
-### Package Modules (`packages/`)
-
-#### `desktop.nix`
-Desktop application packages.
-
-**Options:**
-- `packages.desktop.enable` - Enable desktop applications
-
-**Provides:**
-- Browsers (Chromium, Zen Browser)
-- Productivity apps (Obsidian, TickTick)
-- Communication (Claude Desktop)
-- Utilities (cliphist, syncthingtray, Tailscale QS GNOME extension, netbird-ui)
-
-**Usage:**
-```nix
-{
-  imports = [ ./modules/packages/desktop.nix ];
-  packages.desktop.enable = true;
-}
-```
-
-#### `development.nix`
-Development tool packages.
-
-**Options:**
-- `packages.development.enable` - Enable development tools
-
-**Provides:**
-- Terminal emulator (Kitty)
-- Development tools (nomad, uv, graphviz)
-- Version control CLI tools (gh, glab)
-- Nix tooling (agenix)
-- Network tools (nftables, iptables)
-- Syncthing
-
-**Usage:**
-```nix
-{
-  imports = [ ./modules/packages/development.nix ];
-  packages.development.enable = true;
-}
-```
-
-#### `scripts.nix`
-Personal shell scripts collection.
-
-**Options:**
-- `packages.scripts.enable` - Enable personal shell scripts
-
-**Provides:**
-- Custom shell scripts (kill-port, clipfile, tmux-session, aicat)
-- Wrapped scripts with proper dependencies in PATH
-- System-wide script installation (available as commands without .sh extension)
-
-**Available Scripts:**
-- `kill-port`: Interactive process killer by port using fzf
-- `clipfile`: Copy file contents to system clipboard
-- `tmux-session`: Interactive tmux session manager
-- `aicat`: AI-friendly file concatenation tool
-
-**Usage:**
-```nix
-{
-  imports = [ ./modules/packages/scripts.nix ];
-  packages.scripts.enable = true;
-}
-```
-
-### Hardware Modules (`hardware/`)
-
-#### `laptop.nix`
-Laptop-specific hardware configuration.
-
-**Options:**
-- `hardware.laptop.enable` - Enable laptop configuration
-
-**Note:** Currently empty, reserved for future laptop-specific settings.
-
-## Best Practices
-
-1. **Use Enable Options**: Always gate module functionality behind enable options for flexibility
-2. **Set Defaults**: Use `lib.mkDefault` for settings that hosts might want to override
-3. **Document Options**: Clearly document what each module provides and its options
-4. **Single Responsibility**: Each module should focus on one specific aspect
-5. **Avoid Duplication**: Extract common patterns into shared modules
-
-## Example Host Configuration
-
-```nix
-{ config, lib, pkgs, inputs, ... }:
-{
-  imports = [
-    # Hardware
-    ./hardware-configuration.nix
-    
-    # System modules
-    ./modules/system/common.nix
-    ./modules/system/boot.nix
-    ./modules/system/networking.nix
-    
-    # User management
-    ./modules/users/rhnvrm.nix
-    
-    # Services
-    ./modules/services/openssh.nix
-    ./modules/services/desktop.nix
-    ./modules/services/development.nix
-    
-    # Desktop environment
-    ./modules/desktop/gnome.nix
-    
-    # Package collections
-    ./modules/packages/desktop.nix
-    ./modules/packages/development.nix
-  ];
-  
-  # Enable desired features
-  services.desktop.enable = true;
-  services.development = {
-    enable = true;
-    docker.enable = true;
-    gaming.enable = true;
-  };
-  desktop.gnome.enable = true;
-  packages.desktop.enable = true;
-  packages.development.enable = true;
-  
-  # Host-specific configuration
-  networking.hostName = "my-hostname";
-}
-```
+If a host only needs something once, keeping it in the host file is still fine.

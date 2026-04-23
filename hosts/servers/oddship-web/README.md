@@ -1,83 +1,83 @@
-# oddship-web Server
+# oddship-web
 
-NixOS server on Hetzner Cloud for hosting oddship.net.
+`oddship-web` is the public-facing box in this repo. It is the machine that
+terminates web traffic for the public sites and hosts the small services that
+actually need public reachability.
 
-## Quick Start
+## What runs here
 
-```bash
-# Enter dev shell (provides tofu, agenix, jq)
-nix develop
+At the moment the host is responsible for:
 
-# Full setup: generates host key, configures secrets, provisions server
-just server-setup
+- Caddy with the Cloudflare DNS plugin for certificate issuance
+- `s3site`, which serves `oddship.net` and `rohanverma.net` from Garage-backed
+  tarball uploads
+- two Linkpage instances for `links.rohanverma.net` and `links.oddship.net`
+- Umami at `analytics.rohanverma.net`
+- Tailscale, so the host can reach Garage on `rhnvrm-private` without exposing
+  that object store publicly
 
-# Or step by step:
-just server-init-key      # Generate SSH host key in terraform
-just server-setup-secrets # Update secrets.nix + rekey
-just server-provision     # Create server + install NixOS
-```
+## Files worth opening
 
-## Architecture
+| File | Why it matters |
+| --- | --- |
+| `configuration.nix` | Main host config: users, reverse proxies, secrets, Linkpage, Umami, Tailscale, and `s3site`. |
+| `disko-config.nix` | Disk layout for the host. |
+| `../../../modules/services/server.nix` | Shared public Caddy wrapper used by this host. |
+| `../../../modules/services/s3site.nix` | Service module for the hosted-site path. |
+| `../../../docs/s3site-garage-canary.md` | Notes on the `s3site` + Garage deployment model. |
+| `../../../terraform/` | Infra bootstrap for the server and its DNS records. |
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    Cloudflare (proxied)                     │
-│                  oddship.net → 167.x.x.x                    │
-└─────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────┐
-│                 Hetzner Cloud (cpx11)                       │
-│  ┌───────────────────────────────────────────────────────┐  │
-│  │                    NixOS 26.05                        │  │
-│  │  ┌─────────────┐  ┌─────────────┐  ┌──────────────┐  │  │
-│  │  │   Caddy     │  │   agenix    │  │   systemd    │  │  │
-│  │  │  (HTTPS)    │  │  (secrets)  │  │  (services)  │  │  │
-│  │  └─────────────┘  └─────────────┘  └──────────────┘  │  │
-│  └───────────────────────────────────────────────────────┘  │
-│  Disk: LVM on ext4 (avoids partition label timing issues)   │
-└─────────────────────────────────────────────────────────────┘
-```
+## Deploy and bootstrap
 
-## Files
-
-| File | Purpose |
-|------|---------|
-| `configuration.nix` | NixOS system config (users, services, secrets) |
-| `disko-config.nix` | Disk partitioning (LVM layout) |
-| `../../terraform/` | Infrastructure as code (Hetzner + Cloudflare) |
-| `../../secrets/secrets.nix` | agenix public keys |
-
-## Key Decisions
-
-**LVM instead of direct ext4/btrfs**: Avoids boot failures from partition label timing issues. See disko issues #736, #739.
-
-**Pre-generated SSH host key**: Terraform generates the server's SSH host key before provisioning. This lets us encrypt agenix secrets for the server before it exists.
-
-**Cloudflare proxy**: Orange-cloud enabled for DDoS protection and IP hiding. Uses DNS-01 challenge for Let's Encrypt certificates.
-
-## Common Tasks
+For normal config changes:
 
 ```bash
-# Deploy config changes
 just deploy oddship-web
+```
 
-# SSH to server
-ssh rhnvrm@$(just tofu-ip)
+For a fresh server build:
 
-# View server IP
-just tofu-ip
-
-# Destroy and recreate
-just tofu-destroy
+```bash
+nix develop
 just server-setup
 ```
 
-## Secrets
+Or, if you need the steps separately:
 
-The server needs access to `cloudflare-api-token.age` for Caddy DNS-01 challenges. The host key is added to `secrets/secrets.nix` as `oddship_web`.
-
-To re-key secrets after host key changes:
 ```bash
-cd secrets && agenix -r
+nix develop
+just server-init-key
+just server-setup-secrets
+just server-provision
 ```
+
+Useful checks:
+
+```bash
+just tofu-ip
+ssh rhnvrm@$(just tofu-ip)
+```
+
+## Secrets this host needs
+
+- `cloudflare-api-token.age`
+- `umami-app-secret.age`
+- `oddship-web-linkpage-rohan-password.age`
+- `oddship-web-linkpage-oddship-password.age`
+- `oddship-web-s3site-env.age`
+- `oddship-web-tailscale-auth.age`
+
+Terraform injects the SSH host key during install so agenix can decrypt these on
+first boot.
+
+## Mental model
+
+`oddship-web` is best thought of as a thin public edge:
+
+- public HTTP entrypoint lives here
+- mutable static site content lives in Garage on `rhnvrm-private`
+- CI uploads site tarballs
+- `s3site` polls and serves the extracted content
+
+That split keeps the host config declarative without forcing a full machine
+rebuild for every site publish.

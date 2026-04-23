@@ -1,243 +1,152 @@
-# Home-Manager Modules Documentation
+# home
 
-This directory contains modular home-manager configurations for user environments. These modules provide user-specific settings, dotfiles, and program configurations.
+Home Manager lives here. The shared user environment is split into a profile
+layer and a set of per-program modules so the desktop host can reuse the same
+editor, shell, terminal, and session-management setup without turning the host
+files into a blob.
 
-## Directory Structure
+## Layout
 
-```
+```text
 home/
-├── profiles/       # Complete user environment profiles
-│   └── desktop.nix # Desktop user profile
-└── programs/       # Individual program configurations
-    ├── shell.nix      # Shell environment (zsh, direnv, fzf)
-    ├── terminal.nix   # Terminal emulators (kitty, ghostty, rofi)
-    ├── git.nix        # Git configuration
-    └── neovim.nix     # Neovim configuration
+├── profiles/
+│   └── desktop.nix
+└── programs/
+    ├── claude-skills.nix
+    ├── git.nix
+    ├── lazygit.nix
+    ├── neovim.nix
+    ├── shell.nix
+    ├── terminal.nix
+    ├── tmux.nix
+    └── zellij.nix
 ```
 
-## Profile Modules (`profiles/`)
+## Shared profile
 
-### `desktop.nix`
-Complete desktop user environment profile.
+`profiles/desktop.nix` is the main shared user profile.
 
-**Imports:**
-- All program modules from `programs/`
+It currently owns:
 
-**Provides:**
-- User home directory configuration
-- Desktop packages (btop, htop, development tools)
-- GNOME extensions and dconf settings
-- XDG mime associations
-- Autostart applications (syncthingtray, netbird-ui)
+- Catppuccin theming
+- common user packages
+- desktop MIME defaults
+- GNOME `dconf` settings
+- wallpaper, favorites, and other shell UX choices
+- autostart entries for desktop tools
+- shared session variables such as `PINENTRY_PROGRAM`
 
-**Key Features:**
-- GNOME shell customization (extensions, keybindings, favorites)
-- Dark theme preference
-- Custom wallpaper
-- Workspace configuration
-- Clipboard history integration
+The desktop profile imports these program modules:
 
-**Usage:**
-```nix
-{
-  home-manager.users.username = {
-    imports = [ ./home/profiles/desktop.nix ];
-    _module.args = {
-      gitConfigExtra = "/path/to/git/config";
-    };
-  };
-}
-```
+- `shell.nix`
+- `terminal.nix`
+- `git.nix`
+- `neovim.nix`
+- `tmux.nix`
+- `zellij.nix`
+- `lazygit.nix`
+- `claude-skills.nix`
 
-## Program Modules (`programs/`)
+## Program modules
 
-### `shell.nix`
-Shell environment configuration.
+### `programs/shell.nix`
 
-**Provides:**
-- **Zsh**: Oh-My-Zsh with git, docker, dotenv plugins
-- **Aliases**: Enhanced ls (eza), cd (zoxide), sudo with env preservation
-- **Zoxide**: Smart directory navigation
-- **Direnv**: Automatic environment loading with nix-direnv
-- **Fzf**: Fuzzy finder with zsh integration
+Zsh plus the shell-level glue that makes the rest of the setup feel coherent.
+This is where the repo-specific aliases and helpers live.
 
-**Shell Customizations:**
-- PATH includes `$HOME/go/bin`
-- Default editor set to vim
-- fnm (Fast Node Manager) integration
-- Ghostty terminal compatibility fix
+Current highlights:
 
-### `terminal.nix`
-Terminal emulator configurations.
+- Oh My Zsh with `git`, `docker`, and `dotenv`
+- `zoxide`, `fzf`, and `direnv` integration
+- tmux aliases such as `tm`, `tms`, and `tmd`
+- zellij helpers such as `za`, `zf`, `zjl`, and `zjk`
+- `cdgw` for jumping to git worktrees found by `git-worktree-search`
+- `TERM` compatibility fix for Ghostty on remote systems
 
-**Provides:**
-- **Kitty**: Basic terminal emulator setup
-- **Ghostty**: Modern terminal with zsh integration
-- **Rofi**: Application launcher (Wayland version)
+### `programs/terminal.nix`
 
-### `git.nix`
-Git version control configuration.
+Terminal and launcher config:
 
-**Provides:**
-- User name and email settings
-- Support for external git configuration includes
-- Basic git setup
+- Kitty
+- Ghostty
+- Rofi
 
-**Usage with External Config:**
-```nix
-{
-  _module.args = {
-    gitConfigExtra = config.age.secrets.git-config-extra.path;
-  };
-}
-```
+### `programs/git.nix`
 
-### `neovim.nix`
-Comprehensive Neovim configuration for development.
+Git defaults plus a few workflow niceties:
 
-**Provides:**
-- **Full LSP support**: Nix, Python, TypeScript, Go, Rust, Bash, JSON, YAML
-- **GitHub Copilot integration**: AI-powered code completion
-- **Auto-completion**: nvim-cmp with snippets support
-- **Syntax highlighting**: Treesitter for multiple languages
-- **File navigation**: Telescope fuzzy finder, nvim-tree file explorer
-- **Git integration**: gitsigns, fugitive
-- **Modern UI**: Tokyo Night theme, lualine status bar, bufferline tabs
-- **Development tools**: auto-pairs, comments, indentation guides, terminal
+- base `programs.git` config
+- optional include file via `gitConfigExtra`
+- `delta` as diff viewer
+- `wta` alias for creating worktrees under the inbox worktree directory
 
-### `tmux.nix`
-Terminal multiplexer configuration.
+### `programs/neovim.nix`
 
-**Key Bindings:**
-- **Prefix**: `Ctrl+a` (instead of default `Ctrl+b`)
-- **Split panes**: `|` (horizontal), `-` (vertical)
-- **Navigate panes**: `Alt+arrows` (no prefix needed)
-- **Resize panes**: `Ctrl+arrows` (with prefix)
-- **Switch windows**: `Shift+arrows` (no prefix needed)
-- **Copy mode**: `v` (select), `y` (copy), `r` (rectangle mode)
-- **Reload config**: `prefix + r`
+The largest single user module in the repo. It provides the editor setup rather
+than a tiny wrapper around distro defaults.
 
-**Shell Aliases:**
-```bash
-tm          # tmux
-tma <name>  # tmux attach-session -t <name>
-tmn <name>  # tmux new-session -s <name>
-tml         # tmux list-sessions
-tmk <name>  # tmux kill-session -t <name>
-tms         # tmux-session (interactive session manager)
-tmd         # tmux-session --dev (create dev session)
-```
+Current setup includes:
 
-**Shell Functions:**
-- `tmux-dev`: Create development session for current directory
-- `tmux-attach`: Attach to session with fzf selection
+- LSP and completion
+- Treesitter
+- Telescope and Neo-tree
+- Neogit, Diffview, Fugitive, and conflict helpers
+- GitHub Copilot
+- repo-specific extras such as `nvim-claudecode-mcp`
 
-**Session Manager:**
-The `tmux-session` script provides an interactive session manager:
+### `programs/tmux.nix`
 
-- **`tms`**: Interactive menu with options:
-  - Attach to existing session
-  - Create new session
-  - Create development session
-  - Kill session
-  - Show session info
-  - List all sessions
+The opinionated tmux setup used for heavier development sessions.
 
-- **`tmd`**: Directly creates a development session for current directory:
-  - Uses current directory name as session name
-  - Creates 3-pane layout:
-    - Left pane: Opens `nvim` automatically
-    - Top right pane: Terminal in current directory
-    - Bottom right pane: Terminal in current directory
-  - Selects the nvim pane and attaches to the session
+Key points:
 
-## Integration with NixOS
+- `Ctrl+a` prefix
+- plugin set via `pkgs.tmuxPlugins`
+- custom pane/window navigation bindings
+- Ghostty-aware terminal handling
 
-Home-manager can be integrated with NixOS in two ways:
+### `programs/zellij.nix`
 
-### As a NixOS Module (Recommended)
-```nix
-{
-  home-manager = {
-    backupFileExtension = "bak";
-    users.username = {
-      imports = [ ./home/profiles/desktop.nix ];
-    };
-  };
-}
-```
+A lighter terminal workspace option alongside tmux.
 
-### Standalone
-```bash
-home-manager switch --flake .#username@hostname
-```
+Current customizations include:
 
-## Module Arguments
+- Catppuccin Mocha theme
+- `Alt+h/j/k/l` pane navigation
+- `Alt+n` and `Alt+x` for pane create/close
+- `Alt+t` and `Alt+w` for tab create/close
+- `Alt+1..5` tab switching
+- session serialization and automatic layout restoration
 
-Some modules accept arguments that can be passed from the host configuration:
+### `programs/lazygit.nix`
 
-- `gitConfigExtra`: Path to additional git configuration file
-- `inputs`: Flake inputs for accessing external packages
-- `pkgs`: Nixpkgs instance
+A themed lazygit config with Ghostty-based editor integration and custom key
+choices that fit the rest of the shell/editor setup.
 
-## Customization Guide
+### `programs/claude-skills.nix`
 
-### Adding New Programs
+Symlinks personal Claude Code skills from this repo into `~/.claude/skills/`.
+Right now that is only `skills/tmux-orchestrator`, but this is the hook point
+for adding more.
 
-1. Create a new file in `programs/`:
-```nix
-{ config, lib, pkgs, ... }:
-{
-  programs.myprogram = {
-    enable = true;
-    # ... configuration
-  };
-}
-```
+## Host overrides
 
-2. Import it in the relevant profile:
-```nix
-imports = [
-  ../programs/myprogram.nix
-];
-```
+Shared user config should stay in `home/`.
 
-### Creating New Profiles
+Host-specific changes belong in the host tree. Right now the main example is:
 
-1. Create a new profile in `profiles/`:
-```nix
-{ inputs, pkgs, ... }:
-{
-  imports = [
-    # Import needed program modules
-  ];
-  
-  home = {
-    username = "myuser";
-    homeDirectory = "/home/myuser";
-    stateVersion = "24.11";
-    packages = with pkgs; [
-      # Profile-specific packages
-    ];
-  };
-}
-```
+- `hosts/desktop/thinkpadx1/home.nix`
 
-## Best Practices
+That file imports `home/profiles/desktop.nix` and keeps only the things that are
+actually host-specific, such as extra packages or autostart plumbing.
 
-1. **Modularity**: Keep program configurations separate and focused
-2. **Reusability**: Design modules to be usable across different profiles
-3. **Documentation**: Document module options and usage
-4. **Version Control**: Specify `stateVersion` to ensure compatibility
-5. **Backup**: Use `backupFileExtension` to handle file conflicts
+## Working in this directory
 
-## Common Issues
+A good rule of thumb:
 
-### File Conflicts
-If home-manager encounters existing files, it creates `.bak` backups. Review and remove these after verifying the new configuration.
+- put reusable behavior in `home/programs/*.nix`
+- collect stable defaults in `home/profiles/*.nix`
+- keep host quirks in `hosts/.../home.nix`
 
-### Autostart Applications
-Some applications may require manual intervention on first boot. The autostart configuration handles most cases but check application-specific requirements.
-
-### Environment Variables
-Shell environment variables set in `programs.zsh.initContent` are only available in interactive shells. For system-wide variables, use NixOS configuration.
+That split has held up better than stuffing everything into a single giant home
+module.

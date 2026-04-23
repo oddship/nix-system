@@ -1,0 +1,26 @@
+site_name = "nix-system"
+base_path = "/nix-system"
+
+[highlight]
+light = "github"
+dark = "github-dark"
+
+[[links]]
+title = "GitHub"
+url = "https://github.com/oddship/nix-system"
+icon = "github"
+
+[[topnav]]
+title = "GitHub"
+url = "https://github.com/oddship/nix-system"
+icon = "github"
+
+[search]
+enabled = true
+
+[feed]
+enabled = false
+
+[extra]
+tagline = "Personal NixOS, Home Manager, and small-server notes"
+footer = '&copy; <a href="https://github.com/oddship">oddship</a>'

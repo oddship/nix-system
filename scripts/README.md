@@ -1,120 +1,58 @@
-# Personal Shell Scripts
+# scripts
 
-This directory contains custom shell scripts that are built and installed system-wide via Nix.
+These are personal shell helpers that get wrapped into the system when
+`packages.scripts.enable = true;` is enabled.
 
-## Available Scripts
+The wrapper module is `modules/packages/scripts.nix`. It installs the commands
+without the `.sh` suffix and makes sure the dependencies declared there are on
+`PATH`.
 
-### kill-port
-Interactive process killer by port using fzf.
+## Current commands
 
-**Usage:**
-```bash
-kill-port
+| Command | Purpose |
+| --- | --- |
+| `aicat` | Concatenate multiple files into one markdown document with AI-friendly section headers. |
+| `clipfile` | Copy a file's contents to the clipboard, with backend detection for Wayland/X11/macOS. |
+| `get-hetzner-token` | Decrypt the Hetzner API token from agenix-managed secrets for infra scripts. |
+| `git-worktree-search` | Fuzzy-pick a git worktree from the inbox worktree directory. |
+| `kill-port` | Find a listening TCP port and kill the owning process after confirmation. |
+| `kill-process` | Fuzzy-pick and kill a process by name. |
+| `mdview` | Render a markdown file to temporary HTML with pandoc and open it in a browser. |
+| `setup-chrome-mcp` | Start Chromium with remote debugging and write a `chrome-devtools` entry into `.mcp.json`. |
+| `tmux-session` | Interactive tmux session manager with a simple "dev layout" path. |
+| `update-llm-tools` | Update globally installed Node-based LLM CLIs. |
+
+## Notes on a few repo-specific helpers
+
+### `get-hetzner-token`
+
+Used by the infra recipes in the root `justfile`. It expects the agenix secret
+files to exist locally and uses `rage` plus the local SSH identity to decrypt
+the token.
+
+### `git-worktree-search`
+
+Hard-coded to search under:
+
+```text
+$HOME/Documents/Code/inbox/git-worktrees
 ```
 
-**Features:**
-- Lists all processes listening on TCP ports
-- Fuzzy search with fzf for easy selection
-- Shows detailed process information before killing
-- Confirmation prompt for safety
-- Uses `kill -9` for force termination
+That is intentional. It is a personal helper, not a general-purpose worktree
+browser.
 
-**Dependencies:** lsof, fzf, awk, ps, sudo
+### `tmux-session`
 
-### clipfile
-Copy file contents to system clipboard with cross-platform support.
+This is the fast path for "open a dev session for the current repo". The `--dev`
+mode opens a 3-pane layout with Neovim in the first pane and two extra shells.
 
-**Usage:**
-```bash
-clipfile [OPTIONS] FILE
-```
+## Adding or changing scripts
 
-**Options:**
-- `-h, --help`: Show help message
-- `-v, --verbose`: Show verbose output
-- `-n, --no-newline`: Remove trailing newline from output
+1. Edit or add `scripts/*.sh`
+2. If the command needs extra runtime dependencies, update
+   `modules/packages/scripts.nix`
+3. rebuild the system so the wrapped command is refreshed
 
-**Features:**
-- Auto-detects available clipboard backend
-- Supports X11 (xclip, xsel), Wayland (wl-clipboard), and macOS (pbcopy)
-- File validation and error handling
-- Verbose mode for detailed feedback
-- Option to strip trailing newlines
-
-**Dependencies:** xclip OR xsel OR wl-clipboard OR pbcopy (platform-dependent)
-
-### tmux-session.sh
-Interactive tmux session manager using fzf for streamlined session management.
-
-**Usage:**
-```bash
-tmux-session [OPTIONS]
-```
-
-**Options:**
-- `-h, --help`: Show help message
-- `-l, --list`: List all sessions
-- `-a, --attach`: Attach to session (with fzf selection)
-- `-c, --create NAME`: Create new session
-- `-k, --kill`: Kill session (with fzf selection)
-- `-d, --dev`: Create development session for current directory
-- `-i, --info`: Show session info
-
-**Features:**
-- Interactive menu with fzf for session selection
-- Development session creation with 3-pane layout (nvim + 2 terminals)
-- Session management (create, kill, attach, info)
-- Current directory-based session naming
-- Automatic session detection and attachment
-
-**Dependencies:** tmux, fzf, bash
-
-**Shell Aliases (from shell.nix):**
-- `tms`: Interactive session manager menu
-- `tmd`: Create development session for current directory
-
-### aicat.sh
-AI-friendly file concatenation tool for analysis and documentation.
-
-**Usage:**
-```bash
-aicat <title> <file1> <file2> ... <fileN>
-```
-
-**Features:**
-- Concatenates multiple files with AI-readable headers
-- Adds contextual information for AI analysis
-- Preserves file structure and relationships
-- Generates markdown-formatted output with proper document structure
-- Includes usage instructions and analysis guide in output
-- Handles missing files gracefully with warnings
-
-**Dependencies:** bash, cat, basename
-
-**Example:**
-```bash
-aicat "NixOS Configuration" flake.nix configuration.nix hardware.nix
-```
-
-## Adding New Scripts
-
-1. Add your `.sh` script to this directory
-2. Make sure it has a proper shebang (`#!/usr/bin/env bash`)
-3. The script will be automatically built and installed as `script-name` (without .sh extension)
-4. Dependencies should be added to the `scripts.nix` module if needed
-
-## Module Integration
-
-Scripts are managed by the `modules/packages/scripts.nix` module:
-
-- Enable with `packages.scripts.enable = true;` in your host configuration
-- Scripts are wrapped with necessary dependencies in PATH
-- Available system-wide after rebuild
-
-## Script Guidelines
-
-- Use `set -euo pipefail` for robust error handling
-- Include clear documentation and usage examples
-- Handle user input validation and edge cases
-- Provide meaningful error messages
-- Use confirmation prompts for destructive operations
+Most of these are deliberately small and personal. If a script starts needing
+real configuration or portability work, it should probably become something more
+structured than a shell one-off.

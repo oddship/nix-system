@@ -1,101 +1,103 @@
-# Zellij Development Environment Setup
+---
+title: Claude + Zellij orchestration
+description: How the repo's zellij helpers are meant to be used for AI-heavy terminal work.
+---
 
-A practical guide for using Zellij to create structured development sessions with Claude Code.
+# Claude + Zellij orchestration
 
-## Basic Zellij Control
+This repo carries both tmux and zellij config. They are not trying to solve the
+same problem.
 
-### Session Management
+- tmux is the more opinionated "open a dev workspace" tool
+- zellij is the lighter session shell for hopping between repos and keeping
+  long-running terminal contexts around
+
+For Claude Code or other agent-heavy terminal workflows, zellij is usually the
+faster default.
+
+## What is actually configured
+
+The relevant files are:
+
+- `home/programs/zellij.nix`
+- `home/programs/shell.nix`
+- `home/programs/claude-skills.nix`
+
+Current zellij defaults in this repo:
+
+- Catppuccin Mocha theme
+- session serialization enabled
+- automatic layouts enabled
+- `Alt+h/j/k/l` pane navigation
+- `Alt+n` / `Alt+x` for pane create and close
+- `Alt+t` / `Alt+w` for tab create and close
+- `Alt+1..5` to jump tabs
+
+Current shell helpers worth remembering:
+
+- `za [name]` — attach to a session or create it if it does not exist
+- `zf` — fuzzy session picker / quick session manager
+- `zja`, `zjl`, `zjk` — thin aliases for attach, list, and kill
+- `cdgw` — jump into a git worktree picked by `git-worktree-search`
+
+## Practical patterns
+
+### One repo, one session
+
+From a repo root:
+
 ```bash
-# Create detached session
-zellij -d -s session-name
-
-# List sessions
-zellij ls
-
-# Kill session
-zellij kill-session session-name
-
-# Send commands to specific session
-ZELLIJ_SESSION_NAME=session-name zellij action write-chars "command"
-ZELLIJ_SESSION_NAME=session-name zellij action write 13  # Enter key
+za
 ```
 
-## Development Environment Setup
+That uses the current directory name as the session name.
 
-### Multi-Pane Development Session
+### Name a session explicitly
+
 ```bash
-# Create main development session
-zellij -d -s dev
-
-# Pane 1: Claude Code
-ZELLIJ_SESSION_NAME=dev zellij action write-chars "claude"
-ZELLIJ_SESSION_NAME=dev zellij action write 13
-
-# Pane 2: Development server
-ZELLIJ_SESSION_NAME=dev zellij action new-pane
-ZELLIJ_SESSION_NAME=dev zellij action write-chars "npm run dev"
-ZELLIJ_SESSION_NAME=dev zellij action write 13
-
-# Pane 3: Test watcher
-ZELLIJ_SESSION_NAME=dev zellij action new-pane
-ZELLIJ_SESSION_NAME=dev zellij action write-chars "npm run test:watch"
-ZELLIJ_SESSION_NAME=dev zellij action write 13
+za nix-system
+za blog
+za docs
 ```
 
-### Project-Specific Sessions
-```bash
-# Frontend development
-zellij -d -s frontend
-ZELLIJ_SESSION_NAME=frontend zellij action write-chars "cd /path/to/frontend && claude"
+### Jump between sessions quickly
 
-# Backend development
-zellij -d -s backend
-ZELLIJ_SESSION_NAME=backend zellij action write-chars "cd /path/to/backend && claude"
+```bash
+zf
 ```
 
-## Automation Scripts
+That is the real day-to-day convenience command in this setup.
 
-### Development Environment Bootstrap
+### Pair zellij with repo-local helper commands
+
+A useful pattern is:
+
+1. use `cdgw` to jump into a worktree
+2. run `za` to create or attach to a session named after that worktree
+3. keep the agent/tooling state inside that session instead of mixing repos
+
+## Where tmux still fits better
+
+tmux is still the better choice when you want the repo's pre-canned 3-pane dev
+layout:
+
 ```bash
-setup_dev_environment() {
-    local project_name=$1
-    local project_path=$2
-    
-    # Create session and navigate to project
-    zellij -d -s "${project_name}"
-    ZELLIJ_SESSION_NAME="${project_name}" zellij action write-chars "cd ${project_path}"
-    ZELLIJ_SESSION_NAME="${project_name}" zellij action write 13
-    
-    # Start Claude Code
-    ZELLIJ_SESSION_NAME="${project_name}" zellij action write-chars "claude"
-    ZELLIJ_SESSION_NAME="${project_name}" zellij action write 13
-    
-    # Add development server pane if package.json exists
-    if [[ -f "${project_path}/package.json" ]]; then
-        ZELLIJ_SESSION_NAME="${project_name}" zellij action new-pane
-        ZELLIJ_SESSION_NAME="${project_name}" zellij action write-chars "npm run dev"
-        ZELLIJ_SESSION_NAME="${project_name}" zellij action write 13
-    fi
-}
+tmd
+# or
 
-# Usage: setup_dev_environment "my-project" "/path/to/project"
+tmux-session --dev
 ```
 
-### Session Cleanup
-```bash
-cleanup_dev_sessions() {
-    zellij ls | grep -v "^$" | while read session; do
-        session_name=$(echo $session | awk '{print $1}')
-        echo "Found session: $session_name"
-        # Optionally kill specific sessions
-        # zellij kill-session "$session_name"
-    done
-}
-```
+That path opens Neovim in the first pane and two extra shells beside it.
 
-## Use Cases
+## Claude-specific notes
 
-- **Organized Development**: Separate sessions for different parts of a project
-- **Persistent Environments**: Long-running development setups that survive terminal closures
-- **Automated Setup**: Scripts to quickly bootstrap common development patterns
-- **Resource Isolation**: Keep different projects and their processes separated
+This repo also keeps personal Claude Code skills under `skills/`, and
+`home/programs/claude-skills.nix` symlinks them into `~/.claude/skills/`.
+
+Right now the relevant one is `tmux-orchestrator/`. It is still tmux-focused,
+which matches the fact that tmux remains the more scripted option here.
+
+For browser-assisted flows, `setup-chrome-mcp` is the helper that starts
+Chromium with remote debugging and writes a `chrome-devtools` entry into a local
+`.mcp.json`.

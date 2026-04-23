@@ -1,6 +1,13 @@
+---
+title: s3site + Garage canary path
+description: Hosted static-site path for oddship-web and rhnvrm-private.
+---
+
 # s3site + Garage hosted sites on `oddship-web`
 
-This note captures the hosted static-site design for serving both `rohanverma.net` and `oddship.net` from `oddship-web` without rebuilding the VPS for each content publish.
+This note captures the current hosted static-site path for serving both
+`rohanverma.net` and `oddship.net` from `oddship-web` without rebuilding the VPS
+for each content publish.
 
 ## Topology
 
@@ -14,7 +21,7 @@ This note captures the hosted static-site design for serving both `rohanverma.ne
 - GitHub Actions (`rhnvrm/rohanverma.net`, `oddship/oddship.net`)
   - join Tailscale with `tailscale/github-action`
   - build site tarballs and upload them to Garage
-  - let `oddship-web` pick up uploads on the next `s3site` poll
+  - let `oddship-web` pick them up on the next `s3site` poll
 
 ## Current object-store contract
 
@@ -25,17 +32,19 @@ This note captures the hosted static-site design for serving both `rohanverma.ne
   - `sites/rohanverma.net.tar.gz`
   - `sites/oddship.net.tar.gz`
 
-## Why this split
+## Why this split exists
 
-This keeps long-lived infra declarative in Nix:
+This keeps the long-lived infrastructure declarative in Nix:
+
 - Caddy
 - `s3site`
 - Tailscale on `oddship-web`
 - agenix-managed runtime secrets
 
-And keeps mutable object-store control-plane state out of ordinary host activation:
+And it keeps mutable object-store state out of host activation:
+
 - bucket creation
-- Garage S3 access-key issuance
+- Garage key issuance
 - GitHub Actions secrets
 - site artifact uploads
 
@@ -44,12 +53,15 @@ And keeps mutable object-store control-plane state out of ordinary host activati
 Use separate credentials for runtime and CI.
 
 ### `oddship-web` runtime key
+
 Purpose: `s3site` reads hosted site tarballs from Garage.
 
 Required grants on `static-sites`:
+
 - read only
 
 Stored in agenix secret:
+
 - `secrets/oddship-web-s3site-env.age`
 
 Payload shape:
@@ -60,7 +72,9 @@ AWS_S3_SECRET_KEY=...
 ```
 
 ### `oddship-web` Tailscale auth
+
 Stored in agenix secret:
+
 - `secrets/oddship-web-tailscale-auth.age`
 
 Payload shape:
@@ -69,24 +83,30 @@ Payload shape:
 <raw OAuth client secret>
 ```
 
-Use a dedicated OAuth client with the `auth_keys` scope restricted to `tag:oddship-web`.
+Use a dedicated OAuth client with the `auth_keys` scope restricted to
+`tag:oddship-web`.
+
 The host uses the built-in `services.tailscale.authKeyFile` flow with:
 
 - `authKeyParameters = { ephemeral = false; preauthorized = true; }`
 - `extraUpFlags = [ "--advertise-tags=tag:oddship-web" ]`
 
 ### CI upload keys
+
 Purpose: each publishing repo uploads its own tarball to Garage.
 
 Required grants on `static-sites`:
+
 - read
 - write
 
 Recommended layout:
+
 - `rohanverma-site-ci` for `rhnvrm/rohanverma.net`
 - `oddship-site-ci` for `oddship/oddship.net`
 
 Mapped to repository secrets:
+
 - `S3SITE_ACCESS_KEY_ID`
 - `S3SITE_SECRET_ACCESS_KEY`
 
@@ -94,8 +114,8 @@ Do not reuse the `oddship-web` runtime read-only key for CI.
 
 ## Garage admin CLI note
 
-On `rhnvrm-private`, the `garage` CLI needs the RPC secret from the agenix env file.
-Run admin commands like this:
+On `rhnvrm-private`, the `garage` CLI needs the RPC secret from the agenix env
+file. Run admin commands like this:
 
 ```bash
 sudo bash -lc 'set -a; source /run/agenix/rhnvrm-private-env; set +a; garage status'
@@ -116,7 +136,7 @@ sudo bash -lc 'set -a; source /run/agenix/rhnvrm-private-env; set +a; garage key
 sudo bash -lc 'set -a; source /run/agenix/rhnvrm-private-env; set +a; garage bucket allow --read static-sites --key oddship-web-runtime'
 ```
 
-## oddship-web config contract
+## `oddship-web` config contract
 
 `oddship-web` hosts both public sites through one local `s3site` listener.
 
@@ -131,12 +151,15 @@ Caddy reverse proxies both domains to that local listener.
 ## Publishing flow
 
 ### `rhnvrm/rohanverma.net`
+
 - workflow uploads `sites/rohanverma.net.tar.gz`
 
 ### `oddship/oddship.net`
+
 - workflow uploads `sites/oddship.net.tar.gz`
 
 Both workflows:
+
 - build locally in GitHub Actions
 - join the tailnet
 - upload via `aws s3api put-object`
@@ -145,13 +168,13 @@ Both workflows:
 
 ## Enable sequence
 
-1. Bootstrap the Garage bucket and CI/runtime keys on `rhnvrm-private`
-2. Create or update the agenix secrets for `oddship-web`
-3. Add repo secrets to `rhnvrm/rohanverma.net`
-4. Add repo secrets to `oddship/oddship.net`
-5. Deploy `oddship-web`
-6. Upload initial tarballs for both sites
-7. Verify both domains return `200`
+1. bootstrap the Garage bucket and CI/runtime keys on `rhnvrm-private`
+2. create or update the agenix secrets for `oddship-web`
+3. add repo secrets to `rhnvrm/rohanverma.net`
+4. add repo secrets to `oddship/oddship.net`
+5. deploy `oddship-web`
+6. upload initial tarballs for both sites
+7. verify both domains return `200`
 
 ## Rollback
 
