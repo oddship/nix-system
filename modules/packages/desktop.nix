@@ -16,8 +16,12 @@ in
   config = lib.mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
       # Browsers
-      chromium
-      google-chrome
+      (chromium.override {
+        commandLineArgs = "--enable-features=WaylandWindowDecorations,TouchpadOverscrollHistoryNavigation";
+      })
+      (google-chrome.override {
+        commandLineArgs = "--enable-features=WaylandWindowDecorations,TouchpadOverscrollHistoryNavigation";
+      })
       inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
 
       # Productivity
