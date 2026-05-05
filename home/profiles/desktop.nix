@@ -98,8 +98,6 @@ in
 
     thunderbird
 
-    appflowy
-
     gnomeExtensions.caffeine
     gnomeExtensions.dash-to-dock
     gnomeExtensions.appindicator
