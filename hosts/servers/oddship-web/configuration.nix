@@ -174,7 +174,7 @@ in
     controlSocket = "/run/s3site/control.sock";
     storage = "disk";
     dataDir = "/var/lib/s3site/data";
-    poll = "5m";
+    poll = "1m";
     environmentFile = config.age.secrets.oddship-web-s3site-env.path;
     hostedSites = s3siteHostedSites;
   };

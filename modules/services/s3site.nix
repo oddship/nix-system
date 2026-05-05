@@ -97,7 +97,7 @@ in
 
     poll = lib.mkOption {
       type = lib.types.str;
-      default = "10m";
+      default = "1m";
       description = "Polling interval for hosted site refresh checks";
     };
 
