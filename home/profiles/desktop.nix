@@ -40,7 +40,10 @@ in
       package = pkgs.catppuccin-gtk.override {
         accents = [ "blue" ];
         size = "standard";
-        tweaks = [ "rimless" "black" ];
+        tweaks = [
+          "rimless"
+          "black"
+        ];
         variant = "mocha";
       };
     };
@@ -124,11 +127,17 @@ in
     libnotify
   ];
 
-  xdg.mimeApps.defaultApplications = {
-    "text/html" = [ "zen-beta.desktop" ];
-    "text/xml" = [ "zen-beta.desktop" ];
-    "x-scheme-handler/http" = [ "zen-beta.desktop" ];
-    "x-scheme-handler/https" = [ "zen-beta.desktop" ];
+  xdg = {
+    enable = true;
+    mimeApps = {
+      enable = true;
+      defaultApplications = {
+        "text/html" = [ "google-chrome.desktop" ];
+        "text/xml" = [ "google-chrome.desktop" ];
+        "x-scheme-handler/http" = [ "google-chrome.desktop" ];
+        "x-scheme-handler/https" = [ "google-chrome.desktop" ];
+      };
+    };
   };
 
   dconf.settings = {
@@ -140,10 +149,8 @@ in
     "org/gnome/shell" = {
       favorite-apps = [
         "com.mitchellh.ghostty.desktop"
-        "ticktick.desktop"
-        "obsidian.desktop"
-        "zen-beta.desktop"
-        "code.desktop"
+        "org.gnome.Nautilus.desktop"
+        "google-chrome.desktop"
         "dev.zed.Zed.desktop"
       ];
       disable-user-extensions = false;

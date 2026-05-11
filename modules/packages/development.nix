@@ -26,6 +26,7 @@ in
       uv
       bun
       graphviz
+      qemu # Provides qemu-system-x86_64 for VM/backend tooling
       gh # GitHub CLI
       glab # GitLab CLI
       lazygit # Git TUI

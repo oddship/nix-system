@@ -89,6 +89,7 @@
                 just
                 jq
                 curl
+                qemu
               ]
               ++ [
                 agenix.packages.${system}.default
@@ -96,7 +97,7 @@
 
             shellHook = ''
               echo "Infrastructure dev shell loaded"
-              echo "Available commands: tofu, just, jq, agenix"
+              echo "Available commands: tofu, just, jq, agenix, qemu-system-x86_64"
             '';
           };
         }
