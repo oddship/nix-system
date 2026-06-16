@@ -168,8 +168,18 @@
             "hrsh7th/cmp-nvim-lsp",
           },
           config = function()
-            local lspconfig = require('lspconfig')
             local capabilities = require('cmp_nvim_lsp').default_capabilities()
+            local on_attach = function(_, bufnr)
+              local bufopts = { noremap=true, silent=true, buffer=bufnr }
+              vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, bufopts)
+              vim.keymap.set('n', 'gd', vim.lsp.buf.definition, bufopts)
+              vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)
+              vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, bufopts)
+              vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, bufopts)
+              vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, bufopts)
+              vim.keymap.set('n', 'gr', vim.lsp.buf.references, bufopts)
+              vim.keymap.set('n', '<leader>f', function() vim.lsp.buf.format { async = true } end, bufopts)
+            end
             
             local servers = {
               'nil_ls', 'pyright', 'ts_ls', 'gopls', 'rust_analyzer', 
@@ -177,20 +187,11 @@
             }
             
             for _, server in ipairs(servers) do
-              lspconfig[server].setup {
+              vim.lsp.config(server, {
                 capabilities = capabilities,
-                on_attach = function(client, bufnr)
-                  local bufopts = { noremap=true, silent=true, buffer=bufnr }
-                  vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, bufopts)
-                  vim.keymap.set('n', 'gd', vim.lsp.buf.definition, bufopts)
-                  vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)
-                  vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, bufopts)
-                  vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, bufopts)
-                  vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, bufopts)
-                  vim.keymap.set('n', 'gr', vim.lsp.buf.references, bufopts)
-                  vim.keymap.set('n', '<leader>f', function() vim.lsp.buf.format { async = true } end, bufopts)
-                end,
-              }
+                on_attach = on_attach,
+              })
+              vim.lsp.enable(server)
             end
           end,
         },
@@ -262,12 +263,21 @@
           build = ":TSUpdate",
           config = function()
             require('nvim-treesitter.configs').setup {
-              ensure_installed = { "nix", "lua", "python", "javascript", "typescript", "json", "yaml", "toml", "markdown", "bash", "go", "rust", "html", "css" },
-              auto_install = true,
+              ensure_installed = {
+                "nix", "lua", "python", "javascript", "typescript",
+                "json", "yaml", "toml", "markdown", "markdown_inline",
+                "bash", "go", "rust", "html", "css"
+              },
+              auto_install = false,
               highlight = { enable = true },
               indent = { enable = true },
               folding = { enable = true },
             }
+
+            -- Neovim 0.12 can hit a query directive mismatch in older
+            -- markdown injection paths. Disabling markdown injections avoids
+            -- the crashing code path while keeping markdown parsing/rendering.
+            vim.treesitter.query.set('markdown', 'injections', [[]])
           end,
         },
         
@@ -447,7 +457,7 @@
               use_local_fs = false,
               enable_builtin = true,
               default_remote = {"upstream", "origin"},
-              default_merge_method = "commit",
+              default_merge_method = "merge",
               timeout = 5000,
               ui = {
                 use_signcolumn = true,
@@ -467,7 +477,7 @@
               },
               file_panel = {
                 size = 10,
-                use_icons = true
+                icons = true
               },
             })
           end,
@@ -661,6 +671,10 @@
         -- Markdown Preview (render in-neovim)
         {
           "MeanderingProgrammer/render-markdown.nvim",
+          dependencies = {
+            "nvim-treesitter/nvim-treesitter",
+            "nvim-tree/nvim-web-devicons",
+          },
           opts = {
             file_types = { "markdown", "md" },
             heading = {
