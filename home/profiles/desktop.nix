@@ -81,6 +81,8 @@ in
     sessionVariables = {
       # rage uses this for passphrase prompts instead of /dev/tty
       PINENTRY_PROGRAM = "${pkgs.pinentry-gnome3}/bin/pinentry-gnome3";
+      SSL_CERT_FILE = "/etc/ssl/certs/ca-certificates.crt";
+      NIX_SSL_CERT_FILE = "/etc/ssl/certs/ca-certificates.crt";
     };
   };
 
