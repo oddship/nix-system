@@ -4,18 +4,6 @@
   gitConfigExtra ? "",
   ...
 }:
-let
-  wallpaper = pkgs.fetchurl {
-    url = "https://w.wallhaven.cc/full/2y/wallhaven-2yrwzy.jpg";
-    hash = "sha256-OJBIdULF8iElf2GNl2Nmedh5msVSSWbid2RtYM5Cjog=";
-  };
-
-  # TODO: syncthingtray does not work on first boot correctly
-  autostartPrograms = [
-    pkgs.syncthingtray-minimal
-    pkgs.netbird-ui
-  ];
-in
 {
   imports = [
     ../../../home/profiles/desktop.nix
@@ -28,8 +16,6 @@ in
   # Host-specific packages (additional to desktop profile)
   home.packages = with pkgs; [
     # Only truly host-specific packages here
-    # Common packages moved to desktop profile
-    websocat
   ];
 
   # MIME apps configuration in desktop profile
@@ -48,30 +34,4 @@ in
       path = gitConfigExtra; # TODO: need to figure out a better way to do this
     }
   ];
-
-  # Autostart XDG for gnome (ref: https://github.com/nix-community/home-manager/issues/3447)
-  home.file = builtins.listToAttrs (
-    map (pkg: {
-      name = ".config/autostart/" + pkg.pname + ".desktop";
-      value =
-        if pkg ? desktopItem then
-          {
-            # Application has a desktopItem entry.
-            # Assume that it was made with makeDesktopEntry, which exposes a
-            # text attribute with the contents of the .desktop file
-            text = pkg.desktopItem.text;
-          }
-        # Some packages ship desktop files that do not match pname.
-        else if pkg.pname == "netbird-ui" then
-          {
-            source = (pkg + "/share/applications/netbird.desktop");
-          }
-        else
-          {
-            # Application does *not* have a desktopItem entry. Try to find a
-            # matching .desktop name in /share/applications
-            source = (pkg + "/share/applications/" + pkg.pname + ".desktop");
-          };
-    }) autostartPrograms
-  );
 }

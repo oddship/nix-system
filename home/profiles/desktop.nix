@@ -1,4 +1,4 @@
-{ inputs, pkgs, ... }:
+{ inputs, lib, pkgs, ... }:
 let
   wallpaper = pkgs.fetchurl {
     url = "https://images.unsplash.com/photo-1644700057440-f05c649e21b9";
@@ -9,6 +9,40 @@ let
     pkgs.syncthingtray-minimal
     pkgs.netbird-ui
   ];
+
+  mkAutostartEntry =
+    pkg:
+    if lib.hasPrefix "syncthingtray" pkg.pname then
+      {
+        name = ".config/autostart/syncthingtray.desktop";
+        value.text = ''
+          [Desktop Entry]
+          Name=Syncthing Tray
+          GenericName=Syncthing Tray
+          Comment=Tray application for Syncthing
+          Exec=syncthingtray --wait
+          Icon=syncthingtray
+          Terminal=false
+          Type=Application
+          Categories=Network;FileTransfer;
+        '';
+      }
+    else {
+      name = ".config/autostart/" + pkg.pname + ".desktop";
+      value =
+        if pkg ? desktopItem then
+          {
+            text = pkg.desktopItem.text;
+          }
+        else if pkg.pname == "netbird-ui" then
+          {
+            source = (pkg + "/share/applications/netbird.desktop");
+          }
+        else
+          {
+            source = (pkg + "/share/applications/" + pkg.pname + ".desktop");
+          };
+    };
 in
 {
   imports = [
@@ -25,12 +59,15 @@ in
 
   # Catppuccin theme configuration
   catppuccin = {
+    enable = true;
+    autoEnable = true;
     flavor = "mocha";
     accent = "blue";
   };
 
   # Enable catppuccin for specific applications
   catppuccin.ghostty.enable = true;
+  catppuccin.gtk.icon.enable = false;
 
   # GTK theming (manual since catppuccin GTK port was archived)
   gtk = {
@@ -156,7 +193,7 @@ in
         "dev.zed.Zed.desktop"
       ];
       disable-user-extensions = false;
-      disabled-extensions = "disabled";
+      disabled-extensions = [ ];
       enabled-extensions = [
         "caffeine@patapon.info"
         "dash-to-dock@micxgx.gmail.com"
@@ -250,28 +287,5 @@ in
   programs.home-manager.enable = true;
 
   # Autostart XDG for gnome (ref: https://github.com/nix-community/home-manager/issues/3447)
-  home.file = builtins.listToAttrs (
-    map (pkg: {
-      name = ".config/autostart/" + pkg.pname + ".desktop";
-      value =
-        if pkg ? desktopItem then
-          {
-            # Application has a desktopItem entry.
-            # Assume that it was made with makeDesktopEntry, which exposes a
-            # text attribute with the contents of the .desktop file
-            text = pkg.desktopItem.text;
-          }
-        # Some packages ship desktop files that do not match pname.
-        else if pkg.pname == "netbird-ui" then
-          {
-            source = (pkg + "/share/applications/netbird.desktop");
-          }
-        else
-          {
-            # Application does *not* have a desktopItem entry. Try to find a
-            # matching .desktop name in /share/applications
-            source = (pkg + "/share/applications/" + pkg.pname + ".desktop");
-          };
-    }) autostartPrograms
-  );
+  home.file = builtins.listToAttrs (map mkAutostartEntry autostartPrograms);
 }

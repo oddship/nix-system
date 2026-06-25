@@ -55,6 +55,13 @@
   packages.scripts.enable = true;
   packages.libreoffice.enable = true;
 
+  # Desktop theming is managed via Home Manager; keep NixOS-side Catppuccin explicit
+  # to avoid future default changes without auto-enrolling system ports like GDM/GTK.
+  catppuccin = {
+    enable = true;
+    autoEnable = false;
+  };
+
   # Desktop-specific user configuration
   users.users.rhnvrm.extraGroups = [ "docker" ];
 
