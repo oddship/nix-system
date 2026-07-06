@@ -21,5 +21,6 @@
     "com.github.tchx84.Flatseal"
     "com.vivaldi.Vivaldi"
     "com.spotify.Client"
+    "org.telegram.desktop"
   ];
 }
