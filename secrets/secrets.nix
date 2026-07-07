@@ -22,6 +22,10 @@ in
     rhnvrm_ed25519
     thinkpadx1
   ];
+  "checkpost-osquery.age".publicKeys = [
+    rhnvrm_ed25519
+    thinkpadx1
+  ];
   "wifi_pass_ux303.age".publicKeys = [
     rhnvrm_ed25519
     ux303

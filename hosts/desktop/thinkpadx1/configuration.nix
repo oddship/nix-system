@@ -11,6 +11,7 @@
     ./hardware-configuration.nix
     ./disko-config.nix
     ./flatpaks.nix
+    ./osquery.nix
 
     # System modules
     ../../../modules/system/common.nix
