@@ -1,5 +1,6 @@
 {
   config,
+  lib,
   pkgs,
   ...
 }:
@@ -17,6 +18,13 @@ in
   environment.systemPackages = [ pkgs.osquery ];
 
   security.auditd.enable = true;
+
+  services.osquery = {
+    # Keep using the custom unit below so Checkpost values are written only at
+    # activation/runtime instead of into the Nix store flagfile.
+    enable = lib.mkForce false;
+  };
+  services.osqueryNftables.enable = true;
 
   systemd.services.osqueryd = {
     description = "osquery daemon";
@@ -78,6 +86,8 @@ in
         printf '%s\n' "--distributed_interval=''${CHECKPOST_DISTRIBUTED_INTERVAL:-10}"
         printf '%s\n' "--disable_distributed=false"
         printf '%s\n' "--extensions_socket=/run/osquery/osquery.em"
+        printf '%s\n' "--extensions_autoload=${config.services.osquery.flags.extensions_autoload}"
+        printf '%s\n' "--extensions_timeout=${config.services.osquery.flags.extensions_timeout}"
       } > /run/osquery/osquery.flags
       chmod 0600 /run/osquery/osquery.flags
     '';
@@ -85,11 +95,14 @@ in
     serviceConfig = {
       ExecStart = "${pkgs.osquery}/bin/osqueryd --flagfile /run/osquery/osquery.flags";
       PIDFile = "/run/osquery/osqueryd.pid";
+      AmbientCapabilities = [ "CAP_NET_ADMIN" ];
+      Environment = [ "NFT_BIN=${pkgs.nftables}/bin/nft" ];
       RuntimeDirectory = "osquery";
       RuntimeDirectoryMode = "0750";
       StateDirectory = "osquery";
       LogsDirectory = "osquery";
       Restart = "always";
     };
+    path = [ pkgs.nftables ];
   };
 }

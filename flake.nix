@@ -48,6 +48,11 @@
       inputs.flake-utils.follows = "flake-utils";
     };
 
+    osquery-nftables-ext = {
+      url = "github:codingCoffee/osquery-nftables-ext";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
   };
 
   outputs =
@@ -155,6 +160,7 @@
           nix-flatpak.nixosModules.nix-flatpak
           catppuccin.nixosModules.catppuccin
           chaotic.nixosModules.default
+          inputs.osquery-nftables-ext.nixosModules.default
 
           ./hosts/desktop/thinkpadx1/configuration.nix
         ];

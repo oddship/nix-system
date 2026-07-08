@@ -372,6 +372,26 @@
         "type": "github"
       }
     },
+    "osquery-nftables-ext": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1782300911,
+        "narHash": "sha256-fSWAoDFasvUFkeN3x5hBcgReCQ6huAeqm4iA7NdIFDA=",
+        "owner": "codingCoffee",
+        "repo": "osquery-nftables-ext",
+        "rev": "9df1af275ef6c5c8e6a7322ce12111234c3de314",
+        "type": "github"
+      },
+      "original": {
+        "owner": "codingCoffee",
+        "repo": "osquery-nftables-ext",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "agenix": "agenix",
@@ -384,6 +404,7 @@
         "linkpage": "linkpage",
         "nix-flatpak": "nix-flatpak",
         "nixpkgs": "nixpkgs_4",
+        "osquery-nftables-ext": "osquery-nftables-ext",
         "s3site": "s3site",
         "zen-browser": "zen-browser"
       }
