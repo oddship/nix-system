@@ -1,4 +1,9 @@
-{ inputs, lib, pkgs, ... }:
+{
+  inputs,
+  lib,
+  pkgs,
+  ...
+}:
 let
   wallpaper = pkgs.fetchurl {
     url = "https://images.unsplash.com/photo-1644700057440-f05c649e21b9";
@@ -27,22 +32,23 @@ let
           Categories=Network;FileTransfer;
         '';
       }
-    else {
-      name = ".config/autostart/" + pkg.pname + ".desktop";
-      value =
-        if pkg ? desktopItem then
-          {
-            text = pkg.desktopItem.text;
-          }
-        else if pkg.pname == "netbird-ui" then
-          {
-            source = (pkg + "/share/applications/netbird.desktop");
-          }
-        else
-          {
-            source = (pkg + "/share/applications/" + pkg.pname + ".desktop");
-          };
-    };
+    else
+      {
+        name = ".config/autostart/" + pkg.pname + ".desktop";
+        value =
+          if pkg ? desktopItem then
+            {
+              text = pkg.desktopItem.text;
+            }
+          else if pkg.pname == "netbird-ui" then
+            {
+              source = (pkg + "/share/applications/netbird.desktop");
+            }
+          else
+            {
+              source = (pkg + "/share/applications/" + pkg.pname + ".desktop");
+            };
+      };
 in
 {
   imports = [

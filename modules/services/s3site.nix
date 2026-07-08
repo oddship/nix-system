@@ -24,7 +24,8 @@ let
   controlSocketDirManagedBySystemd = lib.hasPrefix "/run/" controlSocketDir;
   stateDirectoryName = lib.removePrefix "/var/lib/" cfg.dataDir;
   runtimeDirectoryName = lib.removePrefix "/run/" controlSocketDir;
-  tailscaleAutoconnectEnabled = config.services.tailscale.enable && config.services.tailscale.authKeyFile != null;
+  tailscaleAutoconnectEnabled =
+    config.services.tailscale.enable && config.services.tailscale.authKeyFile != null;
   execArgs = [
     "${cfg.package}/bin/s3site"
     "-bucket"
@@ -45,7 +46,8 @@ let
     hostedSitesConfig
     "-control-socket"
     cfg.controlSocket
-  ] ++ lib.optionals (cfg.endpoint != null && cfg.endpoint != "") [
+  ]
+  ++ lib.optionals (cfg.endpoint != null && cfg.endpoint != "") [
     "-endpoint"
     cfg.endpoint
   ];
@@ -176,8 +178,14 @@ in
     systemd.services.s3site = {
       description = "s3site hosted static site service";
       wantedBy = [ "multi-user.target" ];
-      after = [ "network-online.target" ] ++ lib.optionals tailscaleAutoconnectEnabled [ "tailscaled-autoconnect.service" ];
-      wants = [ "network-online.target" ] ++ lib.optionals tailscaleAutoconnectEnabled [ "tailscaled-autoconnect.service" ];
+      after = [
+        "network-online.target"
+      ]
+      ++ lib.optionals tailscaleAutoconnectEnabled [ "tailscaled-autoconnect.service" ];
+      wants = [
+        "network-online.target"
+      ]
+      ++ lib.optionals tailscaleAutoconnectEnabled [ "tailscaled-autoconnect.service" ];
       preStart = ''
         ${pkgs.coreutils}/bin/install -d -m 0750 -o s3site -g s3site ${lib.escapeShellArg cfg.dataDir}
         ${pkgs.coreutils}/bin/install -d -m 0755 -o s3site -g s3site ${lib.escapeShellArg controlSocketDir}
@@ -199,7 +207,8 @@ in
         ReadWritePaths =
           lib.optionals (!dataDirManagedBySystemd) [ cfg.dataDir ]
           ++ lib.optionals (!controlSocketDirManagedBySystemd) [ controlSocketDir ];
-      } // lib.optionalAttrs (cfg.environmentFile != null) {
+      }
+      // lib.optionalAttrs (cfg.environmentFile != null) {
         EnvironmentFile = cfg.environmentFile;
       };
     };

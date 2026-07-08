@@ -85,29 +85,29 @@ in
           }
         ) cfg.staticSites)
         ++
-        # Reverse proxy sites
-        (lib.mapAttrsToList (
-          name: site:
-          let
-            commonConfig = ''
-              reverse_proxy ${site.upstream}
-            '';
-          in
-          {
-            "${site.domain}" = {
-              extraConfig = ''
-                ${commonConfig}
-
-                tls {
-                  dns cloudflare {env.CLOUDFLARE_DNS_API_TOKEN}
-                }
+          # Reverse proxy sites
+          (lib.mapAttrsToList (
+            name: site:
+            let
+              commonConfig = ''
+                reverse_proxy ${site.upstream}
               '';
-            };
-            "http://${site.domain}" = {
-              extraConfig = commonConfig;
-            };
-          }
-        ) cfg.reverseProxySites)
+            in
+            {
+              "${site.domain}" = {
+                extraConfig = ''
+                  ${commonConfig}
+
+                  tls {
+                    dns cloudflare {env.CLOUDFLARE_DNS_API_TOKEN}
+                  }
+                '';
+              };
+              "http://${site.domain}" = {
+                extraConfig = commonConfig;
+              };
+            }
+          ) cfg.reverseProxySites)
       );
     };
 
