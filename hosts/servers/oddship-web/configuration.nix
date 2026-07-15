@@ -7,13 +7,17 @@
   ...
 }:
 let
-  enableS3SiteHostedSites = true; # serve oddship.net and rohanverma.net from Garage via s3site
+  enableS3SiteHostedSites = true; # serve hosted static sites from Garage via s3site
   s3siteListen = "127.0.0.1:9001";
   garageEndpoint = "http://rhnvrm-private:3900";
   s3siteHostedSites = {
     oddship = {
       hostname = "oddship.net";
       key = "sites/oddship.net.tar.gz";
+    };
+    readingList = {
+      hostname = "reading-list.oddship.net";
+      key = "sites/reading-list.oddship.net.tar.gz";
     };
     rohanverma = {
       hostname = "rohanverma.net";
@@ -118,6 +122,10 @@ in
     reverseProxySites = {
       oddship = {
         domain = s3siteHostedSites.oddship.hostname;
+        upstream = "http://${s3siteListen}";
+      };
+      readingList = {
+        domain = s3siteHostedSites.readingList.hostname;
         upstream = "http://${s3siteListen}";
       };
       rohanverma = {

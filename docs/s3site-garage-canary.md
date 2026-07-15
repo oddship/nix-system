@@ -18,7 +18,8 @@ for each content publish.
   - runs Caddy publicly
   - runs `s3site` on localhost
   - joins Tailscale and reads site archives from Garage
-- GitHub Actions (`rhnvrm/rohanverma.net`, `oddship/oddship.net`)
+- GitHub Actions (`rhnvrm/rohanverma.net`, `oddship/oddship.net`,
+  `oddship/reading-list`)
   - join Tailscale with `tailscale/github-action`
   - build site tarballs and upload them to Garage
   - let `oddship-web` pick them up on the next `s3site` poll
@@ -31,6 +32,7 @@ for each content publish.
 - site keys:
   - `sites/rohanverma.net.tar.gz`
   - `sites/oddship.net.tar.gz`
+  - `sites/reading-list.oddship.net.tar.gz`
 
 ## Why this split exists
 
@@ -104,9 +106,12 @@ Recommended layout:
 
 - `rohanverma-site-ci` for `rhnvrm/rohanverma.net`
 - `oddship-site-ci` for `oddship/oddship.net`
+- `reading-list-site-ci` for `oddship/reading-list`
 
 Mapped to repository secrets:
 
+- `TS_OAUTH_CLIENT_ID`
+- `TS_OAUTH_SECRET`
 - `S3SITE_ACCESS_KEY_ID`
 - `S3SITE_SECRET_ACCESS_KEY`
 
@@ -132,6 +137,9 @@ sudo bash -lc 'set -a; source /run/agenix/rhnvrm-private-env; set +a; garage buc
 sudo bash -lc 'set -a; source /run/agenix/rhnvrm-private-env; set +a; garage key create oddship-site-ci'
 sudo bash -lc 'set -a; source /run/agenix/rhnvrm-private-env; set +a; garage bucket allow --read --write static-sites --key oddship-site-ci'
 
+sudo bash -lc 'set -a; source /run/agenix/rhnvrm-private-env; set +a; garage key create reading-list-site-ci'
+sudo bash -lc 'set -a; source /run/agenix/rhnvrm-private-env; set +a; garage bucket allow --read --write static-sites --key reading-list-site-ci'
+
 sudo bash -lc 'set -a; source /run/agenix/rhnvrm-private-env; set +a; garage key create oddship-web-runtime'
 sudo bash -lc 'set -a; source /run/agenix/rhnvrm-private-env; set +a; garage bucket allow --read static-sites --key oddship-web-runtime'
 ```
@@ -144,9 +152,10 @@ sudo bash -lc 'set -a; source /run/agenix/rhnvrm-private-env; set +a; garage buc
 - `services.s3site.poll = "5m"`
 - hosted sites:
   - `oddship.net`
+  - `reading-list.oddship.net`
   - `rohanverma.net`
 
-Caddy reverse proxies both domains to that local listener.
+Caddy reverse proxies each hosted domain to that local listener.
 
 ## Publishing flow
 
@@ -158,7 +167,11 @@ Caddy reverse proxies both domains to that local listener.
 
 - workflow uploads `sites/oddship.net.tar.gz`
 
-Both workflows:
+### `oddship/reading-list`
+
+- workflow uploads `sites/reading-list.oddship.net.tar.gz`
+
+All workflows:
 
 - build locally in GitHub Actions
 - join the tailnet
@@ -172,9 +185,10 @@ Both workflows:
 2. create or update the agenix secrets for `oddship-web`
 3. add repo secrets to `rhnvrm/rohanverma.net`
 4. add repo secrets to `oddship/oddship.net`
-5. deploy `oddship-web`
-6. upload initial tarballs for both sites
-7. verify both domains return `200`
+5. add repo secrets to `oddship/reading-list`
+6. deploy `oddship-web`
+7. upload initial tarballs for all sites
+8. verify all domains return `200`
 
 ## Rollback
 
@@ -182,4 +196,4 @@ If hosted serving misbehaves:
 
 1. restore the old static-site wiring in `hosts/servers/oddship-web/configuration.nix`
 2. deploy `oddship-web`
-3. both domains fall back to the old Nix-built static roots
+3. affected domains fall back to the old Nix-built static roots

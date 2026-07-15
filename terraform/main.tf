@@ -42,9 +42,9 @@ resource "hcloud_ssh_key" "default" {
 # Server
 resource "hcloud_server" "web" {
   name        = "oddship-web"
-  server_type = "cpx11"       # 2 vCPU, 2GB RAM, ~$4/mo
-  image       = "debian-12"   # Will be replaced by nixos-anywhere
-  location    = "nbg1"        # Nuremberg, Germany
+  server_type = "cpx11"     # 2 vCPU, 2GB RAM, ~$4/mo
+  image       = "debian-12" # Will be replaced by nixos-anywhere
+  location    = "nbg1"      # Nuremberg, Germany
   backups     = true
 
   ssh_keys = [hcloud_ssh_key.default.id]
@@ -136,7 +136,7 @@ resource "cloudflare_record" "oddship_root" {
   name    = "@"
   content = hcloud_server.web.ipv4_address
   type    = "A"
-  proxied = true  # Orange cloud for IP hiding + DDoS protection
+  proxied = true # Orange cloud for IP hiding + DDoS protection
 }
 
 resource "cloudflare_record" "oddship_www" {
@@ -150,6 +150,14 @@ resource "cloudflare_record" "oddship_www" {
 resource "cloudflare_record" "oddship_links" {
   zone_id = data.cloudflare_zone.oddship.id
   name    = "links"
+  content = hcloud_server.web.ipv4_address
+  type    = "A"
+  proxied = true
+}
+
+resource "cloudflare_record" "oddship_reading_list" {
+  zone_id = data.cloudflare_zone.oddship.id
+  name    = "reading-list"
   content = hcloud_server.web.ipv4_address
   type    = "A"
   proxied = true
@@ -175,4 +183,3 @@ resource "cloudflare_record" "rohanverma_links" {
   type    = "A"
   proxied = true
 }
-
