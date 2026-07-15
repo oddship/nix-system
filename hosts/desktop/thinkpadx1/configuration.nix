@@ -92,6 +92,6 @@
 
   # Host-specific packages that don't belong in modules
   environment.systemPackages = with pkgs; [
-    # Empty - all packages are in modules
+    inputs.herdr.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
 }
