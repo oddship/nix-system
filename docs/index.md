@@ -34,6 +34,7 @@ still the fuller map of the tree.
 - [Claude + Zellij orchestration](claude-zellij-orchestration/)
 - [Zellij reference](zellij-reference/)
 - [s3site + Garage canary path](s3site-garage-canary/)
+- [Buzz AppImage on NixOS](buzz-appimage-nixos/)
 
 ## Local preview
 
