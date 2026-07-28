@@ -18,6 +18,18 @@ let
     readingList = {
       hostname = "reading-list.oddship.net";
       key = "sites/reading-list.oddship.net.tar.gz";
+      headers = [
+        {
+          path = "/notes/rss.xml";
+          name = "Access-Control-Allow-Origin";
+          value = "*";
+        }
+        {
+          path = "/digests/rss.xml";
+          name = "Access-Control-Allow-Origin";
+          value = "*";
+        }
+      ];
     };
     rohanverma = {
       hostname = "rohanverma.net";

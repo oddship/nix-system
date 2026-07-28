@@ -17,6 +17,21 @@ let
       // lib.optionalAttrs (site.key != null) {
         key = site.key;
       }
+      // lib.optionalAttrs (site.headers != [ ]) {
+        headers = map (
+          header:
+          {
+            name = header.name;
+            value = header.value;
+          }
+          // lib.optionalAttrs (header.path != null) {
+            path = header.path;
+          }
+          // lib.optionalAttrs (header.pathPrefix != null) {
+            pathPrefix = header.pathPrefix;
+          }
+        ) site.headers;
+      }
     ) cfg.hostedSites;
   };
   controlSocketDir = builtins.dirOf cfg.controlSocket;
@@ -137,6 +152,34 @@ in
               default = null;
               description = "Optional explicit object key. Defaults to <prefix><hostname>.tar.gz";
             };
+            headers = lib.mkOption {
+              type = lib.types.listOf (
+                lib.types.submodule {
+                  options = {
+                    path = lib.mkOption {
+                      type = lib.types.nullOr lib.types.str;
+                      default = null;
+                      description = "Exact request path that receives this response header";
+                    };
+                    pathPrefix = lib.mkOption {
+                      type = lib.types.nullOr lib.types.str;
+                      default = null;
+                      description = "Request path prefix that receives this response header";
+                    };
+                    name = lib.mkOption {
+                      type = lib.types.str;
+                      description = "Response header name";
+                    };
+                    value = lib.mkOption {
+                      type = lib.types.str;
+                      description = "Response header value";
+                    };
+                  };
+                }
+              );
+              default = [ ];
+              description = "Optional response headers applied to matching hosted-site request paths";
+            };
           };
         }
       );
@@ -155,7 +198,16 @@ in
         assertion = cfg.hostedSites != { };
         message = "services.s3site.hostedSites must declare at least one site";
       }
-    ];
+    ]
+    ++ lib.flatten (
+      lib.mapAttrsToList (
+        siteName: site:
+        map (header: {
+          assertion = (header.path != null) != (header.pathPrefix != null);
+          message = "services.s3site.hostedSites.${siteName}.headers entries must set exactly one of path or pathPrefix";
+        }) site.headers
+      ) cfg.hostedSites
+    );
 
     users.groups.s3site = { };
     users.users.s3site = {

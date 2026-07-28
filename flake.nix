@@ -49,7 +49,7 @@
     };
 
     s3site = {
-      url = "github:rhnvrm/s3site";
+      url = "github:rhnvrm/s3site/v0.1.1";
       inputs.flake-utils.follows = "flake-utils";
     };
 
