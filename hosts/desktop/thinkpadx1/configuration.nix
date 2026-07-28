@@ -30,6 +30,7 @@
     ../../../modules/desktop/gnome.nix
 
     # Package collections
+    ../../../modules/packages/appimage.nix
     ../../../modules/packages/desktop.nix
     ../../../modules/packages/development.nix
     ../../../modules/packages/scripts.nix
@@ -51,6 +52,7 @@
     gaming.enable = true;
   };
   desktop.gnome.enable = true;
+  packages.appimage.enable = true;
   packages.desktop.enable = true;
   packages.development.enable = true;
   packages.scripts.enable = true;
