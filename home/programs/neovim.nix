@@ -643,7 +643,24 @@
               { "<leader>ll", "<cmd>Trouble lsp toggle focus=false win.position=right<cr>", desc = "LSP Definitions" },
               { "<leader>lL", "<cmd>Trouble loclist toggle<cr>", desc = "Location List" },
               { "<leader>lQ", "<cmd>Trouble qflist toggle<cr>", desc = "Quickfix List" },
-              { "<leader>t", group = "Terminal" },
+              { "<leader>t", group = "Tasks / Terminal" },
+              {
+                "<leader>tc",
+                function()
+                  local line = vim.api.nvim_get_current_line()
+                  local updated, count = line:gsub("%[([ xX])%]", function(mark)
+                    return mark == " " and "[x]" or "[ ]"
+                  end, 1)
+
+                  if count == 0 then
+                    vim.notify("No checkbox found on this line", vim.log.levels.INFO)
+                    return
+                  end
+
+                  vim.api.nvim_set_current_line(updated)
+                end,
+                desc = "Toggle checkbox",
+              },
               { "<leader>tt", "<cmd>ToggleTerm<cr>", desc = "Toggle terminal" },
               { "<leader>m", group = "MCP" },
               { "<leader>ms", "<cmd>MCPStart<cr>", desc = "Start MCP Server" },
