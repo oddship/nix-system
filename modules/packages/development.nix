@@ -34,8 +34,6 @@ in
       delta # Better git diffs
       bubblewrap # Provides bwrap sandboxing tool
       libxcrypt # Provides libcrypt for building packages
-      inputs.antigravity-nix.packages.${pkgs.stdenv.hostPlatform.system}.default
-
       # Nix tooling
       inputs.agenix.packages.${pkgs.stdenv.hostPlatform.system}.default
 
