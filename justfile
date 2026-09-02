@@ -33,7 +33,7 @@ info:
 # Build the system configuration without switching
 build host=hostname:
     @echo -e "${BLUE}Building configuration for {{host}}...${NC}"
-    sudo nixos-rebuild build --flake {{flake_path}}#{{host}}
+    nixos-rebuild build --flake {{flake_path}}#{{host}}
 
 # Build and switch to new configuration
 switch host=hostname:
