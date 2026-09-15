@@ -54,6 +54,7 @@ in
       package = pkgs.symlinkJoin {
         name = "appimage-run";
         paths = [ appimageRun ];
+        meta.mainProgram = "appimage-run";
         buildInputs = [ pkgs.makeWrapper ];
         postBuild = ''
           wrapProgram $out/bin/appimage-run \

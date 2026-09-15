@@ -12,7 +12,7 @@ import sys
 
 
 COPY = b'await y.default.cp(e,t,{recursive:!0,verbatimSymlinks:!0});return'
-FUNCTION = b'async function Cte(e,t){'
+FUNCTION = b'async function Pne(e,t){'
 HELPER = b'''async function nixMakePluginCopyWritable(e){
 let t=await y.default.lstat(e);if(t.isSymbolicLink())return;
 await y.default.chmod(e,t.mode|(t.isDirectory()?448:384));

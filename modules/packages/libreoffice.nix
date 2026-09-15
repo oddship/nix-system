@@ -17,7 +17,7 @@ in
         "still"
       ];
       default = "fresh";
-      description = "LibreOffice version to install (fresh = latest, still = stable)";
+      description = "LibreOffice version to install (fresh = current, still = stable)";
     };
 
     withLanguagePacks = lib.mkOption {
@@ -38,7 +38,7 @@ in
       with pkgs;
       [
         # Main LibreOffice package
-        (if cfg.version == "fresh" then libreoffice-fresh else libreoffice-still)
+        (if cfg.version == "fresh" then libreoffice else libreoffice-stable)
 
         # Language packs and spell checkers
       ]
