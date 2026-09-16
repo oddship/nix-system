@@ -15,6 +15,7 @@
 
     # System modules
     ../../../modules/system/common.nix
+    ../../../modules/system/nix-ld.nix
     ../../../modules/system/boot.nix
     ../../../modules/system/networking.nix
 
