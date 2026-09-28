@@ -38,12 +38,20 @@ build host=hostname:
 # Build and switch to new configuration
 switch host=hostname:
     @echo -e "${BLUE}Switching to new configuration for {{host}}...${NC}"
-    sudo nixos-rebuild switch --flake {{flake_path}}#{{host}}
+    @if [ ! -t 0 ] && command -v pkexec >/dev/null 2>&1 && { [ "${XDG_SESSION_TYPE:-}" = wayland ] || [ "${XDG_SESSION_TYPE:-}" = x11 ]; } && { [ -n "${DISPLAY:-}" ] || [ -n "${WAYLAND_DISPLAY:-}" ]; }; then \
+        pkexec nixos-rebuild switch --flake {{flake_path}}#{{host}}; \
+    else \
+        sudo nixos-rebuild switch --flake {{flake_path}}#{{host}}; \
+    fi
 
 # Build and switch with verbose output
 debug host=hostname:
     @echo -e "${BLUE}Debug build for {{host}}...${NC}"
-    sudo nixos-rebuild switch --flake {{flake_path}}#{{host}} --show-trace
+    @if [ ! -t 0 ] && command -v pkexec >/dev/null 2>&1 && { [ "${XDG_SESSION_TYPE:-}" = wayland ] || [ "${XDG_SESSION_TYPE:-}" = x11 ]; } && { [ -n "${DISPLAY:-}" ] || [ -n "${WAYLAND_DISPLAY:-}" ]; }; then \
+        pkexec nixos-rebuild switch --flake {{flake_path}}#{{host}} --show-trace; \
+    else \
+        sudo nixos-rebuild switch --flake {{flake_path}}#{{host}} --show-trace; \
+    fi
 
 # Test configuration in a VM
 test host=hostname:
@@ -58,7 +66,7 @@ update input="":
         nix flake update; \
     else \
         echo -e "${BLUE}Updating flake input: {{input}}...${NC}"; \
-        nix flake lock --update-input {{input}}; \
+        nix flake update "{{input}}"; \
     fi
 
 # Show flake inputs and their versions
@@ -106,7 +114,11 @@ generations:
 # Rollback to previous generation
 rollback:
     @echo -e "${YELLOW}Rolling back to previous generation...${NC}"
-    sudo nixos-rebuild switch --rollback
+    @if [ ! -t 0 ] && command -v pkexec >/dev/null 2>&1 && { [ "${XDG_SESSION_TYPE:-}" = wayland ] || [ "${XDG_SESSION_TYPE:-}" = x11 ]; } && { [ -n "${DISPLAY:-}" ] || [ -n "${WAYLAND_DISPLAY:-}" ]; }; then \
+        pkexec nixos-rebuild switch --rollback; \
+    else \
+        sudo nixos-rebuild switch --rollback; \
+    fi
 
 # Edit system configuration
 edit host=hostname:
@@ -126,7 +138,7 @@ check host=hostname:
 diff host=hostname:
     @echo -e "${BLUE}Building and showing diff...${NC}"
     nixos-rebuild build --flake {{flake_path}}#{{host}}
-    nvd diff /run/current-system result
+    nix shell --inputs-from {{flake_path}} nixpkgs#nvd --command nvd diff /run/current-system result
 
 # Create a new module
 new-module category name:
