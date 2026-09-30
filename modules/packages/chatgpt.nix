@@ -11,11 +11,11 @@ let
   # version and hash pinned; update both when OpenAI publishes a new release.
   chatgpt-unwrapped = pkgs.stdenvNoCC.mkDerivation {
     pname = "chatgpt-unwrapped";
-    version = "26.901.20858";
+    version = "26.928.21956";
 
     src = pkgs.fetchurl {
       url = "https://persistent.oaistatic.com/codex-app-prod/linux/deb/latest/chatgpt_amd64.deb";
-      hash = "sha256-EO0MGogLmXXR8YW/eRGn9RTga5hjzU7ZVh1ABjYXyFQ=";
+      hash = "sha256-msjQcRtGATaNSd7dv1Co/lI1jLYbbZ96XBi0HtRQCtg=";
     };
 
     nativeBuildInputs = [
