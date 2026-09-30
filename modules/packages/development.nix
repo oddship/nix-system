@@ -30,6 +30,7 @@ in
       gh # GitHub CLI
       glab # GitLab CLI
       lazygit # Git TUI
+      inputs.px0-nix.packages.${pkgs.stdenv.hostPlatform.system}.default # Browser-based code review
       ast-grep # Structural search and replace
       delta # Better git diffs
       bubblewrap # Provides bwrap sandboxing tool

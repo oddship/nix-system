@@ -364,6 +364,26 @@
         "type": "github"
       }
     },
+    "px0-nix": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1790764538,
+        "narHash": "sha256-00PSXkFvfAX3i4I20z7LmxLAB5xQ9RPddFThNJR+11A=",
+        "owner": "oddship",
+        "repo": "px0-nix-flake",
+        "rev": "331f4dc559466e6f4f1c44b637d8f86df12dea97",
+        "type": "github"
+      },
+      "original": {
+        "owner": "oddship",
+        "repo": "px0-nix-flake",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "agenix": "agenix",
@@ -378,6 +398,7 @@
         "nix-flatpak": "nix-flatpak",
         "nixpkgs": "nixpkgs_4",
         "osquery-nftables-ext": "osquery-nftables-ext",
+        "px0-nix": "px0-nix",
         "s3site": "s3site",
         "zen-browser": "zen-browser"
       }
