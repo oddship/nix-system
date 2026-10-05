@@ -40,6 +40,7 @@ The authoritative host list lives in `flake.nix`.
 ```bash
 just help
 just check
+just check-all
 just build <host>
 just switch <host>
 just diff <host>
@@ -49,8 +50,18 @@ just secret list
 just secret edit <name>
 ```
 
-For `build`, `switch`, `debug`, and `diff`, the `host` argument defaults to the
+For `check`, `build`, `switch`, `debug`, and `diff`, the `host` argument defaults to the
 current hostname.
+
+Use `just upgrade` for routine updates: update the inputs, build the current
+host once, then activate that exact store path without evaluating again as root.
+`just check` evaluates only the selected host; `just check-all` checks every
+host and the other flake outputs.
+
+Herdr uses its official binary-package flake and ChatGPT uses the maintained
+`danielbodart/chatgpt-desktop` flake with versioned OpenAI downloads. Their
+upstream pins move when `just update` runs. Store optimisation runs on Sundays
+at 04:30 instead of during package imports.
 
 ## Provisioning and deploy flows
 

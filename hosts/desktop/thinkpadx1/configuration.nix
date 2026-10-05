@@ -44,6 +44,17 @@
   # Host-specific configuration
   networking.hostName = "oddship-thinkpad-x1";
 
+  nix.settings = {
+    extra-substituters = [
+      "https://herdr.cachix.org"
+      "https://danielbodart.cachix.org"
+    ];
+    extra-trusted-public-keys = [
+      "herdr.cachix.org-1:3nH7IStRsS0ASfdonA0DCRR2ZrSCeWitZ7Kwew0cR4I="
+      "danielbodart.cachix.org-1:751qv4GxLFJCThWMEw1WL6kUqY0DpF6oqPqsLKnnEwU="
+    ];
+  };
+
   # Enable modules for this host
   services.desktop.enable = true;
   services.development = {

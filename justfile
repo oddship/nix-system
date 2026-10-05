@@ -33,15 +33,19 @@ info:
 # Build the system configuration without switching
 build host=hostname:
     @echo -e "${BLUE}Building configuration for {{host}}...${NC}"
-    nixos-rebuild build --flake {{flake_path}}#{{host}}
+    nix build "{{flake_path}}#nixosConfigurations.{{host}}.config.system.build.toplevel" --out-link "{{flake_path}}/result"
 
 # Build and switch to new configuration
 switch host=hostname:
-    @echo -e "${BLUE}Switching to new configuration for {{host}}...${NC}"
-    @if [ ! -t 0 ] && command -v pkexec >/dev/null 2>&1 && { [ "${XDG_SESSION_TYPE:-}" = wayland ] || [ "${XDG_SESSION_TYPE:-}" = x11 ]; } && { [ -n "${DISPLAY:-}" ] || [ -n "${WAYLAND_DISPLAY:-}" ]; }; then \
-        pkexec nixos-rebuild switch --flake {{flake_path}}#{{host}}; \
-    else \
-        sudo nixos-rebuild switch --flake {{flake_path}}#{{host}}; \
+    #!/usr/bin/env bash
+    set -euo pipefail
+    echo -e "${BLUE}Building configuration for {{host}}...${NC}"
+    system_path=$(nix build "{{flake_path}}#nixosConfigurations.{{host}}.config.system.build.toplevel" --no-link --print-out-paths)
+    echo -e "${BLUE}Activating $system_path...${NC}"
+    if [ ! -t 0 ] && command -v pkexec >/dev/null 2>&1 && { [ "${XDG_SESSION_TYPE:-}" = wayland ] || [ "${XDG_SESSION_TYPE:-}" = x11 ]; } && { [ -n "${DISPLAY:-}" ] || [ -n "${WAYLAND_DISPLAY:-}" ]; }; then
+        pkexec nixos-rebuild switch --store-path "$system_path" --no-reexec
+    else
+        sudo nixos-rebuild switch --store-path "$system_path" --no-reexec
     fi
 
 # Build and switch with verbose output
@@ -128,9 +132,15 @@ edit host=hostname:
 edit-home host=hostname:
     $EDITOR {{flake_path}}/hosts/*/{{host}}/home.nix
 
-# Check configuration for errors
+# Evaluate only the selected host, including its NixOS assertions
 check host=hostname:
-    @echo -e "${BLUE}Checking configuration...${NC}"
+    @echo -e "${BLUE}Checking configuration for {{host}}...${NC}"
+    nix eval --raw "{{flake_path}}#nixosConfigurations.{{host}}.config.system.build.toplevel.drvPath" > /dev/null
+    @echo -e "${GREEN}Configuration check passed${NC}"
+
+# Check every host and the other flake outputs
+check-all:
+    @echo -e "${BLUE}Checking all flake outputs...${NC}"
     nix flake check
     @echo -e "${GREEN}Configuration check passed${NC}"
 

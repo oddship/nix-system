@@ -3,7 +3,7 @@
   # Common nix settings shared across all hosts
   nix.settings = {
     accept-flake-config = true;
-    auto-optimise-store = true;
+    auto-optimise-store = false;
     builders-use-substitutes = true;
 
     # Allow your user to use substituters from flakes
@@ -24,6 +24,12 @@
     extra-trusted-public-keys = [
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
     ];
+  };
+
+  # Deduplicate outside the update path and apart from weekly garbage collection.
+  nix.optimise = {
+    automatic = lib.mkDefault true;
+    dates = lib.mkDefault [ "Sun 04:30" ];
   };
 
   # Automatic garbage collection

@@ -36,9 +36,12 @@
     };
 
     herdr = {
-      url = "github:ogulcancelik/herdr";
-      inputs.nixpkgs.follows = "nixpkgs";
+      url = "github:herdrdev/herdr-nix";
+      # Keep the binary flake's own nixpkgs pin to match its published cache.
     };
+
+    # Versioned OpenAI downloads, maintained patches, and hourly upstream checks.
+    chatgpt-desktop.url = "github:danielbodart/chatgpt-desktop";
 
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
 
