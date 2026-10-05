@@ -40,6 +40,9 @@
       # Keep the binary flake's own nixpkgs pin to match its published cache.
     };
 
+    # Keep the app's tested Nixpkgs pin and packaged helper.
+    nixos-update-manager.url = "github:oddship/nixos-update-manager";
+
     # Versioned OpenAI downloads, maintained patches, and hourly upstream checks.
     chatgpt-desktop.url = "github:danielbodart/chatgpt-desktop";
 
@@ -174,6 +177,7 @@
           catppuccin.nixosModules.catppuccin
           chaotic.nixosModules.default
           inputs.osquery-nftables-ext.nixosModules.default
+          inputs.nixos-update-manager.nixosModules.default
 
           ./hosts/desktop/thinkpadx1/configuration.nix
         ];

@@ -57,6 +57,10 @@
 
   # Enable modules for this host
   services.desktop.enable = true;
+  services.nixos-update-manager = {
+    enable = true;
+    indicator.enable = true;
+  };
   services.development = {
     enable = true;
     docker = {

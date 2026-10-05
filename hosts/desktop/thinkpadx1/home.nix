@@ -1,5 +1,6 @@
 {
   inputs,
+  lib,
   pkgs,
   gitConfigExtra ? "",
   ...
@@ -27,6 +28,11 @@
 
   # Program configurations moved to home/profiles/desktop.nix to avoid duplication
   # Only host-specific program overrides should be here
+
+  # Enable the system-installed update indicator for this desktop.
+  dconf.settings."org/gnome/shell".enabled-extensions = lib.mkAfter [
+    "nixos-updates@oddship.github.io"
+  ];
 
   # Host-specific git config (if needed)
   programs.git.includes = [
