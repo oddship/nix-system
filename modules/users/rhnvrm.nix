@@ -24,7 +24,6 @@ in
     # Essential user packages
     packages = with pkgs; [
       git
-      neovim
       zsh
       firefox
       vscode-fhs

@@ -65,6 +65,10 @@
 
       # Formatters and tools
       prettier
+      gcc
+      tree-sitter
+      curl
+      gnutar
     ];
 
     extraConfig = ''
@@ -260,24 +264,27 @@
         -- Treesitter
         {
           "nvim-treesitter/nvim-treesitter",
+          branch = "main",
+          lazy = false,
           build = ":TSUpdate",
           config = function()
-            require('nvim-treesitter.configs').setup {
-              ensure_installed = {
+            local treesitter = require('nvim-treesitter')
+            treesitter.setup({})
+            treesitter.install({
                 "nix", "lua", "python", "javascript", "typescript",
                 "json", "yaml", "toml", "markdown", "markdown_inline",
                 "bash", "go", "rust", "html", "css"
-              },
-              auto_install = false,
-              highlight = { enable = true },
-              indent = { enable = true },
-              folding = { enable = true },
-            }
-
-            -- Neovim 0.12 can hit a query directive mismatch in older
-            -- markdown injection paths. Disabling markdown injections avoids
-            -- the crashing code path while keeping markdown parsing/rendering.
-            vim.treesitter.query.set('markdown', 'injections', [[]])
+            })
+            vim.api.nvim_create_autocmd('FileType', {
+              group = vim.api.nvim_create_augroup('UserTreesitter', { clear = true }),
+              callback = function(event)
+                local lang = vim.treesitter.language.get_lang(vim.bo[event.buf].filetype)
+                if lang and vim.treesitter.language.add(lang) then
+                  vim.treesitter.start(event.buf, lang)
+                  vim.bo[event.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+                end
+              end,
+            })
           end,
         },
         
@@ -509,7 +516,7 @@
           dependencies = { "nvim-tree/nvim-web-devicons" },
           config = function()
             require('lualine').setup {
-              options = { theme = 'catppuccin' },
+              options = { theme = require('catppuccin.utils.lualine')('mocha') },
             }
           end,
         },
