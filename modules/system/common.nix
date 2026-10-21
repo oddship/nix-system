@@ -1,5 +1,15 @@
 { lib, pkgs, ... }:
 {
+  # Prevent setuid programs from writing sensitive memory to core dumps.
+  boot.kernel.sysctl."fs.suid_dumpable" = 0;
+
+  # Block roots that can authenticate the compromised eMudhra intermediates.
+  # https://emudhra.we-have-a-problem.com/#developers
+  security.pki.caCertificateBlacklist = [
+    "Comodo AAA Services root"
+    "emSign ECC Root CA - G3"
+  ];
+
   # Common nix settings shared across all hosts
   nix.settings = {
     accept-flake-config = true;
