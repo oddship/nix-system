@@ -215,6 +215,10 @@ in
 
     "org/gnome/desktop/wm/keybindings" = {
       close = [ "<Super>q" ];
+    };
+
+    "org/gnome/shell/keybindings" = {
+      # Free Super+V for clipboard history.
       "toggle-message-tray" = [ "<Shift><Super>v" ];
     };
 
