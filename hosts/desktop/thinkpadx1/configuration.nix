@@ -33,6 +33,7 @@
     # Package collections
     ../../../modules/packages/appimage.nix
     ../../../modules/packages/antigravity.nix
+    ../../../modules/packages/bb.nix
     ../../../modules/packages/chatgpt.nix
     ../../../modules/packages/desktop.nix
     ../../../modules/packages/development.nix
@@ -72,6 +73,7 @@
   desktop.gnome.enable = true;
   packages.appimage.enable = true;
   packages.antigravity.enable = true;
+  packages.bb.enable = true;
   packages.chatgpt.enable = true;
   packages.desktop.enable = true;
   packages.development.enable = true;
