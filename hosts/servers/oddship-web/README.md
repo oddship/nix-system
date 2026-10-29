@@ -9,7 +9,7 @@ actually need public reachability.
 At the moment the host is responsible for:
 
 - Caddy with the Cloudflare DNS plugin for certificate issuance
-- `s3site`, which serves `oddship.net` and `rohanverma.net` from Garage-backed
+- `s3site`, which serves `oddship.net`, `rohanverma.net`, and `sarojbhatnagar.com` from Garage-backed
   tarball uploads
 - two Linkpage instances for `links.rohanverma.net` and `links.oddship.net`
 - Umami at `analytics.rohanverma.net`
@@ -81,3 +81,11 @@ first boot.
 
 That split keeps the host config declarative without forcing a full machine
 rebuild for every site publish.
+
+## Saroj Bhatnagar book
+
+`rhnvrm/sarojbhatnagar.com` publishes `sites/sarojbhatnagar.com.tar.gz` to the
+`static-sites` bucket. The apex uses s3site; `www.sarojbhatnagar.com` redirects
+to the apex and preserves the path. Cloudflare records live in `terraform/main.tf`.
+Existing zone records must be imported before the first DNS apply. Keep the
+legacy origin at `143.198.208.213` available until the cutover is verified.

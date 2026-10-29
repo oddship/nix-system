@@ -11,6 +11,10 @@ let
   s3siteListen = "127.0.0.1:9001";
   garageEndpoint = "http://rhnvrm-private:3900";
   s3siteHostedSites = {
+    saroj = {
+      hostname = "sarojbhatnagar.com";
+      key = "sites/sarojbhatnagar.com.tar.gz";
+    };
     oddship = {
       hostname = "oddship.net";
       key = "sites/oddship.net.tar.gz";
@@ -132,6 +136,10 @@ in
     webserver.enable = true;
     staticSites = { };
     reverseProxySites = {
+      saroj = {
+        domain = s3siteHostedSites.saroj.hostname;
+        upstream = "http://${s3siteListen}";
+      };
       oddship = {
         domain = s3siteHostedSites.oddship.hostname;
         upstream = "http://${s3siteListen}";
@@ -158,6 +166,18 @@ in
       };
     };
   };
+
+  # The existing DNS challenge token covers oddship.net and rohanverma.net.
+  # Use the normal HTTP/TLS challenges for the book's separate Cloudflare zone.
+  services.caddy.virtualHosts."sarojbhatnagar.com".extraConfig = lib.mkForce ''
+    reverse_proxy http://${s3siteListen}
+  '';
+  services.caddy.virtualHosts."www.sarojbhatnagar.com".extraConfig = ''
+    redir https://sarojbhatnagar.com{uri} permanent
+  '';
+  services.caddy.virtualHosts."http://www.sarojbhatnagar.com".extraConfig = ''
+    redir https://sarojbhatnagar.com{uri} permanent
+  '';
 
   services.linkpage.instances = {
     rohanverma = {

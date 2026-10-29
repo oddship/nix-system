@@ -183,3 +183,24 @@ resource "cloudflare_record" "rohanverma_links" {
   type    = "A"
   proxied = true
 }
+
+# Cloudflare - sarojbhatnagar.com
+data "cloudflare_zone" "saroj" {
+  name = "sarojbhatnagar.com"
+}
+
+resource "cloudflare_record" "saroj_root" {
+  zone_id = data.cloudflare_zone.saroj.id
+  name    = "@"
+  content = hcloud_server.web.ipv4_address
+  type    = "A"
+  proxied = true
+}
+
+resource "cloudflare_record" "saroj_www" {
+  zone_id = data.cloudflare_zone.saroj.id
+  name    = "www"
+  content = "sarojbhatnagar.com"
+  type    = "CNAME"
+  proxied = true
+}
